@@ -248,6 +248,8 @@
   .factor .ck{color:var(--green); font-weight:900;}
 
   .editq{width:100%; border:1px solid var(--blue); background:#fff; border-radius:11px; padding:11px 13px; font-size:13.5px; font-family:inherit; color:var(--navy); resize:vertical; min-height:54px;}
+  .ed-l{font-size:11.5px; color:var(--muted); font-weight:700; display:block; margin:11px 0 4px;}
+  .ed-hint{font-size:11px; color:var(--muted); margin:6px 0 0;}
   .qcard{border:1px solid var(--line); border-radius:13px; padding:12px 15px; margin-bottom:10px;}
   .qcard.pr{border-color:var(--blue); background:var(--sky);}
   .qtext{font-size:13.5px; font-weight:700; color:var(--navy); margin:0;}
@@ -275,7 +277,25 @@
   .slack{display:flex; align-items:center; gap:11px; background:#4A154B; color:#fff; border-radius:14px; padding:15px 18px; margin-top:14px;}
   .slack .ico{font-size:20px;} .slack .t{font-size:14px; font-weight:800;} .slack .a{margin-left:auto; background:#fff; color:#4A154B; padding:7px 15px; border-radius:9px; font-weight:800; font-size:12.5px; text-decoration:none;}
 
+  /* 소통 채널 입력 (Shooter) */
+  .chan-l{display:block; font-size:12.5px; font-weight:800; color:var(--navy); margin:11px 0 4px;}
+  .chan-in{width:100%; box-sizing:border-box; border:1px solid var(--line); background:#fff; border-radius:11px; padding:10px 13px; font-size:13px; font-family:inherit; color:var(--navy);}
+  .chan-in:focus{outline:none; border-color:var(--blue);}
+  /* 소통 채널 공개 (수락 후, Rider) */
+  .chanrow{display:flex; align-items:center; gap:11px; background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 15px; margin-top:9px;}
+  .chanrow .ic{font-size:18px;} .chanrow .t{font-size:13.5px; font-weight:800; color:var(--navy);} .chanrow .v{font-size:12px; color:var(--muted); margin-top:1px; word-break:break-all;}
+  .chanrow .go{margin-left:auto; background:var(--blue); color:#fff; padding:7px 14px; border-radius:9px; font-weight:800; font-size:12.5px; text-decoration:none; white-space:nowrap;}
+
   .loading{display:flex; align-items:center; gap:12px; color:var(--muted); font-size:14px; padding:18px 2px;}
+  /* 로켓 발사 로딩 */
+  .orbit-load{display:flex; flex-direction:column; align-items:center; gap:16px; padding:30px 2px;}
+  .orbit-stage{position:relative; width:96px; height:96px;}
+  .orbit-core{position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:30px; z-index:2;}
+  .orbit-ring{position:absolute; inset:6px; border:1.5px dashed #c7d2fe; border-radius:50%; animation:orbitSpin 3.4s linear infinite;}
+  .orbit-sat{position:absolute; top:-12px; left:50%; margin-left:-12px; font-size:23px;}
+  @keyframes orbitSpin{ to{ transform:rotate(360deg);} }
+  .rk-text{font-size:14.5px; color:var(--navy); font-weight:700;}
+  .rk-sub{font-size:12px; color:var(--muted); margin-top:-9px;}
   .spinner{width:20px;height:20px;border:3px solid #e2e8f0;border-top-color:var(--blue);border-radius:50%;animation:spin 1s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
   .banner{background:linear-gradient(135deg,#eff6ff,#eef2ff); border:1px solid #c7d2fe; border-radius:14px; padding:14px 18px; margin-bottom:16px; font-size:13px; color:#334155;} .banner b{color:var(--navy);}
@@ -284,6 +304,7 @@
   .browsecard .bt{font-size:17px; font-weight:800; color:var(--navy);} .browsecard .bd{font-size:13px; color:var(--muted); margin:4px 0 10px;}
   .browsecard .fitpct{font-size:11.5px; font-weight:800; color:#047857; background:var(--mint); padding:3px 10px; border-radius:999px;}
   .err{color:#dc2626; background:#fef2f2; border:1px solid #fecaca; border-radius:12px; padding:13px 16px;}
+  #idea-boost, #idea-vision, #teamPickSec, #card-story, #card-plan, #card-factors{ scroll-margin-top:84px; }
   /* 마이페이지 */
   .myhead{margin-bottom:20px;}
   .myhi{font-size:18px; color:var(--navy); margin-bottom:14px;}
@@ -519,6 +540,8 @@
         <textarea id="idea" placeholder="예) 버려지는 페트병 뚜껑을 모아 핸드폰 그립톡으로 업사이클링하는 사업"></textarea>
         <div class="attach" onclick="comingSoon()">📎 파일 첨부 <span class="soon">준비중</span></div>
         <button class="btn full" style="margin-top:13px" id="ideaGo" onclick="ideaStart()">ORBIT 구체화 시작 →</button>
+        <div onclick="previewLoading()" style="margin-top:9px; text-align:center; font-size:12px; color:var(--muted); cursor:pointer">🚀 로딩 화면 미리보기 <span style="color:#bbb">(개발용·API 안 씀)</span></div>
+        <div onclick="previewVision()" style="margin-top:6px; text-align:center; font-size:12px; color:var(--muted); cursor:pointer">📄 비전 페이지 미리보기(에코그립) <span style="color:#bbb">(개발용·API 안 씀)</span></div>
         <div class="chips">
           <span class="chip" onclick="setIdea(this)">페트병 뚜껑을 그립톡으로 재활용하는 사업</span>
           <span class="chip" onclick="setIdea(this)">할머니 손맛 반찬을 정기배송하는 서비스</span>
@@ -597,6 +620,7 @@ const DEMO_PROJECT = {
     "Gen Z 트렌드나 친환경 굿즈 시장을 얼마나 이해하고 있나요?",
   ],
   founderQuestion:"우리 사업에서 '환경'은 양보 못 할 가치예요. 자원 재활용에 대해 어떤 생각을 가지고 계신가요?",
+  channels:{ kakao:"https://open.kakao.com/o/ecogrip", slack:"https://ecogrip.slack.com", email:"team@ecogrip.kr" },
 };
 const DEMO_PROJECT_PROPOSALS = [
   {name:"김도현", role:"압출 기계 및 생산 시설 관련 지식 보유자", rate:88, line:"PP/HDPE 분쇄·사출 설비를 직접 다뤄봤어요. 시제품을 빠르게 만들 수 있습니다.", status:"pending"},
@@ -647,6 +671,31 @@ function slug(s){ return ([...(s||"")].filter(c=>/[a-zA-Z0-9]/.test(c)).join("")
 function setIdea(el){ document.getElementById("idea").value = el.textContent; }
 function comingSoon(){ alert("🔸 준비 중입니다.\n(MVP에서는 핵심 흐름만 작동합니다 — 전체 그림을 보여드리기 위한 화면이에요.)"); }
 function spinner(t){ return `<div class="loading"><div class="spinner"></div><div>${esc(t)}</div></div>`; }
+function rocketLoader(text, sub){
+  return `<div class="orbit-load">
+    <div class="orbit-stage">
+      <span class="orbit-core">💡</span>
+      <div class="orbit-ring"><span class="orbit-sat">🛰️</span></div>
+    </div>
+    <div class="rk-text">${esc(text)}</div>${sub?`<div class="rk-sub">${esc(sub)}</div>`:``}
+  </div>`;
+}
+/* 개발용: API 안 부르고 로딩 화면만 미리보기 (비용 0) */
+function previewLoading(){
+  const box = document.getElementById("idea-vision");
+  box.innerHTML = `<div class="card">${rocketLoader("아이디어가 궤도에 오르는 중...", "약 30초 걸려요 🛰️")}</div>`;
+  box.scrollIntoView({ behavior:"smooth", block:"center" });
+}
+/* 개발용: API 안 부르고 에코그립 예시로 비전 페이지 미리보기 (비용 0) */
+function previewVision(){
+  const v = JSON.parse(JSON.stringify(DEMO_PROJECT));
+  ORBIT.vision = v; ORBIT.founderQuestion = v.founderQuestion || ""; ORBIT.picks = []; ORBIT.editing = null;
+  ORBIT.channels = v.channels ? {...v.channels} : {kakao:"",slack:"",email:""};
+  document.getElementById("idea-input").classList.add("hidden");
+  document.getElementById("idea-boost").innerHTML = "";
+  renderVision(v);
+  document.getElementById("idea-vision").scrollIntoView({ behavior:"smooth", block:"start" });
+}
 
 function go(id){
   document.querySelectorAll(".screen").forEach(s=>s.classList.add("hidden"));
@@ -727,6 +776,7 @@ async function ideaStart(){
   const btn = document.getElementById("ideaGo"); btn.disabled=true;
   const box = document.getElementById("idea-boost");
   box.innerHTML = `<div class="card">${spinner("AI가 비전을 또렷하게 만들 질문을 준비하는 중...")}</div>`;
+  box.scrollIntoView({ behavior:"smooth", block:"center" });
   try{
     const b = await api("/api/boost", { idea });
     ORBIT.boost = b.questions || [];
@@ -747,11 +797,17 @@ function renderBoost(){
       <button class="btn full" id="boostGo" onclick="ideaMakeVision()">이 답으로 비전 만들기 →</button>
     </div>`;
   ORBIT._sel = {};
+  document.getElementById("idea-boost").scrollIntoView({ behavior:"smooth", block:"center" });
 }
 function pickOpt(qi,oi){
   ORBIT._sel = ORBIT._sel || {};
   ORBIT._sel[qi] = oi;
   ORBIT.boost[qi].options.forEach((_,i)=>document.getElementById(`opt-${qi}-${i}`).classList.toggle("sel", i===oi));
+  // 보충 질문을 모두 선택하면 '비전 만들기' 버튼으로 부드럽게 이동
+  if(Object.keys(ORBIT._sel).length >= ORBIT.boost.length){
+    const btn = document.getElementById("boostGo");
+    if(btn) btn.scrollIntoView({ behavior:"smooth", block:"center" });
+  }
 }
 
 async function ideaMakeVision(){
@@ -760,7 +816,8 @@ async function ideaMakeVision(){
   const strengthAnswer = (ORBIT.boost[1] && ORBIT.boost[1].options[sel[1] ?? 0]) || "";
   document.getElementById("boostGo").disabled = true;
   const box = document.getElementById("idea-vision");
-  box.innerHTML = `<div class="card">${spinner("ORBIT이 비전 페이지를 만드는 중... (약 30초)")}</div>`;
+  box.innerHTML = `<div class="card">${rocketLoader("아이디어가 궤도에 오르는 중...", "약 30초 걸려요 🛰️")}</div>`;
+  box.scrollIntoView({ behavior:"smooth", block:"center" });
   try{
     const v = await api("/api/vision", { idea:ORBIT.idea, targetAnswer, strengthAnswer });
     if(v.needMoreInfo){
@@ -768,75 +825,134 @@ async function ideaMakeVision(){
       return;
     }
     ORBIT.vision = v; ORBIT.founderQuestion = v.founderQuestion || ""; ORBIT.picks = [];
+    ORBIT.channels = v.channels ? {...v.channels} : {kakao:"",slack:"",email:""};
     document.getElementById("idea-input").classList.add("hidden");
     document.getElementById("idea-boost").classList.add("hidden");
     renderVision(v);
   }catch(err){ box.innerHTML = `<div class="err">⚠️ ${esc(err.message)}</div>`; }
 }
 
+function visHead(label, key){
+  const ctrl = ORBIT.editing===key
+    ? `<button class="btn sm" onclick="saveVisionField('${key}')">💾 저장</button><button class="btn ghost sm" onclick="cancelEdit()">취소</button>`
+    : `<button class="btn sm" onclick="editVisionField('${key}')">✎ 수정</button>`;
+  return `<div style="display:flex; align-items:flex-start; gap:8px; margin-bottom:12px;"><p class="eyebrow" style="margin:0; flex:1">${label}</p><div style="display:flex; gap:6px; flex:0 0 auto;">${ctrl}</div></div>`;
+}
+function visSaveBtns(key){
+  return `<div style="display:flex; gap:8px; margin-top:11px;"><button class="btn green sm" onclick="saveVisionField('${key}')">💾 저장</button><button class="btn ghost sm" onclick="cancelEdit()">취소</button></div>`;
+}
 function renderVision(v){
+  const ed = ORBIT.editing;
   const p = v.plan || {};
   const story = (v.story||[]).map(t=>`<p>${esc(t)}</p>`).join("");
   const why = (v.whyNow||[]).map(w=>`<div class="why"><div class="ic">${esc(w.icon||"✨")}</div><div class="t">${esc(w.title)}</div><div class="d">${esc(w.desc)}</div></div>`).join("");
-  const picks = (v.neededTeammates||[]).map((m,i)=>`
-    <div class="pick" id="pick-${i}" onclick="togglePick(${i})"><span class="cbx"></span><div><div class="role">${esc(m.role)}</div><div class="det">${esc(m.detail)}</div></div></div>`).join("");
+  const picks = (v.neededTeammates||[]).map((m,i)=>`<div class="pick" id="pick-${i}" onclick="togglePick(${i})"><span class="cbx"></span><div><div class="role">${esc(m.role)}</div><div class="det">${esc(m.detail)}</div></div></div>`).join("");
   const factors = (v.matchFactors||[]).map(f=>`<div class="factor"><span class="ck">✓</span>${esc(f)}</div>`).join("");
+  const fq = (typeof ORBIT.founderQuestion === "string") ? ORBIT.founderQuestion : (v.founderQuestion||"");
+  const ch = ORBIT.channels = ORBIT.channels || (v.channels ? {...v.channels} : {kakao:"",slack:"",email:""});
 
   document.getElementById("idea-vision").innerHTML = `
-    <div class="banner fade">✍️ <b>AI가 만든 비전이에요.</b> 아래 <b>제공자 질문</b>은 직접 고칠 수 있고, <b>함께 찾을 팀원</b>을 1명 이상 선택해야 합니다. <button class="linkbtn" style="color:#8b5cf6;font-weight:800" onclick="comingSoon()">🔄 항목별 수정<span class="soon">준비중</span></button></div>
+    <div class="banner fade">✍️ <b>AI가 만든 비전이에요.</b> 각 항목 옆 <b>✎ 수정</b>으로 직접 고칠 수 있어요. <b>함께 찾을 팀원</b>은 1명 이상 선택해야 합니다.</div>
     <div class="hero fade">
-      <div class="tags"><span class="hot">진척도 0% · 아이디어 단계</span><span>팀원 모집 중</span></div>
+      <div class="tags"><span class="hot">아이디어 단계</span><span>팀원 모집 중</span></div>
       <h1>${esc(v.serviceName)} — ${esc(v.tagline)}</h1>
       <p class="lead">${esc(v.lead)}</p>
     </div>
-    <div class="card story"><p class="eyebrow">📖 왜 이 사업을 하는가</p>${story}</div>
-    <div class="card"><p class="eyebrow">⏱ 왜 지금, 왜 함께인가</p><div class="why-grid">${why}</div></div>
-    <div class="card">
-      <p class="eyebrow">📄 AI 사업 기획안</p>
-      <p style="font-size:13.5px; color:#334155; margin:0 0 14px; line-height:1.6;">${esc(v.productNote)}</p>
-      <div class="plan">
-        <div class="prow"><div class="pk">⛳ 문제</div><div class="pv">${esc(p.problem)}</div></div>
-        <div class="prow"><div class="pk">💡 해결</div><div class="pv">${esc(p.solution)}</div></div>
-        <div class="prow"><div class="pk">🎯 타겟</div><div class="pv">${esc(p.target)}</div></div>
-        <div class="prow"><div class="pk">💰 수익</div><div class="pv">${esc(p.revenue)}</div></div>
-      </div>
+
+    <div class="card story" id="card-story">
+      ${visHead("📖 왜 이 사업을 하는가","story")}
+      ${ed==='story'
+        ? `<textarea class="editq" id="ed-story" style="min-height:180px">${esc((v.story||[]).join("\n\n"))}</textarea><p class="ed-hint">문단은 빈 줄로 구분돼요.</p>`
+        : story}
     </div>
-    <div class="card">
+
+    <div class="card"><p class="eyebrow">⏱ 왜 지금, 왜 함께인가</p><div class="why-grid">${why}</div></div>
+
+    <div class="card" id="card-plan">
+      ${visHead("📄 AI 사업 기획안","plan")}
+      ${ed==='plan'
+        ? `<label class="ed-l">한 줄 소개</label><textarea class="editq" id="ed-productNote">${esc(v.productNote)}</textarea>
+           <label class="ed-l">⛳ 문제</label><textarea class="editq" id="ed-problem">${esc(p.problem)}</textarea>
+           <label class="ed-l">💡 해결</label><textarea class="editq" id="ed-solution">${esc(p.solution)}</textarea>
+           <label class="ed-l">🎯 타겟</label><textarea class="editq" id="ed-target">${esc(p.target)}</textarea>
+           <label class="ed-l">💰 수익</label><textarea class="editq" id="ed-revenue">${esc(p.revenue)}</textarea>`
+        : `<p style="font-size:13.5px; color:#334155; margin:0 0 14px; line-height:1.6;">${esc(v.productNote)}</p>
+           <div class="plan">
+             <div class="prow"><div class="pk">⛳ 문제</div><div class="pv">${esc(p.problem)}</div></div>
+             <div class="prow"><div class="pk">💡 해결</div><div class="pv">${esc(p.solution)}</div></div>
+             <div class="prow"><div class="pk">🎯 타겟</div><div class="pv">${esc(p.target)}</div></div>
+             <div class="prow"><div class="pk">💰 수익</div><div class="pv">${esc(p.revenue)}</div></div>
+           </div>`}
+    </div>
+
+    <div class="card" id="teamPickSec">
       <p class="eyebrow">🧩 함께 찾을 팀원 — 1명 이상 선택</p>
       ${picks}
-      <div style="height:1px; background:var(--line); margin:14px 0;"></div>
-      <p class="eyebrow" style="color:var(--navy)">🤝 팀원 매칭 시 중요 요소 (궁합)</p>
-      ${factors}
     </div>
+
+    <div class="card" id="card-factors">
+      ${visHead("🤝 팀원 매칭 시 중요 요소 (궁합)","factors")}
+      ${ed==='factors'
+        ? `<textarea class="editq" id="ed-factors" style="min-height:110px">${esc((v.matchFactors||[]).join("\n"))}</textarea><p class="ed-hint">한 줄에 하나씩 적어요.</p>`
+        : factors}
+    </div>
+
     <div class="card">
       <p class="eyebrow">❓ 팀원에게 물어볼 내 질문 <span class="qsrc prv">수정 가능</span></p>
       <p style="font-size:12.5px; color:#475569; margin:0 0 10px;">합류 지원자는 <b>AI 질문 2개 + 아래 내 질문 1개</b>에 답합니다.</p>
       <div class="qcard"><p class="qtext">${esc((v.aiQuestions||[])[0]||"")}<span class="qsrc ai">AI</span></p></div>
       <div class="qcard"><p class="qtext">${esc((v.aiQuestions||[])[1]||"")}<span class="qsrc ai">AI</span></p></div>
-      <textarea class="editq" id="founderQ" oninput="ORBIT.founderQuestion=this.value">${esc(v.founderQuestion)}</textarea>
+      <textarea class="editq" id="founderQ" oninput="ORBIT.founderQuestion=this.value">${esc(fq)}</textarea>
+      <p style="font-size:12px; color:var(--blue); font-weight:700; margin:9px 0 0;">✏️ 내 질문은 직접 수정할 수 있어요.</p>
     </div>
+
+    <div class="card">
+      <p class="eyebrow">🔗 팀 소통 채널 <span class="qsrc prv">수락 후 공개</span></p>
+      <p style="font-size:12.5px; color:#475569; margin:0 0 6px;">합류가 <b>서로 수락</b>되면 이 링크가 팀원에게 공개돼요. 지금은 나만 봅니다. (선택 입력)</p>
+      <label class="chan-l">💬 카카오 오픈채팅</label>
+      <input class="chan-in" type="text" placeholder="https://open.kakao.com/o/..." value="${esc(ch.kakao||'')}" oninput="ORBIT.channels.kakao=this.value">
+      <label class="chan-l">🟣 슬랙 채널</label>
+      <input class="chan-in" type="text" placeholder="https://○○○.slack.com" value="${esc(ch.slack||'')}" oninput="ORBIT.channels.slack=this.value">
+      <label class="chan-l">✉️ 이메일</label>
+      <input class="chan-in" type="text" placeholder="team@example.com" value="${esc(ch.email||'')}" oninput="ORBIT.channels.email=this.value">
+    </div>
+
     <div style="display:flex; gap:9px;">
-      <button class="btn ghost" onclick="location.reload()">↺ 다른 아이디어</button>
-      <button class="btn green" style="flex:1" id="confirmBtn" disabled onclick="confirmVision()">팀원을 1명 이상 선택하세요</button>
+      <button class="btn ghost" onclick="newIdea()">↺ 다른 아이디어</button>
+      <button class="btn green" style="flex:1" id="confirmBtn" onclick="tryConfirm()">${(ORBIT.picks&&ORBIT.picks.length)?`확정하고 팀원 찾기 (${ORBIT.picks.length}자리) →`:"팀원을 1명 이상 선택하세요"}</button>
     </div>`;
+
+  (ORBIT.picks||[]).forEach(i=>{ const el=document.getElementById("pick-"+i); if(el) el.classList.add("on"); });
 }
 
-function vtab(which){
-  document.getElementById("vt-mock").classList.toggle("on", which==="mock");
-  document.getElementById("vt-plan").classList.toggle("on", which==="plan");
-  document.getElementById("vbody-mock").classList.toggle("hidden", which!=="mock");
-  document.getElementById("vbody-plan").classList.toggle("hidden", which!=="plan");
+function editVisionField(key){ ORBIT.editing = key; renderVision(ORBIT.vision); setTimeout(()=>{ const e=document.getElementById("card-"+key); if(e) e.scrollIntoView({behavior:"smooth", block:"start"}); }, 60); }
+function cancelEdit(){ ORBIT.editing = null; renderVision(ORBIT.vision); }
+function saveVisionField(key){
+  const v = ORBIT.vision; const val = id => (document.getElementById(id)||{}).value || "";
+  if(key==='story') v.story = val('ed-story').split(/\n\s*\n/).map(s=>s.trim()).filter(Boolean);
+  if(key==='factors') v.matchFactors = val('ed-factors').split(/\n+/).map(s=>s.trim()).filter(Boolean);
+  if(key==='plan'){ v.productNote=val('ed-productNote'); v.plan.problem=val('ed-problem'); v.plan.solution=val('ed-solution'); v.plan.target=val('ed-target'); v.plan.revenue=val('ed-revenue'); }
+  ORBIT.editing = null; renderVision(v);
+  setTimeout(()=>{ const e=document.getElementById("card-"+key); if(e) e.scrollIntoView({behavior:"smooth", block:"start"}); }, 60);
+}
+function tryConfirm(){
+  const fq=document.getElementById("founderQ"); if(fq) ORBIT.founderQuestion = fq.value.trim();
+  if(!ORBIT.picks || ORBIT.picks.length===0){
+    const s=document.getElementById("teamPickSec"); if(s) s.scrollIntoView({behavior:"smooth", block:"start"});
+    return;
+  }
+  confirmVision();
 }
 function togglePick(i){
   const el = document.getElementById("pick-"+i); el.classList.toggle("on");
   ORBIT.picks = [...document.querySelectorAll(".pick.on")].map(e=>+e.id.split("-")[1]);
   const btn = document.getElementById("confirmBtn");
-  btn.disabled = ORBIT.picks.length===0;
-  btn.textContent = ORBIT.picks.length ? `확정하고 팀원 찾기 (${ORBIT.picks.length}자리) →` : "팀원을 1명 이상 선택하세요";
+  if(btn) btn.textContent = ORBIT.picks.length ? `확정하고 팀원 찾기 (${ORBIT.picks.length}자리) →` : "팀원을 1명 이상 선택하세요";
 }
 function confirmVision(){
   const fq = document.getElementById("founderQ"); if(fq) ORBIT.founderQuestion = fq.value.trim();
   const v = ORBIT.vision; v.founderQuestion = ORBIT.founderQuestion;
+  v.channels = {...(ORBIT.channels||{})};
   ORBIT.myIdeas.unshift({ vision:v, proposals: makeProposals(v) });
   alert("🚀 아이디어를 쏘아 올렸어요!\nORBIT이 이 아이디어에 맞는 팀원을 찾아드릴게요.");
   openDetail(v, true);  // 내 비전 상세로 이동 → 추천 팀원 매칭
@@ -975,12 +1091,28 @@ function applyToIdea(){
 }
 function demoAcceptApply(){
   if(ORBIT.applied[0]) ORBIT.applied[0].status = "accepted";
-  document.getElementById("applyDone").innerHTML = slackBlock(ORBIT.detailVision.serviceName);
+  document.getElementById("applyDone").innerHTML = slackBlock(ORBIT.detailVision);
 }
-function slackBlock(name){
+function chanRow(ic, label, val, isMail){
+  const href = isMail ? ("mailto:"+val) : (/^https?:\/\//.test(val) ? val : "https://"+val);
+  const tgt = isMail ? "" : ` target="_blank" rel="noopener"`;
+  return `<div class="chanrow"><span class="ic">${ic}</span>
+    <div style="flex:1; min-width:0"><div class="t">${esc(label)}</div><div class="v">${esc(val)}</div></div>
+    <a class="go" href="${esc(href)}"${tgt}>${isMail?"메일 보내기":"열기"} →</a></div>`;
+}
+function slackBlock(v){
+  const name = (v&&v.serviceName)||"";
+  const ch = (v&&v.channels)||{};
+  const rows = [];
+  if(ch.kakao) rows.push(chanRow("💬","카카오 오픈채팅", ch.kakao, false));
+  if(ch.slack) rows.push(chanRow("🟣","슬랙 채널", ch.slack, false));
+  if(ch.email) rows.push(chanRow("✉️","이메일", ch.email, true));
+  const list = rows.length
+    ? `<p style="font-size:12.5px; color:#475569; margin:14px 0 2px; font-weight:800;">🔓 제공자가 공개한 팀 소통 채널</p>${rows.join("")}`
+    : `<div class="slack"><span class="ico">💬</span><div class="t">${esc(name)} 팀 슬랙 채널</div><a class="a" href="#" onclick="comingSoon();return false">참여하기 →</a></div>`;
   return `<div style="margin-top:13px">
       <div class="banner" style="background:#ecfdf5; border-color:#a7f3d0;">🎉 <b>서로 수락했어요!</b> 이제 팀의 여정이 시작됩니다.</div>
-      <div class="slack"><span class="ico">💬</span><div class="t">${esc(name)} 팀 슬랙 채널</div><a class="a" href="#" onclick="comingSoon();return false">참여하기 →</a></div>
+      ${list}
       <p style="font-size:11.5px; color:var(--muted); margin:11px 0 0;">🛡 여기까지가 ORBIT. 이후 협업과 결정은 팀의 몫이며 ORBIT은 관여하지 않습니다.</p>
     </div>`;
 }
