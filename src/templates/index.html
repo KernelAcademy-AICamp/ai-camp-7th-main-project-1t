@@ -415,20 +415,8 @@
     </div>
   </div>
 
-  <!-- 책임 -->
+  <!-- 과정 (이용 방법) -->
   <div class="lsec alt" id="sec-how">
-    <div class="lwrap">
-      <h2 class="lsec-t">ORBIT은 팀 구성까지만 책임집니다</h2>
-      <p class="lsec-s">이후의 사업화, 운영 성공 여부는 팀의 몫입니다.</p>
-      <div class="two2">
-        <div class="bigcard"><div class="ic">✨</div><div class="t">1. 아이디어를 구체화</div><div class="d">막연한 한 줄을 팀원이 이해하고 반응할 수 있는 설명으로 바꿉니다.</div></div>
-        <div class="bigcard"><div class="ic">◎</div><div class="t">2. 잘 맞는 팀원 알아보기</div><div class="d">고정 프로필이 아니라 아이디어별 질문과 답변을 바탕으로 나와 더 잘 맞는 사람을 식별합니다.</div></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 과정 -->
-  <div class="lsec">
     <div class="lwrap">
       <h2 class="lsec-t">아이디어가 팀이 되는 과정</h2>
       <div class="flowbox">
@@ -440,6 +428,18 @@
           <div class="fstep last"><div class="ic">🚩</div><div class="ft">5. ORBIT 완료</div></div>
         </div>
         <div class="flowcap">아이디어 한 줄 → 구체화 → 맞는 팀원 식별 → ORBIT 초대 → 합류 합의</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 책임 범위 -->
+  <div class="lsec">
+    <div class="lwrap">
+      <h2 class="lsec-t">ORBIT은 팀 구성까지만 책임집니다</h2>
+      <p class="lsec-s">이후의 사업화, 운영 성공 여부는 팀의 몫입니다.</p>
+      <div class="two2">
+        <div class="bigcard"><div class="ic">✨</div><div class="t">1. 아이디어를 구체화</div><div class="d">막연한 한 줄을 팀원이 이해하고 반응할 수 있는 설명으로 바꿉니다.</div></div>
+        <div class="bigcard"><div class="ic">◎</div><div class="t">2. 잘 맞는 팀원 알아보기</div><div class="d">고정 프로필이 아니라 아이디어별 질문과 답변을 바탕으로 나와 더 잘 맞는 사람을 식별합니다.</div></div>
       </div>
     </div>
   </div>
@@ -480,7 +480,10 @@
   <div class="lwrap" style="padding:42px 0 0;">
     <div class="endcta">
       <h2>오늘의 아이디어를<br><span class="bl">ORBIT</span> 해보세요.</h2>
-      <button class="btn lg" onclick="goIdeaIntro()">아이디어 ORBIT 하기 →</button>
+      <div style="display:flex; gap:12px; margin-left:auto; flex-wrap:wrap;">
+        <button class="btn" style="margin-left:0; background:var(--blue2); color:#fff; font-weight:700; padding:10px 17px; font-size:13.5px" onclick="goIdeaIntro()">🚀 아이디어 쏘아 올리기 →</button>
+        <button class="btn" style="margin-left:0; background:#fff; color:var(--navy); font-weight:700; padding:10px 17px; font-size:13.5px" onclick="goExplore()">🛰️ 프로젝트 둘러보기 →</button>
+      </div>
     </div>
     <div class="lfoot"><span class="mark" style="cursor:default;"><span class="logo"></span>ORBIT</span><span class="ft-r">© 2026 ORBIT. 아이디어를, ORBIT 하다.</span></div>
   </div>
@@ -697,7 +700,13 @@ function go(id){
 function requireLogin(next){ if(ORBIT.loggedIn) go(next); else { ORBIT._after=next; go("login"); } }
 function scrollSec(id){
   if(document.getElementById("s-landing").classList.contains("hidden")) go("landing");
-  setTimeout(()=>{ const e=document.getElementById("sec-"+id); if(e) e.scrollIntoView({behavior:"smooth", block:"start"}); }, 60);
+  setTimeout(()=>{
+    const e=document.getElementById("sec-"+id); if(!e) return;
+    const nav=document.querySelector(".nav");
+    const offset=(nav?nav.offsetHeight:56)+16;
+    const y=e.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({top:y, behavior:"smooth"});
+  }, 60);
 }
 function doLogin(){
   ORBIT.loggedIn = true; ORBIT.user = "홍길동";
