@@ -505,8 +505,8 @@
   <!-- 책임 범위 -->
   <div class="lsec">
     <div class="lwrap">
-      <h2 class="lsec-t">ORBIT은 팀 구성까지만 책임집니다</h2>
-      <p class="lsec-s">이후의 사업화, 운영 성공 여부는 팀의 몫입니다.</p>
+      <h2 class="lsec-t">ORBIT은 좋은 팀을 만나는 순간까지 함께해요</h2>
+      <p class="lsec-s">그다음 사업화와 운영은 팀이 함께 만들어가는 여정이에요.</p>
       <div class="two2">
         <div class="bigcard"><div class="ic">✨</div><div class="t">1. 아이디어를 구체화</div><div class="d">막연한 한 줄을 팀원이 이해하고 반응할 수 있는 설명으로 바꿉니다.</div></div>
         <div class="bigcard"><div class="ic">◎</div><div class="t">2. 잘 맞는 팀원 알아보기</div><div class="d">고정 프로필이 아니라 아이디어별 질문과 답변을 바탕으로 나와 더 잘 맞는 사람을 식별합니다.</div></div>
@@ -643,6 +643,7 @@
 <!-- ===== 아이디어 던지기 ===== -->
 <section class="screen hidden" id="s-idea">
   <div class="narrow pagepad">
+    <button class="btn ghost" onclick="go('landing')">← 처음으로</button>
     <!-- 1) 입력 -->
     <div id="idea-input">
       <div class="hero fade" style="margin-top:14px; background:linear-gradient(150deg,#0b1226 0%,#1e3a8a 60%,#2563eb 100%);">
@@ -1560,6 +1561,9 @@ function renderNav(){
   // 로그인 사용자가 홈(랜딩)으로 오면 역할 선택 카드는 숨김 (이미 역할 정함)
   const rp = document.getElementById("landingRolePick");
   if(rp) rp.classList.toggle("hidden", ORBIT.loggedIn);
+  // 역할 카드가 빠져 히어로와 다음 섹션이 붙지 않도록 아래 여백 보정
+  const hero = document.getElementById("sec-about");
+  if(hero) hero.style.paddingBottom = ORBIT.loggedIn ? "48px" : "";
   const menu = document.getElementById("navMenu");
   const r = document.getElementById("navRight");
   if(!ORBIT.loggedIn){
