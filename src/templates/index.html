@@ -27,6 +27,10 @@
   .mark{display:inline-flex; align-items:center; gap:9px; font-weight:900; letter-spacing:.16em; color:var(--navy); font-size:16px; cursor:pointer; background:none; border:none;}
   .logo{width:22px; height:22px; border:5px solid var(--navy); border-radius:50%; position:relative;}
   .logo::after{content:""; position:absolute; width:30px; height:3px; background:var(--blue); border-radius:999px; transform:rotate(-15deg); top:8px; left:-8px;}
+  /* 실제 로고 이미지 (투명 배경, 비율 유지로 잘림 없음) */
+  .logo-img{height:26px; width:auto; display:block;}
+  .loginbox .logo-img{height:32px;}
+  .lfoot .logo-img{height:22px;}
   .nav .right{margin-left:auto; display:flex; align-items:center; gap:8px; font-size:13px; color:var(--muted);}
   .nav .modesw{position:relative; display:inline-grid; grid-template-columns:1fr 1fr; background:#eef2f7; border-radius:999px; padding:4px;}
   .nav .modesw .seg{position:relative; z-index:2; padding:7px 15px; font-size:12.5px; font-weight:800; color:var(--muted); border:none; background:none; cursor:pointer; transition:color .2s; white-space:nowrap; text-align:center;}
@@ -53,7 +57,7 @@
 
   /* 랜딩 */
   .lwrap{width:min(1080px,92%); margin:0 auto;}
-  .lhero{display:grid; grid-template-columns:1.05fr .95fr; gap:44px; align-items:center; padding:56px 0 44px;}
+  .lhero{display:grid; grid-template-columns:1.05fr .95fr; gap:44px; align-items:center; align-content:center; padding:56px 0 44px;}
   @media(max-width:860px){ .lhero{grid-template-columns:1fr; gap:30px;} }
   .badge{display:inline-block; font-size:12.5px; font-weight:800; color:var(--blue); border:1px solid #bfdbfe; background:var(--sky); padding:7px 14px; border-radius:999px; margin-bottom:22px;}
   .lhero h1{font-size:54px; line-height:1.1; letter-spacing:-.045em; color:var(--navy); margin:0 0 22px; font-weight:900;}
@@ -61,10 +65,9 @@
   .lhero h1 .gr{color:#10b981;}
   .badge.rider{color:#047857; border-color:#a7f3d0; background:#ecfdf5;}
   /* 히어로 슬라이더 */
-  .hero-slider{position:relative;}
-  .hslide{transition:opacity .55s ease;}
-  .hslide:not(.active){opacity:0; visibility:hidden; position:absolute; top:0; left:0; right:0;}
-  .hslide.active{opacity:1; visibility:visible; position:relative;}
+  .hero-slider{overflow:hidden;}
+  .hero-track{display:flex; transition:transform .55s cubic-bezier(.4,0,.2,1);}
+  .hero-track > .hslide{flex:0 0 100%; min-width:0;}
   .hdots{display:flex; gap:8px; justify-content:center; margin-top:22px;}
   .hdot{width:9px; height:9px; border-radius:999px; background:#cbd5e1; cursor:pointer; transition:.25s; border:none; padding:0;}
   .hdot.on{background:var(--navy); width:24px;}
@@ -85,7 +88,7 @@
   @media(max-width:680px){ .role-pick{grid-template-columns:1fr;} }
   @media(max-width:860px){ .lhero h1{font-size:38px;} }
   /* 히어로 목업 카드 */
-  .heromock{background:#fff; border:1px solid var(--line); border-radius:18px; box-shadow:0 24px 60px rgba(15,23,42,.13); overflow:hidden;}
+  .heromock{background:#fff; border:1px solid var(--line); border-radius:18px; overflow:hidden;}
   .hm-top{padding:12px 16px; border-bottom:1px solid var(--line); display:flex; gap:6px;}
   .hm-top i{width:9px;height:9px;border-radius:50%;background:#e2e6ee; display:block;}
   .hm-body{padding:18px;}
@@ -361,12 +364,11 @@
 
 <!-- 상단 네비 -->
 <div class="nav"><div class="in">
-  <button class="mark" onclick="go('landing')"><span class="logo"></span>ORBIT</button>
+  <button class="mark" onclick="go('landing')"><img src="/static/orbit-logo.png" alt="ORBIT" class="logo-img"></button>
   <nav class="navmenu">
     <a onclick="scrollSec('about')">서비스 소개</a>
     <a onclick="scrollSec('how')">이용 방법</a>
     <a onclick="scrollSec('example')">프로젝트 예시</a>
-    <a onclick="scrollSec('lang')">브랜드 언어</a>
   </nav>
   <div class="right" id="navRight"></div>
 </div></div>
@@ -376,12 +378,13 @@
   <!-- HERO -->
   <div class="lwrap" id="sec-about">
     <div class="hero-slider">
+      <div class="hero-track" id="heroTrack">
       <!-- 슬라이드 1: Shooter -->
-      <div class="lhero hslide active">
+      <div class="lhero hslide">
         <div>
           <span class="badge">✦ AI Team Building Platform</span>
           <h1>아이디어를,<br><span class="bl">ORBIT</span> 하다.</h1>
-          <p class="desc">한 줄의 아이디어를 팀원이 이해할 수 있는 언어로 바꾸고, 함께할 사람에게 ORBIT 초대를 보내 팀 구성까지 이어지게 합니다.</p>
+          <p class="desc">한 줄의 아이디어를 팀원이 이해할 수 있는 언어로 바꾸고,<br>함께할 사람에게 ORBIT 초대를 보내 팀 구성까지 이어지게 합니다.</p>
           <p style="font-size:13.5px; color:var(--blue); font-weight:800; margin:0;">👇 아래에서 시작 방식을 골라보세요</p>
         </div>
         <div class="heromock">
@@ -389,7 +392,7 @@
           <div class="hm-body">
             <div class="hm-label">아이디어</div>
             <div class="hm-idea">페트병 뚜껑을 모아 핸드폰 그립톡으로 재활용, 판매하는 사업</div>
-            <div class="hm-status"><span class="sp"></span>ORBIT 중… 필요한 팀원과 매칭 기준을 찾고 있어요.</div>
+            <div class="hm-status">ORBIT 중… 필요한 팀원과 매칭 기준을 찾고 있어요.</div>
             <div class="hm-mate"><div class="av"></div><div><div class="mt">생산 시설 지식 보유자</div><div class="md">압출 기계의 재활용 소재 가공 경험이 필요합니다.</div></div><span class="bg req">필수</span></div>
             <div class="hm-mate"><div class="av"></div><div><div class="mt">SNS 마케팅 전문가</div><div class="md">Gen Z 타겟과 인스타그램 판매 흐름에 익숙한 팀원이 적합합니다.</div></div><span class="bg rec">추천</span></div>
           </div>
@@ -400,7 +403,7 @@
         <div>
           <span class="badge rider">🛰️ 당신의 자리를 찾는 곳</span>
           <h1>빛나는 아이디어에,<br><span class="gr">올라타다.</span></h1>
-          <p class="desc">이력서는 필요 없어요. 나를 위해 만들어진 3가지 질문에 답하면, 딱 맞는 자리와 매칭됩니다. 기다리지 말고 — 초대받으세요.</p>
+          <p class="desc">아이디어를 쏘아올리는 3가지 질문에 답하세요.<br>딱 맞는 자리로 초대받고, 탑승하세요.</p>
           <p style="font-size:13.5px; color:#047857; font-weight:800; margin:0;">👇 아래에서 시작 방식을 골라보세요</p>
         </div>
         <div class="heromock">
@@ -408,11 +411,12 @@
           <div class="hm-body">
             <div class="hm-label">🛰️ 도착한 ORBIT 초대</div>
             <div class="hm-idea">에코그립 — 버려진 뚜껑이 손안의 무드</div>
-            <div class="hm-status" style="background:#047857;"><span class="sp"></span>당신에게 딱 맞는 자리를 찾았어요!</div>
+            <div class="hm-status" style="background:#047857;">✅ 당신에게 딱 맞는 자리를 찾았어요!</div>
             <div class="hm-mate"><div class="av" style="background:linear-gradient(135deg,#047857,#10b981)"></div><div><div class="mt">SNS 마케팅 전문가 · 당신의 자리</div><div class="md">Gen Z 트렌드 이해도가 높아 이 팀과 잘 맞아요.</div></div><span class="bg" style="background:#10b981;color:#fff">88%</span></div>
             <div class="hm-mate" style="border:none; padding-top:2px;"><div style="flex:1"></div><span style="background:#0b1226;color:#fff;font-size:11.5px;font-weight:800;padding:8px 14px;border-radius:9px">합류 검토하기 →</span></div>
           </div>
         </div>
+      </div>
       </div>
       <div class="hdots">
         <button class="hdot on" onclick="heroGo(0)" aria-label="Shooter"></button>
@@ -439,20 +443,8 @@
     </div>
   </div>
 
-  <!-- 책임 -->
+  <!-- 과정 (이용 방법) -->
   <div class="lsec alt" id="sec-how">
-    <div class="lwrap">
-      <h2 class="lsec-t">ORBIT은 팀 구성까지만 책임집니다</h2>
-      <p class="lsec-s">이후의 사업화, 운영 성공 여부는 팀의 몫입니다.</p>
-      <div class="two2">
-        <div class="bigcard"><div class="ic">✨</div><div class="t">1. 아이디어를 구체화</div><div class="d">막연한 한 줄을 팀원이 이해하고 반응할 수 있는 설명으로 바꿉니다.</div></div>
-        <div class="bigcard"><div class="ic">◎</div><div class="t">2. 잘 맞는 팀원 알아보기</div><div class="d">고정 프로필이 아니라 아이디어별 질문과 답변을 바탕으로 나와 더 잘 맞는 사람을 식별합니다.</div></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 과정 -->
-  <div class="lsec">
     <div class="lwrap">
       <h2 class="lsec-t">아이디어가 팀이 되는 과정</h2>
       <div class="flowbox">
@@ -464,6 +456,18 @@
           <div class="fstep last"><div class="ic">🚩</div><div class="ft">5. ORBIT 완료</div></div>
         </div>
         <div class="flowcap">아이디어 한 줄 → 구체화 → 맞는 팀원 식별 → ORBIT 초대 → 합류 합의</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 책임 범위 -->
+  <div class="lsec">
+    <div class="lwrap">
+      <h2 class="lsec-t">ORBIT은 팀 구성까지만 책임집니다</h2>
+      <p class="lsec-s">이후의 사업화, 운영 성공 여부는 팀의 몫입니다.</p>
+      <div class="two2">
+        <div class="bigcard"><div class="ic">✨</div><div class="t">1. 아이디어를 구체화</div><div class="d">막연한 한 줄을 팀원이 이해하고 반응할 수 있는 설명으로 바꿉니다.</div></div>
+        <div class="bigcard"><div class="ic">◎</div><div class="t">2. 잘 맞는 팀원 알아보기</div><div class="d">고정 프로필이 아니라 아이디어별 질문과 답변을 바탕으로 나와 더 잘 맞는 사람을 식별합니다.</div></div>
       </div>
     </div>
   </div>
@@ -500,26 +504,16 @@
   </div>
 
   <!-- ORBIT 언어 -->
-  <div class="lsec alt" id="sec-lang">
-    <div class="lwrap">
-      <h2 class="lsec-t">제품 안에서 쓰는 <span style="color:var(--blue)">ORBIT</span> 언어</h2>
-      <p class="lsec-s">브랜드명을 동사처럼 사용해, 서비스 경험을 하나의 언어로 묶습니다.</p>
-      <div class="lang4">
-        <div class="langc"><div class="lk">프로젝트 생성</div><div class="lv"><b>ORBIT</b> 시작</div></div>
-        <div class="langc"><div class="lk">아이디어 분석</div><div class="lv"><b>ORBIT</b> 중…</div></div>
-        <div class="langc"><div class="lk">팀원에게 제안</div><div class="lv"><b>ORBIT</b> 초대</div></div>
-        <div class="langc"><div class="lk">합류 합의</div><div class="lv"><b>ORBIT</b> 완료</div></div>
-      </div>
-    </div>
-  </div>
-
   <!-- 마무리 CTA + 푸터 -->
   <div class="lwrap" style="padding:42px 0 0;">
     <div class="endcta">
       <h2>오늘의 아이디어를<br><span class="bl">ORBIT</span> 해보세요.</h2>
-      <button class="btn lg" onclick="goIdeaIntro()">아이디어 ORBIT 하기 →</button>
+      <div style="display:flex; gap:12px; margin-left:auto; flex-wrap:wrap;">
+        <button class="btn" style="margin-left:0; background:var(--blue2); color:#fff; font-weight:700; padding:10px 17px; font-size:13.5px" onclick="goIdeaIntro()">🚀 아이디어 쏘아 올리기 →</button>
+        <button class="btn" style="margin-left:0; background:#fff; color:var(--navy); font-weight:700; padding:10px 17px; font-size:13.5px" onclick="goExplore()">🛰️ 프로젝트 둘러보기 →</button>
+      </div>
     </div>
-    <div class="lfoot"><span class="mark" style="cursor:default;"><span class="logo"></span>ORBIT</span><span class="ft-r">© 2026 ORBIT. 아이디어를, ORBIT 하다.</span></div>
+    <div class="lfoot"><span class="mark" style="cursor:default;"><img src="/static/orbit-logo.png" alt="ORBIT" class="logo-img"></span><span class="ft-r">© 2026 ORBIT. 아이디어를, ORBIT 하다.</span></div>
   </div>
 </section>
 
@@ -527,7 +521,7 @@
 <section class="screen hidden" id="s-login">
   <div class="loginpage">
     <div class="loginbox fade">
-      <div class="mark"><span class="logo"></span>ORBIT</div>
+      <div class="mark"><img src="/static/orbit-logo.png" alt="ORBIT" class="logo-img"></div>
       <p class="lb-sub">빛나는 아이디어를 함께 실현할<br>팀원을 찾는 여정</p>
       <h2>시작하기</h2>
       <p class="lb-desc">간편하게 로그인하고 아이디어를 ORBIT 하세요</p>
@@ -740,14 +734,40 @@ function rocketLoader(text, sub){
       <span class="orbit-core">💡</span>
       <div class="orbit-ring"><span class="orbit-sat">🛰️</span></div>
     </div>
-    <div class="rk-text">${esc(text)}</div>${sub?`<div class="rk-sub">${esc(sub)}</div>`:``}
+    <div class="rk-text" id="rkStage">${esc(text)}</div>${sub?`<div class="rk-sub">${esc(sub)}</div>`:``}
   </div>`;
+}
+/* 로딩 중 문구 순환 (3분 대기 지루함 완화) — 두 문구 5초마다 번갈아 */
+const LOAD_MSGS=[
+  "아이디어가 궤도에 오르는 중...",
+  "ORBIT을 함께할 팀원을 찾는 중..."
+];
+let _loadTimer=null;
+function startLoadingStages(){
+  stopLoadingStages();
+  let i=0;
+  const el0=document.getElementById("rkStage"); if(el0) el0.textContent=LOAD_MSGS[0];
+  _loadTimer=setInterval(()=>{
+    const el=document.getElementById("rkStage");
+    if(!el){ stopLoadingStages(); return; }
+    i=(i+1)%LOAD_MSGS.length;
+    el.textContent=LOAD_MSGS[i];
+  }, 5000);
+}
+function stopLoadingStages(){ if(_loadTimer){ clearInterval(_loadTimer); _loadTimer=null; } }
+/* 완료 순간: 마무리 문구 잠깐 보여주고 결과 렌더 */
+function finishLoadingStages(cb){
+  stopLoadingStages();
+  const el=document.getElementById("rkStage");
+  if(el){ el.textContent="거의 다 됐어요! 마무리 중이에요 🎉"; setTimeout(cb, 1400); }
+  else cb();
 }
 /* 개발용: API 안 부르고 로딩 화면만 미리보기 (비용 0) */
 function previewLoading(){
   const box = document.getElementById("idea-vision");
-  box.innerHTML = `<div class="card">${rocketLoader("아이디어가 궤도에 오르는 중...", "약 30초 걸려요 🛰️")}</div>`;
+  box.innerHTML = `<div class="card">${rocketLoader(LOAD_MSGS[0], "약 3분 걸려요 🛰️")}</div>`;
   box.scrollIntoView({ behavior:"smooth", block:"center" });
+  startLoadingStages();
 }
 /* 개발용: API 안 부르고 에코그립 예시로 비전 페이지 미리보기 (비용 0) */
 function previewVision(){
@@ -769,7 +789,13 @@ function go(id){
 function requireLogin(next){ if(ORBIT.loggedIn) go(next); else { ORBIT._after=next; go("login"); } }
 function scrollSec(id){
   if(document.getElementById("s-landing").classList.contains("hidden")) go("landing");
-  setTimeout(()=>{ const e=document.getElementById("sec-"+id); if(e) e.scrollIntoView({behavior:"smooth", block:"start"}); }, 60);
+  setTimeout(()=>{
+    const e=document.getElementById("sec-"+id); if(!e) return;
+    const nav=document.querySelector(".nav");
+    const offset=(nav?nav.offsetHeight:56)+16;
+    const y=e.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({top:y, behavior:"smooth"});
+  }, 60);
 }
 function doLogin(){
   ORBIT.loggedIn = true; ORBIT.user = "홍길동";
@@ -1299,20 +1325,23 @@ async function ideaMakeVision(){
   const strengthAnswer = (ORBIT.boost[1] && ORBIT.boost[1].options[sel[1] ?? 0]) || "";
   document.getElementById("boostGo").disabled = true;
   const box = document.getElementById("idea-vision");
-  box.innerHTML = `<div class="card">${rocketLoader("아이디어가 궤도에 오르는 중...", "약 30초 걸려요 🛰️")}</div>`;
+  box.innerHTML = `<div class="card">${rocketLoader(LOAD_MSGS[0], "약 3분 걸려요 🛰️")}</div>`;
   box.scrollIntoView({ behavior:"smooth", block:"center" });
+  startLoadingStages();
   try{
     const v = await api("/api/vision", { idea:ORBIT.idea, targetAnswer, strengthAnswer });
-    if(v.needMoreInfo){
-      box.innerHTML = `<div class="card"><p class="eyebrow">아이디어가 조금 짧아요</p><ul class="askfor">${(v.askFor||[]).map(q=>`<li>${esc(q)}</li>`).join("")}</ul></div>`;
-      return;
-    }
-    ORBIT.vision = v; ORBIT.founderQuestion = v.founderQuestion || ""; ORBIT.picks = [];
-    ORBIT.channels = v.channels ? {...v.channels} : {kakao:"",slack:"",email:"",zoom:""};
-    document.getElementById("idea-input").classList.add("hidden");
-    document.getElementById("idea-boost").classList.add("hidden");
-    renderVision(v);
-  }catch(err){ box.innerHTML = `<div class="err">⚠️ ${esc(err.message)}</div>`; }
+    finishLoadingStages(()=>{
+      if(v.needMoreInfo){
+        box.innerHTML = `<div class="card"><p class="eyebrow">아이디어가 조금 짧아요</p><ul class="askfor">${(v.askFor||[]).map(q=>`<li>${esc(q)}</li>`).join("")}</ul></div>`;
+        return;
+      }
+      ORBIT.vision = v; ORBIT.founderQuestion = v.founderQuestion || ""; ORBIT.picks = [];
+      ORBIT.channels = v.channels ? {...v.channels} : {kakao:"",slack:"",email:"",zoom:""};
+      document.getElementById("idea-input").classList.add("hidden");
+      document.getElementById("idea-boost").classList.add("hidden");
+      renderVision(v);
+    });
+  }catch(err){ stopLoadingStages(); box.innerHTML = `<div class="err">⚠️ ${esc(err.message)}</div>`; }
 }
 
 function visHead(label, key){
@@ -1750,7 +1779,8 @@ function showResume(){ go("resume"); document.getElementById("resume-body").inne
 let heroI = 0;
 function heroGo(i){
   heroI = i;
-  document.querySelectorAll(".hslide").forEach((s,j)=>s.classList.toggle("active", j===i));
+  const track = document.getElementById("heroTrack");
+  if(track) track.style.transform = `translateX(-${i*100}%)`;
   document.querySelectorAll(".hdot").forEach((d,j)=>d.classList.toggle("on", j===i));
 }
 setInterval(()=>{
@@ -1758,6 +1788,18 @@ setInterval(()=>{
     heroGo((heroI + 1) % 2);
   }
 }, 5000);
+/* 두 슬라이드 예시화면(목업) 높이를 큰 쪽에 맞춰 통일 → 전환 시 높이 흔들림 제거 */
+function equalizeHeroMocks(){
+  const mocks = document.querySelectorAll(".heromock");
+  if(mocks.length < 2) return;
+  mocks.forEach(m=>{ m.style.minHeight = ""; });
+  let max = 0;
+  mocks.forEach(m=>{ if(m.offsetHeight > max) max = m.offsetHeight; });
+  if(max > 0) mocks.forEach(m=>{ m.style.minHeight = max + "px"; });
+}
+window.addEventListener("load", equalizeHeroMocks);
+window.addEventListener("resize", equalizeHeroMocks);
+setTimeout(equalizeHeroMocks, 400);
 
 renderNav();
 </script>
