@@ -285,6 +285,10 @@
   .chanrow{display:flex; align-items:center; gap:11px; background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 15px; margin-top:9px;}
   .chanrow .ic{font-size:18px;} .chanrow .t{font-size:13.5px; font-weight:800; color:var(--navy);} .chanrow .v{font-size:12px; color:var(--muted); margin-top:1px; word-break:break-all;}
   .chanrow .go{margin-left:auto; background:var(--blue); color:#fff; padding:7px 14px; border-radius:9px; font-weight:800; font-size:12.5px; text-decoration:none; white-space:nowrap;}
+  /* 소통 채널 간결 칩 (제공자 마이페이지) */
+  .chanchips{display:flex; flex-wrap:wrap; gap:8px;}
+  .chanchip{display:inline-flex; align-items:center; gap:5px; background:#f1f5f9; color:var(--navy); border:1px solid var(--line); border-radius:999px; padding:8px 14px; font-size:13px; font-weight:700; text-decoration:none;}
+  .chanchip:hover{background:#e2e8f0;}
 
   .loading{display:flex; align-items:center; gap:12px; color:var(--muted); font-size:14px; padding:18px 2px;}
   /* 로켓 발사 로딩 */
@@ -620,7 +624,7 @@ const DEMO_PROJECT = {
     "Gen Z 트렌드나 친환경 굿즈 시장을 얼마나 이해하고 있나요?",
   ],
   founderQuestion:"우리 사업에서 '환경'은 양보 못 할 가치예요. 자원 재활용에 대해 어떤 생각을 가지고 계신가요?",
-  channels:{ kakao:"https://open.kakao.com/o/ecogrip", slack:"https://ecogrip.slack.com", email:"team@ecogrip.kr" },
+  channels:{ kakao:"https://open.kakao.com/o/ecogrip", slack:"https://ecogrip.slack.com", email:"team@ecogrip.kr", zoom:"https://calendly.com/ecogrip/kickoff" },
 };
 const DEMO_PROJECT_PROPOSALS = [
   {name:"김도현", role:"압출 기계 및 생산 시설 관련 지식 보유자", rate:88, line:"PP/HDPE 분쇄·사출 설비를 직접 다뤄봤어요. 시제품을 빠르게 만들 수 있습니다.", status:"pending"},
@@ -825,7 +829,7 @@ async function ideaMakeVision(){
       return;
     }
     ORBIT.vision = v; ORBIT.founderQuestion = v.founderQuestion || ""; ORBIT.picks = [];
-    ORBIT.channels = v.channels ? {...v.channels} : {kakao:"",slack:"",email:""};
+    ORBIT.channels = v.channels ? {...v.channels} : {kakao:"",slack:"",email:"",zoom:""};
     document.getElementById("idea-input").classList.add("hidden");
     document.getElementById("idea-boost").classList.add("hidden");
     renderVision(v);
@@ -849,7 +853,7 @@ function renderVision(v){
   const picks = (v.neededTeammates||[]).map((m,i)=>`<div class="pick" id="pick-${i}" onclick="togglePick(${i})"><span class="cbx"></span><div><div class="role">${esc(m.role)}</div><div class="det">${esc(m.detail)}</div></div></div>`).join("");
   const factors = (v.matchFactors||[]).map(f=>`<div class="factor"><span class="ck">✓</span>${esc(f)}</div>`).join("");
   const fq = (typeof ORBIT.founderQuestion === "string") ? ORBIT.founderQuestion : (v.founderQuestion||"");
-  const ch = ORBIT.channels = ORBIT.channels || (v.channels ? {...v.channels} : {kakao:"",slack:"",email:""});
+  const ch = ORBIT.channels = ORBIT.channels || (v.channels ? {...v.channels} : {kakao:"",slack:"",email:"",zoom:""});
 
   document.getElementById("idea-vision").innerHTML = `
     <div class="banner fade">✍️ <b>AI가 만든 비전이에요.</b> 각 항목 옆 <b>✎ 수정</b>으로 직접 고칠 수 있어요. <b>함께 찾을 팀원</b>은 1명 이상 선택해야 합니다.</div>
@@ -915,6 +919,8 @@ function renderVision(v){
       <input class="chan-in" type="text" placeholder="https://○○○.slack.com" value="${esc(ch.slack||'')}" oninput="ORBIT.channels.slack=this.value">
       <label class="chan-l">✉️ 이메일</label>
       <input class="chan-in" type="text" placeholder="team@example.com" value="${esc(ch.email||'')}" oninput="ORBIT.channels.email=this.value">
+      <label class="chan-l">🎥 미팅 예약 링크 <span style="color:var(--muted); font-weight:600;">— 팀원이 편한 시간을 직접 골라 예약해요</span></label>
+      <input class="chan-in" type="text" placeholder="Calendly·줌 스케줄러 예약 링크 (예: calendly.com/…)" value="${esc(ch.zoom||'')}" oninput="ORBIT.channels.zoom=this.value">
     </div>
 
     <div style="display:flex; gap:9px;">
@@ -1093,12 +1099,31 @@ function demoAcceptApply(){
   if(ORBIT.applied[0]) ORBIT.applied[0].status = "accepted";
   document.getElementById("applyDone").innerHTML = slackBlock(ORBIT.detailVision);
 }
-function chanRow(ic, label, val, isMail){
+function chanRow(ic, label, val, isMail, goText){
   const href = isMail ? ("mailto:"+val) : (/^https?:\/\//.test(val) ? val : "https://"+val);
   const tgt = isMail ? "" : ` target="_blank" rel="noopener"`;
+  const btn = goText || (isMail ? "메일 보내기" : "열기");
   return `<div class="chanrow"><span class="ic">${ic}</span>
     <div style="flex:1; min-width:0"><div class="t">${esc(label)}</div><div class="v">${esc(val)}</div></div>
-    <a class="go" href="${esc(href)}"${tgt}>${isMail?"메일 보내기":"열기"} →</a></div>`;
+    <a class="go" href="${esc(href)}"${tgt}>${esc(btn)} →</a></div>`;
+}
+/* 수락된 팀원과 공유되는 팀 소통 채널 (제공자 마이페이지용) — 간결 칩 */
+function teamChannelBlock(v){
+  const ch = (v&&v.channels)||{};
+  const chip = (ic, label, val, isMail) => {
+    const href = isMail ? ("mailto:"+val) : (/^https?:\/\//.test(val) ? val : "https://"+val);
+    const tgt = isMail ? "" : ` target="_blank" rel="noopener"`;
+    return `<a class="chanchip" href="${esc(href)}"${tgt}>${ic} ${esc(label)}</a>`;
+  };
+  const chips = [];
+  if(ch.kakao) chips.push(chip("💬","카카오", ch.kakao, false));
+  if(ch.slack) chips.push(chip("🟣","슬랙", ch.slack, false));
+  if(ch.email) chips.push(chip("✉️","이메일", ch.email, true));
+  if(ch.zoom) chips.push(chip("🎥","미팅 예약", ch.zoom, false));
+  if(!chips.length) return "";
+  return `<div style="margin-top:13px; padding-top:13px; border-top:1px solid var(--line);">
+    <p class="eyebrow" style="margin-bottom:9px;">🔓 우리 팀 소통 채널 <span style="font-weight:600; color:var(--muted); font-size:11px;">수락된 팀원과 공유돼요</span></p>
+    <div class="chanchips">${chips.join("")}</div></div>`;
 }
 function slackBlock(v){
   const name = (v&&v.serviceName)||"";
@@ -1107,6 +1132,7 @@ function slackBlock(v){
   if(ch.kakao) rows.push(chanRow("💬","카카오 오픈채팅", ch.kakao, false));
   if(ch.slack) rows.push(chanRow("🟣","슬랙 채널", ch.slack, false));
   if(ch.email) rows.push(chanRow("✉️","이메일", ch.email, true));
+  if(ch.zoom) rows.push(chanRow("🎥","미팅 예약", ch.zoom, false, "예약하기"));
   const list = rows.length
     ? `<p style="font-size:12.5px; color:#475569; margin:14px 0 2px; font-weight:800;">🔓 제공자가 공개한 팀 소통 채널</p>${rows.join("")}`
     : `<div class="slack"><span class="ico">💬</span><div class="t">${esc(name)} 팀 슬랙 채널</div><a class="a" href="#" onclick="comingSoon();return false">참여하기 →</a></div>`;
@@ -1160,6 +1186,7 @@ function renderMyIdea(){
           <span style="color:var(--blue); font-size:13px; font-weight:700; white-space:nowrap;">비전 보기 →</span>
         </div>
         <div style="margin-top:14px">${it.proposals.map((p,pi)=>proposalRow(idx,pi,p,it.vision.serviceName)).join("")}</div>
+        ${acc ? teamChannelBlock(it.vision) : ""}
       </div>`;
     });
   }
@@ -1169,7 +1196,7 @@ function proposalRow(idx,pi,p,svc){
   if(p.status==="accepted"){
     return `<div class="prop accepted"><div class="pav">${esc(p.name[0])}</div>
       <div style="flex:1"><div class="pn">${esc(p.name)} <span class="pill green">수락됨 ✓</span></div><div class="pr">${esc(p.role)} · 매칭률 ${p.rate}%</div></div>
-      <a class="slackmini" onclick="comingSoon()">💬 슬랙</a></div>`;
+      <span class="pill green">합류 완료</span></div>`;
   }
   return `<div class="prop"><div class="pav">${esc(p.name[0])}</div>
     <div style="flex:1"><div class="pn">${esc(p.name)} <span class="pill blue">매칭률 ${p.rate}%</span></div><div class="pr">${esc(p.role)}</div><div class="pl">"${esc(p.line)}"</div></div>
@@ -1178,7 +1205,7 @@ function proposalRow(idx,pi,p,svc){
 function acceptProposal(idx,pi){
   ORBIT.myIdeas[idx].proposals[pi].status="accepted"; renderMyIdea();
   const p = ORBIT.myIdeas[idx].proposals[pi];
-  alert(`🎉 ${p.name}님의 합류를 수락했어요!\n서로 수락했으니 슬랙 채널로 함께 이동합니다.`);
+  alert(`🎉 ${p.name}님의 합류를 수락했어요!\n아래 팀 소통 채널이 ${p.name}님에게 공개돼요. 이제 함께 시작해요!`);
 }
 function rejectProposal(idx,pi){ ORBIT.myIdeas[idx].proposals.splice(pi,1); renderMyIdea(); }
 
