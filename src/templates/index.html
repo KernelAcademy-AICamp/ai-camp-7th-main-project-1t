@@ -467,8 +467,8 @@
     </div>
   </div>
 
-  <!-- 역할 선택 (Shooter / Rider) -->
-  <div class="lwrap" style="padding-bottom:10px;">
+  <!-- 역할 선택 (Shooter / Rider) — 로그인 시 숨김 -->
+  <div class="lwrap" id="landingRolePick" style="padding-bottom:10px;">
     <div class="role-pick">
       <button class="rolecard shooter" onclick="goIdeaIntro()">
         <div class="rc-emoji">🚀</div>
@@ -1557,6 +1557,9 @@ function logout(){ ORBIT.loggedIn=false; ORBIT.user=null; ORBIT.myIdeas=[]; ORBI
 function pickMode(m){ showMy(m); }
 
 function renderNav(){
+  // 로그인 사용자가 홈(랜딩)으로 오면 역할 선택 카드는 숨김 (이미 역할 정함)
+  const rp = document.getElementById("landingRolePick");
+  if(rp) rp.classList.toggle("hidden", ORBIT.loggedIn);
   const menu = document.getElementById("navMenu");
   const r = document.getElementById("navRight");
   if(!ORBIT.loggedIn){
