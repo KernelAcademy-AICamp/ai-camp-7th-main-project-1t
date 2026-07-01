@@ -54,6 +54,12 @@ SYSTEM_PROMPT = """당신은 ORBIT의 비전 생성 AI입니다.
 - matchFactors(매칭 중요 요소): 실력 외에 이 팀에 맞으려면 중요한 성향·가치 정확히 3개.
 - aiQuestions: 합류 지원자가 답할 질문 2개. 이 아이디어 적합성을 가릴 단답형(1~2문장으로 답할 수 있는 것).
 - founderQuestion: 아이디어 제공자가 팀원에게 묻고 싶을 법한 추천 질문 1개(나중에 제공자가 직접 수정합니다).
+- matchProfile: 전문가(팀원) 매칭 점수 계산에 쓰는 구조화 속성. 아래 '허용 값'에서만 고르세요.
+    · roleSkills : 이 프로젝트에 필요한 핵심 역량 태그 3~6개(짧은 명사. 예: 프론트엔드, 디자인, 마케팅, 생산설비, 식품위생).
+    · domains    : 프로젝트 분야. [복지, 교육, 반려동물, 지역 커뮤니티, 의료, ESG, 콘텐츠, 생산성] 중 1~2개.
+    · natures    : 프로젝트 성격. [사회적 가치, 수익, 창업, 학습] 중 1~2개.
+    · minWeeklyCapacity : 팀원에게 기대하는 최소 주당 투입. [주 2시간 이하, 주 5시간, 주 10시간, 주 20시간 이상] 중 하나.
+    · meetingMode : 진행 방식. 온라인만으로 가능하면 "online_only", 오프라인이 필요하면 "offline_optional".
 - 현실적이고 작게 시작할 수 있는 규모로, 모두 한국어로.
 
 [정상 응답 JSON 형식]
@@ -82,6 +88,13 @@ SYSTEM_PROMPT = """당신은 ORBIT의 비전 생성 AI입니다.
   "matchFactors": ["성향·가치 1", "성향·가치 2", "성향·가치 3"],
   "aiQuestions": ["팀원이 답할 질문 1", "팀원이 답할 질문 2"],
   "founderQuestion": "제공자가 팀원에게 물을 추천 질문 1개",
+  "matchProfile": {
+    "roleSkills": ["프론트엔드", "디자인", "마케팅"],
+    "domains": ["콘텐츠"],
+    "natures": ["창업", "수익"],
+    "minWeeklyCapacity": "주 10시간",
+    "meetingMode": "online_only"
+  },
   "needMoreInfo": false
 }
 
@@ -93,32 +106,56 @@ SYSTEM_PROMPT = """당신은 ORBIT의 비전 생성 AI입니다.
 
 
 # 4-2) 발표 데모용 '등록된 팀원 풀' — 실제로는 가입한 사람들의 프로필이 들어올 자리입니다.
-#      지금은 임의의 8명을 다양한 분야로 만들어 두고, 이 안에서 매칭해 보여줍니다.
+#      experts 스키마(테이블정의서 v0.2) 기준 필드로, 결정적 매칭 점수 계산에 그대로 쓰입니다.
 TEAMMATE_POOL = [
     {"name": "김도현", "headline": "플라스틱 사출·금형을 직접 다루는 제조 엔지니어",
-     "skills": "PP/HDPE 분쇄·사출·금형 설계, 소형 생산설비 운용, 시제품 제작",
-     "traits": "직접 손으로 만들며 빠르게 검증하는 걸 즐김, 환경 문제에 진심"},
+     "primaryRole": "생산설비·제조",
+     "skills": "생산설비, 제조, 사출, 금형, 시제품",
+     "traits": "직접 손으로 만들며 빠르게 검증하는 걸 즐김, 환경 문제에 진심",
+     "interestDomains": ["ESG", "생산성"], "participationMotivation": ["창업 기회", "수익"],
+     "weeklyCapacity": "주 20시간 이상", "contactHours": ["평일 저녁", "주말"], "collabMode": "수도권 오프라인 가능"},
     {"name": "이서연", "headline": "브랜드·제품 디자이너",
-     "skills": "제품 외관/패키지 디자인, 브랜드 비주얼, 로고·굿즈 디자인",
-     "traits": "미적 감각이 뛰어나고 트렌드에 민감, 작게 시작해 다듬는 걸 선호"},
+     "primaryRole": "디자인",
+     "skills": "디자인, 브랜딩, 패키지, 굿즈디자인",
+     "traits": "미적 감각이 뛰어나고 트렌드에 민감, 작게 시작해 다듬는 걸 선호",
+     "interestDomains": ["콘텐츠", "ESG"], "participationMotivation": ["포트폴리오", "창업 기회"],
+     "weeklyCapacity": "주 10시간", "contactHours": ["평일 저녁"], "collabMode": "온라인+화상"},
     {"name": "박지훈", "headline": "SNS·콘텐츠 마케터",
-     "skills": "인스타·틱톡 콘텐츠 기획, 브랜드 스토리텔링, 0에서 팬덤 만들기",
-     "traits": "Gen Z 트렌드 이해도 높음, 가치소비·친환경 메시지에 공감"},
+     "primaryRole": "마케팅",
+     "skills": "마케팅, SNS, 콘텐츠, 브랜드스토리텔링",
+     "traits": "Gen Z 트렌드 이해도 높음, 가치소비·친환경 메시지에 공감",
+     "interestDomains": ["콘텐츠", "ESG"], "participationMotivation": ["창업 기회", "네트워킹"],
+     "weeklyCapacity": "주 10시간", "contactHours": ["평일 저녁", "주말"], "collabMode": "온라인+화상"},
     {"name": "최민지", "headline": "B2B 제휴·영업 담당",
-     "skills": "카페·학교·기업 대상 제안 영업, 파트너십 발굴, 단체 주문 수주",
-     "traits": "사람 만나 발로 뛰는 걸 좋아함, 첫 매출을 만드는 데 집중"},
+     "primaryRole": "영업·제휴",
+     "skills": "영업, 제휴, B2B, 온라인판매",
+     "traits": "사람 만나 발로 뛰는 걸 좋아함, 첫 매출을 만드는 데 집중",
+     "interestDomains": ["생산성", "교육"], "participationMotivation": ["수익", "네트워킹"],
+     "weeklyCapacity": "주 10시간", "contactHours": ["평일 낮"], "collabMode": "전국 오프라인 가능"},
     {"name": "정우성", "headline": "웹·앱 풀스택 개발자",
-     "skills": "웹/모바일 앱 개발, 결제·예약 시스템, 매칭 플랫폼 구축",
-     "traits": "MVP를 빠르게 만들어 출시, 사용자 피드백으로 개선"},
+     "primaryRole": "앱개발",
+     "skills": "앱개발, 웹개발, 플랫폼, 결제시스템",
+     "traits": "MVP를 빠르게 만들어 출시, 사용자 피드백으로 개선",
+     "interestDomains": ["생산성", "반려동물"], "participationMotivation": ["창업 기회", "학습"],
+     "weeklyCapacity": "주 20시간 이상", "contactHours": ["언제든"], "collabMode": "온라인만"},
     {"name": "한가람", "headline": "서비스 기획·운영 매니저",
-     "skills": "서비스 기획, 업무 프로세스 설계, 고객 응대·운영 체계 구축",
-     "traits": "꼼꼼하게 빈틈을 메우는 성향, 팀의 중심을 잡는 역할"},
+     "primaryRole": "기획·운영",
+     "skills": "기획, 운영, 프로세스설계, 고객응대",
+     "traits": "꼼꼼하게 빈틈을 메우는 성향, 팀의 중심을 잡는 역할",
+     "interestDomains": ["생산성", "교육"], "participationMotivation": ["사회적 가치", "학습"],
+     "weeklyCapacity": "주 10시간", "contactHours": ["평일 낮", "평일 저녁"], "collabMode": "온라인+화상"},
     {"name": "오은별", "headline": "식품 조리·위생 표준화 전문가",
-     "skills": "레시피 표준화, 식품 위생·HACCP, 소량 생산·포장",
-     "traits": "맛과 안전을 둘 다 챙김, 정성스러운 손맛을 중시"},
+     "primaryRole": "식품위생",
+     "skills": "식품위생, HACCP, 레시피표준화, 제조",
+     "traits": "맛과 안전을 둘 다 챙김, 정성스러운 손맛을 중시",
+     "interestDomains": ["복지", "ESG"], "participationMotivation": ["사회적 가치", "수익"],
+     "weeklyCapacity": "주 10시간", "contactHours": ["평일 낮"], "collabMode": "수도권 오프라인 가능"},
     {"name": "강태현", "headline": "시니어 대상 교육·오프라인 운영 경험자",
-     "skills": "어르신 눈높이 교육, 방문 강의 운영, 친절한 1:1 커뮤니케이션",
-     "traits": "참을성 있고 사람을 편안하게 해줌, 사회적 가치를 중시"},
+     "primaryRole": "교육·운영",
+     "skills": "교육, 오프라인운영, 커뮤니케이션, 제휴영업",
+     "traits": "참을성 있고 사람을 편안하게 해줌, 사회적 가치를 중시",
+     "interestDomains": ["교육", "복지"], "participationMotivation": ["사회적 가치", "네트워킹"],
+     "weeklyCapacity": "주 10시간", "contactHours": ["평일 낮", "주말"], "collabMode": "전국 오프라인 가능"},
 ]
 
 # 4-3) 매칭 AI 의 역할(시스템 프롬프트).
@@ -232,8 +269,15 @@ VISION_SCHEMA = _obj({
     "matchFactors": {"type": "array", "items": {"type": "string"}},
     "aiQuestions": {"type": "array", "items": {"type": "string"}},
     "founderQuestion": {"type": "string"},
+    "matchProfile": _obj({
+        "roleSkills": {"type": "array", "items": {"type": "string"}},
+        "domains": {"type": "array", "items": {"type": "string"}},
+        "natures": {"type": "array", "items": {"type": "string"}},
+        "minWeeklyCapacity": {"type": "string"},
+        "meetingMode": {"type": "string"},
+    }, ["roleSkills", "domains", "natures", "minWeeklyCapacity", "meetingMode"]),
 }, ["serviceName", "tagline", "lead", "story", "whyNow", "productNote",
-    "plan", "neededTeammates", "matchFactors", "aiQuestions", "founderQuestion"])
+    "plan", "neededTeammates", "matchFactors", "aiQuestions", "founderQuestion", "matchProfile"])
 
 BOOST_SCHEMA = _obj({
     "questions": {"type": "array", "items": _obj(
@@ -312,10 +356,15 @@ def generate_boost_questions(idea: str) -> dict:
     return _extract_json(raw)
 
 
-def match_teammates(vision: dict) -> dict:
-    """만들어진 비전과 등록된 팀원 풀을 비교해, 잘 맞는 팀원을 골라 돌려줍니다."""
-    # 비전에서 매칭에 필요한 핵심만 추려서 전달합니다.
-    needed = [t["role"] for t in vision.get("neededTeammates", [])]
+def _fit_level(score: int, hard_pass: bool) -> str:
+    """결정적 점수 → 표시용 적합도 등급."""
+    if not hard_pass:
+        return "보류"
+    return "높음" if score >= 70 else "보통"
+
+
+def _match_teammates_ai(vision: dict, needed: list) -> dict:
+    """폴백 — matchProfile 이 없는 비전은 기존처럼 AI 가 풀에서 직접 고릅니다."""
     vision_brief = {
         "serviceName": vision.get("serviceName"),
         "oneLineDesc": vision.get("oneLineDesc"),
@@ -329,16 +378,74 @@ def match_teammates(vision: dict) -> dict:
         f"{json.dumps(TEAMMATE_POOL, ensure_ascii=False, indent=2)}\n\n"
         "위 팀원 풀 안에서 이 아이디어에 가장 잘 맞는 사람을 골라 JSON 형식으로 답하세요."
     )
-
     response = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=1500,
+        model="claude-sonnet-4-6", max_tokens=1500,
         output_config={"effort": "low", "format": {"type": "json_schema", "schema": MATCH_SCHEMA}},
         system=MATCH_SYSTEM_PROMPT,
         messages=[{"role": "user", "content": user_prompt}],
     )
     raw = "".join(block.text for block in response.content if block.type == "text")
     return _extract_json(raw)
+
+
+def match_teammates(vision: dict) -> dict:
+    """등록된 팀원 풀을 비전과 비교해 추천 팀원을 돌려줍니다.
+
+    비전에 matchProfile 이 있으면 결정적 점수(기술40·관심30·목적20·시간10+하드필터)로
+    랭킹·등급을 확정하고, AI 는 상위 후보의 '맡을 자리(fitsRole)'와 '추천 이유'만 씁니다.
+    """
+    needed = [t["role"] for t in vision.get("neededTeammates", [])]
+    match_profile = vision.get("matchProfile")
+    if not match_profile:
+        return _match_teammates_ai(vision, needed)
+
+    # 1) 풀 전원 결정적 점수 → 하드필터 통과 우선, 점수 내림차순 랭킹
+    scored = [{"person": p, "bd": compute_match_score(p, match_profile)} for p in TEAMMATE_POOL]
+    scored.sort(key=lambda s: (s["bd"]["hardPass"], s["bd"]["score"]), reverse=True)
+    passing = [s for s in scored if s["bd"]["hardPass"]]
+    top = (passing or scored)[:4]
+
+    # 2) 상위 후보의 fitsRole·reason 만 AI 로 생성(점수는 이미 확정값)
+    cand = [{
+        "name": s["person"]["name"],
+        "headline": s["person"].get("headline", ""),
+        "skills": s["person"].get("skills", ""),
+        "score": s["bd"]["score"],
+        "scoreDetail": [f'{c["key"]} {c["got"]}/{c["weight"]}' for c in s["bd"]["components"]],
+    } for s in top]
+    user_prompt = (
+        "[사업 비전]\n"
+        f"{json.dumps({'serviceName': vision.get('serviceName'), 'neededTeammates': needed, 'matchFactors': vision.get('matchFactors', [])}, ensure_ascii=False, indent=2)}\n\n"
+        "[점수 상위 후보 — score 는 이미 확정된 값입니다]\n"
+        f"{json.dumps(cand, ensure_ascii=False, indent=2)}\n\n"
+        "각 후보마다 fitsRole(neededTeammates 중 가장 잘 맞는 자리 하나)과 "
+        "reason(score·scoreDetail 과 모순 없는 추천 이유 한 줄)을 JSON 으로 작성하세요. "
+        "score 는 절대 바꾸지 마세요."
+    )
+    response = client.messages.create(
+        model="claude-sonnet-4-6", max_tokens=1200,
+        output_config={"effort": "low", "format": {"type": "json_schema", "schema": MATCH_SCHEMA}},
+        system=MATCH_SYSTEM_PROMPT,
+        messages=[{"role": "user", "content": user_prompt}],
+    )
+    raw = "".join(b.text for b in response.content if b.type == "text")
+    ai_by_name = {m.get("name"): m for m in _extract_json(raw).get("matches", [])}
+
+    # 3) 결정적 점수를 진실원천으로 병합
+    matches = []
+    for s in top:
+        nm, bd = s["person"]["name"], s["bd"]
+        a = ai_by_name.get(nm, {})
+        matches.append({
+            "name": nm,
+            "fitsRole": a.get("fitsRole") or (needed[0] if needed else ""),
+            "fitLevel": _fit_level(bd["score"], bd["hardPass"]),
+            "reason": a.get("reason") or "",
+            "score": bd["score"],
+            "breakdown": bd,
+        })
+    matches.sort(key=lambda m: m["score"], reverse=True)
+    return {"matches": matches}
 
 
 def print_matches(matches: dict) -> None:
@@ -382,21 +489,171 @@ def recommend_questions(vision: dict) -> dict:
     return _extract_json(raw)
 
 
+# ── experts 스키마 기반 결정적(deterministic) 매칭 점수 — 테이블정의서 v0.2 ──
+#    가중치: 기술 40 · 관심 분야 30 · 참여 목적 20 · 협업 시간 10  (+ 하드필터)
+_WEEKLY_RANK = {
+    "lte_2h": 1, "5h": 2, "10h": 3, "gte_20h": 4,
+    "주 2시간 이하": 1, "주 5시간": 2, "주 10시간": 3, "주 20시간 이상": 4,
+}
+# 온라인 협업이 가능한 전문가 collab_mode (오프라인 필요 프로젝트의 하드필터 판단용)
+_ONLINE_ONLY_COLLAB = {"online_only", "온라인만"}
+
+
+def _cap_rank(v) -> int:
+    """주당 투입 값을 비교용 랭크로. 목록값은 매핑, '주 N시간' 같은 직접 입력은 숫자로 환산."""
+    if v in _WEEKLY_RANK:
+        return _WEEKLY_RANK[v]
+    digits = "".join(ch for ch in str(v or "") if ch.isdigit())
+    if not digits:
+        return 0
+    h = int(digits)
+    return 1 if h <= 2 else 2 if h <= 5 else 3 if h <= 10 else 4
+
+
+def _as_tokens(value) -> list:
+    """문자열('a, b')/리스트를 토큰 리스트로 정규화."""
+    if value is None:
+        return []
+    items = value if isinstance(value, list) else str(value).replace("/", ",").split(",")
+    return [str(t).strip() for t in items if t and str(t).strip()]
+
+
+def _norm(s) -> str:
+    return str(s).replace(" ", "").lower()
+
+
+def _overlap(need: list, have: list) -> list:
+    """느슨한 토큰 교집합 — 양방향 부분일치 허용(한국어 표현 차이 흡수)."""
+    matched = []
+    for x in need:
+        nx = _norm(x)
+        if nx and any(nx in _norm(y) or _norm(y) in nx for y in have):
+            matched.append(x)
+    return matched
+
+
+def _nat(tokens: list) -> list:
+    """참여 목적/프로젝트 성격 어휘 정규화: '창업 기회' → '창업'."""
+    return ["창업" if _norm(t) == _norm("창업 기회") else t for t in tokens]
+
+
+def compute_match_score(expert: dict, project: dict) -> dict:
+    """전문가 프로필 ↔ 프로젝트 matchProfile 을 비교해 0~100 점수와 항목별 근거를 만든다."""
+    mp = project or {}
+    p_skills = _as_tokens(mp.get("roleSkills"))
+    p_domains = _as_tokens(mp.get("domains"))
+    p_natures = _nat(_as_tokens(mp.get("natures")))
+    p_min_cap = mp.get("minWeeklyCapacity")
+    p_meeting = mp.get("meetingMode") or "online_only"
+
+    e_skills = _as_tokens(expert.get("primaryRole")) + _as_tokens(expert.get("skills"))
+    e_domains = _as_tokens(expert.get("interestDomains"))
+    e_natures = _nat(_as_tokens(expert.get("participationMotivation")))
+    e_cap = expert.get("weeklyCapacity")
+    e_contact = _as_tokens(expert.get("contactHours"))
+    e_collab = expert.get("collabMode")
+
+    # ── 하드필터: 주당 투입 ≥ 최소요건, 오프라인 필요 시 온라인-온리 탈락
+    cap_ok = (not p_min_cap) or (_cap_rank(e_cap) >= _cap_rank(p_min_cap))
+    hard_reasons = []
+    if not cap_ok:
+        hard_reasons.append(f"주당 투입이 프로젝트 최소({p_min_cap})에 미달")
+    if p_meeting == "offline_optional" and e_collab and _norm(e_collab) in {_norm(x) for x in _ONLINE_ONLY_COLLAB}:
+        hard_reasons.append("오프라인 협업이 필요한데 온라인만 가능")
+    hard_pass = not hard_reasons
+
+    def _ratio(matched, total):
+        return (len(matched) / total) if total else 1.0  # 프로젝트가 요구하지 않으면 만점
+
+    m_skill = _overlap(p_skills, e_skills)
+    m_dom = _overlap(p_domains, e_domains)
+    m_nat = _overlap(p_natures, e_natures)
+    time_ratio = (0.7 if cap_ok else 0.0) + (0.3 if e_contact else 0.0)
+
+    comps = [
+        {"key": "기술 적합도", "weight": 40, "ratio": _ratio(m_skill, len(p_skills)),
+         "detail": f"필요 역량 {len(m_skill)}/{len(p_skills) or 0} 일치"
+                   + (f" ({', '.join(m_skill)})" if m_skill else "")},
+        {"key": "관심 분야", "weight": 30, "ratio": _ratio(m_dom, len(p_domains)),
+         "detail": f"겹친 분야: {', '.join(m_dom) or '없음'}"},
+        {"key": "참여 목적", "weight": 20, "ratio": _ratio(m_nat, len(p_natures)),
+         "detail": f"겹친 목적: {', '.join(m_nat) or '없음'}"},
+        {"key": "협업 시간", "weight": 10, "ratio": min(1.0, time_ratio),
+         "detail": ("주당 투입 충분" if cap_ok else "주당 투입 부족")
+                   + (" · 연락 시간 명시" if e_contact else "")},
+    ]
+    for c in comps:
+        c["got"] = round(c["weight"] * c["ratio"], 1)
+    score = round(sum(c["got"] for c in comps))
+    if not hard_pass:
+        score = min(score, 45)  # 하드필터 탈락 시 상한
+
+    return {
+        "score": int(score),
+        "hardPass": hard_pass,
+        "hardReasons": hard_reasons,
+        "components": [
+            {"key": c["key"], "weight": c["weight"], "got": c["got"],
+             "pct": round(c["ratio"] * 100), "detail": c["detail"]}
+            for c in comps
+        ],
+    }
+
+
+def preview_scores(applicant: dict, projects: list) -> dict:
+    """여러 프로젝트의 matchProfile 에 대해 한 지원자의 예상 적합도를 한 번에(즉시) 계산.
+    AI 호출 없이 결정적 점수만 내므로 둘러보기 목록 배지에 적합합니다."""
+    scores = []
+    for mp in projects:
+        if mp:
+            bd = compute_match_score(applicant, mp)
+            scores.append({"score": bd["score"], "hardPass": bd["hardPass"]})
+        else:
+            scores.append(None)
+    return {"scores": scores}
+
+
+def _verdict_for(breakdown: dict) -> str:
+    if not breakdown["hardPass"]:
+        return "보류"
+    s = breakdown["score"]
+    return "강력 추천" if s >= 75 else "추천" if s >= 55 else "보류"
+
+
 def evaluate_applicant(vision: dict, question_texts: list, applicant: dict) -> dict:
-    """지원자 프로필과 필수 질문 3개로, 프로젝트와의 매칭률(%)을 평가합니다."""
+    """지원자 프로필과 필수 질문 3개로, 프로젝트와의 매칭률(%)을 평가합니다.
+
+    지원자가 experts 스키마 프로필을 갖추고(비전에 matchProfile 이 있으면),
+    가중치(기술40·관심30·목적20·시간10)+하드필터로 matchRate 를 '결정적으로' 계산하고,
+    AI 는 그 점수/근거에 맞춰 답변·궁합·요약만 생성합니다.
+    """
+    match_profile = vision.get("matchProfile")
+    is_expert = any(applicant.get(k) for k in
+                    ("primaryRole", "interestDomains", "participationMotivation", "weeklyCapacity"))
+    breakdown = compute_match_score(applicant, match_profile) if (match_profile and is_expert) else None
+
     brief = {
         "serviceName": vision.get("serviceName"),
         "oneLineDesc": vision.get("oneLineDesc"),
         "neededTeammates": [t["role"] for t in vision.get("neededTeammates", [])],
         "matchFactors": vision.get("matchFactors", []),
     }
+    score_hint = ""
+    if breakdown:
+        score_hint = (
+            "\n[결정적 매칭 점수 — 이 수치를 반드시 그대로 따르세요]\n"
+            f"{json.dumps(breakdown, ensure_ascii=False, indent=2)}\n"
+            "matchRate 는 위 score 값을 그대로 쓰고, summary·fitItems·answers 를 이 점수와 항목별 근거에 "
+            "모순 없게 작성하세요. (하드필터 탈락 시 약점을 솔직히 짚으세요.)\n"
+        )
     user_prompt = (
         "[사업 비전]\n"
         f"{json.dumps(brief, ensure_ascii=False, indent=2)}\n\n"
         "[합류 필수 질문 3개]\n"
         f"{json.dumps(question_texts, ensure_ascii=False, indent=2)}\n\n"
         "[합류 지원자 프로필]\n"
-        f"{json.dumps(applicant, ensure_ascii=False, indent=2)}\n\n"
+        f"{json.dumps(applicant, ensure_ascii=False, indent=2)}\n"
+        f"{score_hint}\n"
         "이 지원자의 매칭률을 JSON 형식으로 평가하세요."
     )
     response = client.messages.create(
@@ -406,7 +663,14 @@ def evaluate_applicant(vision: dict, question_texts: list, applicant: dict) -> d
         messages=[{"role": "user", "content": user_prompt}],
     )
     raw = "".join(b.text for b in response.content if b.type == "text")
-    return _extract_json(raw)
+    result = _extract_json(raw)
+
+    # 결정적 점수가 있으면 그것을 진실원천(source of truth)으로 확정
+    if breakdown:
+        result["matchRate"] = breakdown["score"]
+        result["verdict"] = _verdict_for(breakdown)
+        result["breakdown"] = breakdown
+    return result
 
 
 def print_join_questions(questions: list) -> None:
