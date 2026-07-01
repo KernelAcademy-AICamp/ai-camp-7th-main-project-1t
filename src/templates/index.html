@@ -675,14 +675,40 @@ function rocketLoader(text, sub){
       <span class="orbit-core">💡</span>
       <div class="orbit-ring"><span class="orbit-sat">🛰️</span></div>
     </div>
-    <div class="rk-text">${esc(text)}</div>${sub?`<div class="rk-sub">${esc(sub)}</div>`:``}
+    <div class="rk-text" id="rkStage">${esc(text)}</div>${sub?`<div class="rk-sub">${esc(sub)}</div>`:``}
   </div>`;
+}
+/* 로딩 중 문구 순환 (3분 대기 지루함 완화) — 두 문구 5초마다 번갈아 */
+const LOAD_MSGS=[
+  "아이디어가 궤도에 오르는 중...",
+  "ORBIT을 함께할 팀원을 찾는 중..."
+];
+let _loadTimer=null;
+function startLoadingStages(){
+  stopLoadingStages();
+  let i=0;
+  const el0=document.getElementById("rkStage"); if(el0) el0.textContent=LOAD_MSGS[0];
+  _loadTimer=setInterval(()=>{
+    const el=document.getElementById("rkStage");
+    if(!el){ stopLoadingStages(); return; }
+    i=(i+1)%LOAD_MSGS.length;
+    el.textContent=LOAD_MSGS[i];
+  }, 5000);
+}
+function stopLoadingStages(){ if(_loadTimer){ clearInterval(_loadTimer); _loadTimer=null; } }
+/* 완료 순간: 마무리 문구 잠깐 보여주고 결과 렌더 */
+function finishLoadingStages(cb){
+  stopLoadingStages();
+  const el=document.getElementById("rkStage");
+  if(el){ el.textContent="거의 다 됐어요! 마무리 중이에요 🎉"; setTimeout(cb, 1400); }
+  else cb();
 }
 /* 개발용: API 안 부르고 로딩 화면만 미리보기 (비용 0) */
 function previewLoading(){
   const box = document.getElementById("idea-vision");
-  box.innerHTML = `<div class="card">${rocketLoader("아이디어가 궤도에 오르는 중...", "약 30초 걸려요 🛰️")}</div>`;
+  box.innerHTML = `<div class="card">${rocketLoader(LOAD_MSGS[0], "약 3분 걸려요 🛰️")}</div>`;
   box.scrollIntoView({ behavior:"smooth", block:"center" });
+  startLoadingStages();
 }
 /* 개발용: API 안 부르고 에코그립 예시로 비전 페이지 미리보기 (비용 0) */
 function previewVision(){
@@ -820,20 +846,23 @@ async function ideaMakeVision(){
   const strengthAnswer = (ORBIT.boost[1] && ORBIT.boost[1].options[sel[1] ?? 0]) || "";
   document.getElementById("boostGo").disabled = true;
   const box = document.getElementById("idea-vision");
-  box.innerHTML = `<div class="card">${rocketLoader("아이디어가 궤도에 오르는 중...", "약 30초 걸려요 🛰️")}</div>`;
+  box.innerHTML = `<div class="card">${rocketLoader(LOAD_MSGS[0], "약 3분 걸려요 🛰️")}</div>`;
   box.scrollIntoView({ behavior:"smooth", block:"center" });
+  startLoadingStages();
   try{
     const v = await api("/api/vision", { idea:ORBIT.idea, targetAnswer, strengthAnswer });
-    if(v.needMoreInfo){
-      box.innerHTML = `<div class="card"><p class="eyebrow">아이디어가 조금 짧아요</p><ul class="askfor">${(v.askFor||[]).map(q=>`<li>${esc(q)}</li>`).join("")}</ul></div>`;
-      return;
-    }
-    ORBIT.vision = v; ORBIT.founderQuestion = v.founderQuestion || ""; ORBIT.picks = [];
-    ORBIT.channels = v.channels ? {...v.channels} : {kakao:"",slack:"",email:"",zoom:""};
-    document.getElementById("idea-input").classList.add("hidden");
-    document.getElementById("idea-boost").classList.add("hidden");
-    renderVision(v);
-  }catch(err){ box.innerHTML = `<div class="err">⚠️ ${esc(err.message)}</div>`; }
+    finishLoadingStages(()=>{
+      if(v.needMoreInfo){
+        box.innerHTML = `<div class="card"><p class="eyebrow">아이디어가 조금 짧아요</p><ul class="askfor">${(v.askFor||[]).map(q=>`<li>${esc(q)}</li>`).join("")}</ul></div>`;
+        return;
+      }
+      ORBIT.vision = v; ORBIT.founderQuestion = v.founderQuestion || ""; ORBIT.picks = [];
+      ORBIT.channels = v.channels ? {...v.channels} : {kakao:"",slack:"",email:"",zoom:""};
+      document.getElementById("idea-input").classList.add("hidden");
+      document.getElementById("idea-boost").classList.add("hidden");
+      renderVision(v);
+    });
+  }catch(err){ stopLoadingStages(); box.innerHTML = `<div class="err">⚠️ ${esc(err.message)}</div>`; }
 }
 
 function visHead(label, key){
