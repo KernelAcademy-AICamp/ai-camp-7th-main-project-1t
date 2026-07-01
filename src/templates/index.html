@@ -643,6 +643,7 @@
 <!-- ===== 아이디어 던지기 ===== -->
 <section class="screen hidden" id="s-idea">
   <div class="narrow pagepad">
+    <button class="btn ghost" onclick="go('landing')">← 처음으로</button>
     <!-- 1) 입력 -->
     <div id="idea-input">
       <div class="hero fade" style="margin-top:14px; background:linear-gradient(150deg,#0b1226 0%,#1e3a8a 60%,#2563eb 100%);">
@@ -1560,6 +1561,9 @@ function renderNav(){
   // 로그인 사용자가 홈(랜딩)으로 오면 역할 선택 카드는 숨김 (이미 역할 정함)
   const rp = document.getElementById("landingRolePick");
   if(rp) rp.classList.toggle("hidden", ORBIT.loggedIn);
+  // 역할 카드가 빠져 히어로와 다음 섹션이 붙지 않도록 아래 여백 보정
+  const hero = document.getElementById("sec-about");
+  if(hero) hero.style.paddingBottom = ORBIT.loggedIn ? "48px" : "";
   const menu = document.getElementById("navMenu");
   const r = document.getElementById("navRight");
   if(!ORBIT.loggedIn){
