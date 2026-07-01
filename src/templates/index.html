@@ -200,6 +200,30 @@
   .chips{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;}
   .chip{cursor:pointer; font-size:12.5px; color:var(--muted); border:1px solid var(--line); border-radius:999px; padding:6px 12px; background:#fff;}
   .chip:hover{color:var(--blue); border-color:var(--blue);}
+  .chip.on{background:#ecfdf5; color:#047857; border-color:#6ee7b7; font-weight:700;}
+  .pf-lbl{font-size:13px; font-weight:800; color:var(--navy); margin:13px 0 7px; display:flex; align-items:center; gap:6px;}
+  .pf-lbl .rq{font-size:10px; font-weight:800; color:#047857; background:#d1fae5; border-radius:999px; padding:1px 7px;}
+  .pf-lbl .rq.optn{color:#64748b; background:#eef2f7;}
+  .pf-lbl .pf-note{font-size:10.5px; font-weight:700; color:var(--muted);}
+  /* 프로필 섹션 그룹 */
+  .pf-sec{margin-top:20px; padding-top:18px; border-top:1px solid var(--line);}
+  .pf-sec:first-of-type{margin-top:14px; padding-top:0; border-top:0;}
+  .pf-sec-t{font-size:11.5px; font-weight:900; color:var(--blue); letter-spacing:.03em; margin:0 0 4px;}
+  .pf-sec-t .secopt{color:var(--muted); font-weight:700;}
+  .pf-in{width:100%; border:1px solid var(--line); border-radius:12px; padding:12px 14px; font-size:14px; font-family:inherit; color:var(--text); background:#fff;}
+  .pf-in:focus{outline:none; border-color:var(--green);}
+  /* 가이드 문구(placeholder) — 입력 텍스트와 구분되게 연한 톤 */
+  .pf-in::placeholder, .inputcard textarea::placeholder{color:#aab2c0; opacity:1;}
+  /* 개인 링크 입력 — 좌측 아이콘 */
+  .link-in{position:relative; margin-bottom:8px;}
+  .link-in:last-child{margin-bottom:0;}
+  .link-in .link-ic{position:absolute; left:12px; top:50%; transform:translateY(-50%); width:18px; height:18px; display:flex; align-items:center; justify-content:center; pointer-events:none;}
+  .link-in .pf-in{padding-left:40px; margin-bottom:0;}
+  /* 연락 가능 시간 상세 슬롯 */
+  .slot-box{border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-top:10px; background:#fafbfc;}
+  /* 역량 직접 입력 */
+  .chip.custom{background:#eff6ff; border-color:#bfdbfe; color:var(--blue);}
+  .chip.custom .x{margin-left:5px; opacity:.6; font-weight:900;}
 
   /* 보충질문 */
   .boostq{margin-bottom:18px;}
@@ -306,7 +330,7 @@
   .spinner{width:20px;height:20px;border:3px solid #e2e8f0;border-top-color:var(--blue);border-radius:50%;animation:spin 1s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
   .banner{background:linear-gradient(135deg,#eff6ff,#eef2ff); border:1px solid #c7d2fe; border-radius:14px; padding:14px 18px; margin-bottom:16px; font-size:13px; color:#334155;} .banner b{color:var(--navy);}
-  .browsecard{border:1px solid var(--line); border-radius:16px; padding:18px 20px; cursor:pointer; transition:.15s; background:var(--card);}
+  .browsecard{border:1px solid var(--line); border-radius:16px; padding:18px 20px; margin-bottom:14px; cursor:pointer; transition:.15s; background:var(--card);}
   .browsecard:hover{border-color:var(--green); box-shadow:0 10px 26px rgba(16,185,129,.1);}
   .browsecard .bt{font-size:17px; font-weight:800; color:var(--navy);} .browsecard .bd{font-size:13px; color:var(--muted); margin:4px 0 10px;}
   .browsecard .fitpct{font-size:11.5px; font-weight:800; color:#047857; background:var(--mint); padding:3px 10px; border-radius:999px;}
@@ -410,7 +434,7 @@
         <div class="rc-sub">아이디어 쏘아 올리기</div>
         <div class="rc-hint">내 아이디어로 팀을 모아요</div>
       </button>
-      <button class="rolecard rider" onclick="goExplore()">
+      <button class="rolecard rider" onclick="goRider()">
         <div class="rc-emoji">🛰️</div>
         <div class="rc-title">Rider</div>
         <div class="rc-sub">빛나는 아이디어에 올라타기</div>
@@ -554,6 +578,37 @@
   </div>
 </section>
 
+<!-- ===== Rider 진입: 프로필 받기 / 다음에 하기 ===== -->
+<section class="screen hidden" id="s-rider">
+  <div class="narrow pagepad">
+    <button class="btn ghost" onclick="go('landing')">← 처음으로</button>
+    <!-- 1) 인트로 + 두 갈래 -->
+    <div id="rider-intro">
+      <div class="hero fade" style="margin-top:14px; background:linear-gradient(150deg,#064e3b 0%,#047857 60%,#10b981 100%);">
+        <div class="tags"><span class="hot">🛰️ Rider</span><span>빛나는 아이디어에 올라타기</span></div>
+        <h1>당신에 대해 알려주세요</h1>
+        <p class="lead">간단한 프로필을 남기면, 아이디어와의 <b style="color:#fff">매칭률·적합도</b>가 더 정확해지고<br>딱 맞는 자리를 먼저 추천받을 수 있어요.</p>
+      </div>
+      <div class="role-pick" style="margin-top:6px;">
+        <button class="rolecard rider" onclick="riderStartProfile()">
+          <div class="rc-emoji">📝</div>
+          <div class="rc-title" style="font-size:20px">프로필 작성하기</div>
+          <div class="rc-sub">매칭률·적합도 ↑</div>
+          <div class="rc-hint">로그인 후 1분이면 충분해요</div>
+        </button>
+        <button class="rolecard" onclick="goExplore()">
+          <div class="rc-emoji">👀</div>
+          <div class="rc-title" style="font-size:20px; color:var(--navy)">다음에 하기</div>
+          <div class="rc-sub" style="color:#334155">먼저 둘러볼게요</div>
+          <div class="rc-hint">바로 아이디어 구경하기</div>
+        </button>
+      </div>
+    </div>
+    <!-- 2) 프로필 폼 (로그인 후) -->
+    <div id="rider-profile" class="hidden"></div>
+  </div>
+</section>
+
 <!-- ===== 둘러보기 (비로그인 가능) ===== -->
 <section class="screen hidden" id="s-explore">
   <div class="narrow pagepad">
@@ -579,7 +634,7 @@
 
 <script>
 const ORBIT = { loggedIn:false, user:null, myTab:"idea", vision:null, founderQuestion:"", boost:null, picks:[],
-  applicant:null, myIdeas:[], applied:[], detailVision:null, detailRole:"", detailRate:0 };
+  applicant:null, myIdeas:[], applied:[], detailVision:null, detailRole:"", detailRate:0, profile:null };
 
 /* 대표 데모 프로젝트 — 홍길동이 낸 아이디어 (로그인 시 미리 등록) */
 const DEMO_PROJECT = {
@@ -619,6 +674,7 @@ const DEMO_PROJECT = {
   ],
   founderQuestion:"우리 사업에서 '환경'은 양보 못 할 가치예요. 자원 재활용에 대해 어떤 생각을 가지고 계신가요?",
   channels:{ kakao:"https://open.kakao.com/o/ecogrip", slack:"https://ecogrip.slack.com", email:"team@ecogrip.kr", zoom:"https://calendly.com/ecogrip/kickoff" },
+  matchProfile:{ roleSkills:["생산설비","제조","디자인","마케팅","온라인판매"], domains:["ESG"], natures:["사회적 가치","창업"], minWeeklyCapacity:"주 10시간", meetingMode:"online_only" },
 };
 const DEMO_PROJECT_PROPOSALS = [
   {name:"김도현", role:"압출 기계 및 생산 시설 관련 지식 보유자", rate:88, line:"PP/HDPE 분쇄·사출 설비를 직접 다뤄봤어요. 시제품을 빠르게 만들 수 있습니다.", status:"pending"},
@@ -635,7 +691,8 @@ const DEMO_IDEAS = [
     plan:{problem:"1인 가구는 건강한 집밥이 그립지만 직접 하긴 번거롭다",solution:"지역 어르신의 반찬을 위생관리·표준화해 정기배송",target:"집밥을 원하는 2030 1인 가구",revenue:"월 구독료 + 명절 선물세트"},
     neededTeammates:[{role:"식품 위생·HACCP을 아는 사람",detail:"가정식을 안전하게 상품화하는 핵심 역할"},{role:"구독 커머스를 운영해본 사람",detail:"정기배송 시스템과 고객 관리"},{role:"지역 어르신 네트워크를 뚫을 수 있는 사람",detail:"공급자 발굴과 신뢰 구축"}],
     matchFactors:["음식과 사람의 온기를 중시","작게 시작해 검증하는 자세","사회적 가치 지향"],
-    aiQuestions:["식품 제조·위생 관련 경험이 있나요?","구독/이커머스 운영을 해본 적 있나요?"], founderQuestion:"'할머니 손맛'이라는 가치를 사업으로 끝까지 지킬 수 있다고 보시나요?" },
+    aiQuestions:["식품 제조·위생 관련 경험이 있나요?","구독/이커머스 운영을 해본 적 있나요?"], founderQuestion:"'할머니 손맛'이라는 가치를 사업으로 끝까지 지킬 수 있다고 보시나요?",
+    matchProfile:{ roleSkills:["식품위생","HACCP","구독커머스","공급망"], domains:["복지"], natures:["수익","사회적 가치"], minWeeklyCapacity:"주 10시간", meetingMode:"online_only" } },
   { serviceName:"실버탭", tagline:"어르신 곁의 디지털 선생님",
     lead:"키오스크도 모바일 뱅킹도 어려운 어르신께. 눈높이 1:1 방문 스마트폰 교육을 제공합니다.",
     story:["부모님이 스마트폰을 어려워하시는 걸 보며 시작했습니다.","디지털 소외는 생각보다 큰 불편이고, 친절한 선생님 한 명이면 해결되는 일이 많았습니다."],
@@ -644,7 +701,8 @@ const DEMO_IDEAS = [
     plan:{problem:"어르신은 디지털 기기 사용이 어려워 일상에 불편을 겪는다",solution:"눈높이 강사가 방문해 1:1로 반복 교육",target:"스마트폰이 어려운 60대 이상과 그 가족",revenue:"방문 교육비 + 지자체·기관 단체 계약"},
     neededTeammates:[{role:"어르신 눈높이로 가르칠 수 있는 사람",detail:"교육의 질을 좌우하는 핵심"},{role:"지자체·기관 제휴를 뚫는 사람",detail:"안정적 단체 수요 확보"},{role:"쉬운 교육 콘텐츠를 만드는 사람",detail:"반복 가능한 커리큘럼 설계"}],
     matchFactors:["인내심과 따뜻함","사회적 가치 중시","오프라인 운영을 즐김"],
-    aiQuestions:["시니어 또는 교육 관련 경험이 있나요?","오프라인 운영·제휴 경험이 있나요?"], founderQuestion:"어르신을 대할 때 가장 중요한 태도는 무엇이라고 생각하세요?" },
+    aiQuestions:["시니어 또는 교육 관련 경험이 있나요?","오프라인 운영·제휴 경험이 있나요?"], founderQuestion:"어르신을 대할 때 가장 중요한 태도는 무엇이라고 생각하세요?",
+    matchProfile:{ roleSkills:["교육","오프라인운영","제휴영업","콘텐츠"], domains:["교육","복지"], natures:["사회적 가치","수익"], minWeeklyCapacity:"주 10시간", meetingMode:"offline_optional" } },
   { serviceName:"왈크메이트", tagline:"우리 동네 강아지 산책 친구",
     lead:"바빠서 산책을 못 시키는 견주와, 강아지를 좋아하는 이웃을 동네 단위로 안전하게 연결합니다.",
     story:["야근이 많아 우리 강아지 산책이 늘 미안했습니다.","근처에 강아지를 좋아하는 사람은 많은데, 믿고 맡길 방법이 없다는 게 문제였어요."],
@@ -653,7 +711,8 @@ const DEMO_IDEAS = [
     plan:{problem:"바쁜 견주는 산책을 못 시키고, 강아지 좋아하는 이웃은 기회가 없다",solution:"동네 단위로 견주와 산책 메이트를 안전하게 매칭",target:"산책이 어려운 견주 + 반려동물 좋아하는 이웃",revenue:"매칭 수수료 + 프리미엄 멤버십"},
     neededTeammates:[{role:"매칭 플랫폼 앱을 만들 수 있는 사람",detail:"서비스의 핵심 인프라 구축"},{role:"반려동물 안전·신뢰 시스템을 설계할 사람",detail:"평판·보험 등 안전장치"},{role:"동네 단위 마케팅을 할 수 있는 사람",detail:"초기 사용자 확보"}],
     matchFactors:["반려동물에 대한 진심","안전을 최우선으로","커뮤니티 운영 감각"],
-    aiQuestions:["앱/플랫폼 개발 또는 운영 경험이 있나요?","반려동물 관련 경험이나 관심이 있나요?"], founderQuestion:"낯선 사람에게 반려견을 맡기는 불안을 어떻게 줄일 수 있을까요?" },
+    aiQuestions:["앱/플랫폼 개발 또는 운영 경험이 있나요?","반려동물 관련 경험이나 관심이 있나요?"], founderQuestion:"낯선 사람에게 반려견을 맡기는 불안을 어떻게 줄일 수 있을까요?",
+    matchProfile:{ roleSkills:["앱개발","플랫폼","마케팅","운영"], domains:["반려동물","지역 커뮤니티"], natures:["창업","수익"], minWeeklyCapacity:"주 10시간", meetingMode:"online_only" } },
 ];
 
 /* 로그인 유저(홍길동)의 팀원 이력서 */
@@ -746,6 +805,7 @@ function doLogin(){
   const p = ORBIT._pending; ORBIT._pending = null;
   if(p && p.type==="idea"){ goIdeaIntro(); const ti=document.getElementById("idea"); if(ti) ti.value=p.idea; ideaStart(); return; }
   if(p && p.type==="detail"){ openDetail(p.vision); return; }
+  if(p && p.type==="profile"){ go("rider"); renderRiderProfile(); return; }
   showMy("idea");
 }
 
@@ -757,23 +817,442 @@ function goIdeaIntro(){
   document.getElementById("idea-vision").innerHTML="";
   const ti=document.getElementById("idea"); if(ti && !ORBIT._pending) ti.value="";
 }
+/* Rider 진입 — '당신에 대해 알려주세요' (프로필 받기 / 다음에 하기) */
+function goRider(){
+  go("rider");
+  document.getElementById("rider-intro").classList.remove("hidden");
+  const pf = document.getElementById("rider-profile");
+  pf.classList.add("hidden"); pf.innerHTML="";
+}
+/* 프로필 작성하기 — 로그인(회원가입) 먼저, 이후 프로필 폼 */
+function riderStartProfile(){
+  if(!ORBIT.loggedIn){ ORBIT._pending={type:"profile"}; go("login"); return; }
+  go("rider"); renderRiderProfile();
+}
+/* experts 시트(ORBIT_테이블정의서 v0.2) MVP 필수 입력 — 선택형 항목 정의 */
+const PF_OPTS = {
+  collab_mode:              { multi:false, icon:"🤝", label:"협업 방식",     opts:["온라인만","온라인+화상","수도권 오프라인 가능","전국 오프라인 가능"] },
+  weekly_capacity:          { multi:false, icon:"⏱", label:"주당 투입 가능 시간", opts:["주 2시간 이하","주 5시간","주 10시간","주 20시간 이상","직접 입력"] },
+  contact_hours:            { multi:true,  single:true, icon:"📞", label:"연락 가능 시간", opts:["평일 낮","평일 저녁","주말","요일 상관없음","직접 입력"] },
+  interest_domains:         { multi:true,  icon:"💡", label:"관심 분야",     opts:["복지","교육","반려동물","지역 커뮤니티","의료","ESG","콘텐츠","생산성"] },
+  participation_motivation: { multi:true,  icon:"🎯", label:"참여 목적",     opts:["수익","포트폴리오","사회적 가치","창업 기회","네트워킹","학습"] },
+};
+/* 역할 택소노미 — 대표 직군(단일 선택) */
+const ROLE_OPTS = ["개발","디자인","기획·운영","마케팅","영업·제휴","제조·생산","식품·위생","교육·운영","데이터","기타"];
+/* 역량 택소노미 — 분류별 스킬 태그(복수 선택). category(dev/design/planning/data/other)는 그룹으로 자동 결정 */
+const SKILL_GROUPS = {
+  "개발":      ["프론트엔드","백엔드","앱개발","웹개발","플랫폼","결제시스템","API연동","DevOps"],
+  "디자인":    ["디자인","UIUX","브랜딩","패키지","굿즈디자인","그래픽","영상편집"],
+  "기획·운영": ["기획","운영","프로세스설계","고객응대","PM","사업기획"],
+  "마케팅":    ["마케팅","SNS","콘텐츠","브랜드스토리텔링","퍼포먼스마케팅","카피라이팅"],
+  "영업·제휴": ["영업","제휴","제휴영업","B2B","온라인판매","구독커머스","공급망","CS"],
+  "제조·생산": ["생산설비","제조","사출","금형","시제품","품질관리","자재구매"],
+  "식품·위생": ["식품위생","HACCP","레시피표준화","조리","소량생산·포장"],
+  "교육·운영": ["교육","오프라인운영","커뮤니케이션","커리큘럼설계","강의"],
+  "데이터":    ["데이터분석","머신러닝","SQL","데이터시각화"],
+};
+/* 스킬 분류 → expert_skills.category enum (dev/design/planning/data/other) */
+const SKILL_CATEGORY = {
+  "개발":"dev", "데이터":"data", "디자인":"design",
+  "기획·운영":"planning", "교육·운영":"planning",
+  "마케팅":"other", "영업·제휴":"other", "제조·생산":"other", "식품·위생":"other",
+};
+function skillCategoryOf(skill){
+  for(const [cat,opts] of Object.entries(SKILL_GROUPS)){ if(opts.includes(skill)) return SKILL_CATEGORY[cat]||"other"; }
+  return "other";
+}
+/* 선택 스킬 → expert_skills 구조: [{skill, category}] (내부 기준 — 화면 비노출) */
+function expertSkillTags(skills){ return (skills||[]).map(s=>({skill:s, category:skillCategoryOf(s)})); }
+/* 링크 입력 정규화 — 스킴 없으면 https:// 보정 */
+function normUrl(u){ u=(u||"").trim(); return u ? (/^https?:\/\//i.test(u)?u:("https://"+u)) : ""; }
+/* 개인 링크 아이콘 (인라인 SVG — 외부 이미지 불필요) */
+const LINK_ICONS = {
+  linkedin: `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#0A66C2" d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.8 0 0 .78 0 1.73v20.54C0 23.22.8 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .78 23.2 0 22.22 0z"/></svg>`,
+  notion:   `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="1.5" y="1.5" width="21" height="21" rx="5" fill="#000"/><text x="12" y="17.5" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-size="15" font-weight="700" fill="#fff">N</text></svg>`,
+  web:      `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#64748b" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"/></svg>`,
+};
+/* 공통 라벨 — 아이콘+제목 + 필수/선택 배지 (+ 보조 note) */
+function pfLabel(text, req, note){
+  const badge = (req===false) ? `<span class="rq optn">선택</span>` : `<span class="rq">필수</span>`;
+  return `<div class="pf-lbl">${text} ${badge}${note?`<span class="pf-note">· ${esc(note)}</span>`:""}</div>`;
+}
+function pfChips(k){
+  const cfg = PF_OPTS[k];
+  return cfg.opts.map(o=>{
+    const sel = cfg.multi ? (ORBIT._pf[k]||[]).includes(o) : ORBIT._pf[k]===o;
+    return `<span class="chip ${sel?'on':''}" onclick="pfToggle('${k}','${esc(o)}')">${esc(o)}</span>`;
+  }).join("");
+}
+function pfGroup(k){
+  const cfg = PF_OPTS[k];
+  const note = cfg.single ? "1개 선택" : (cfg.multi ? "복수 선택" : null);
+  return pfLabel(`${cfg.icon} ${esc(cfg.label)}`, true, note) +
+    `<div class="chips" id="pfg-${k}" style="margin-top:2px">${pfChips(k)}</div>`;
+}
+/* 연락 가능 시간 — 칩마다 개별 요일·시간. 평일 낮/저녁=시간 필수, 주말/요일 상관없음='언제든' 선택 시 시간 불필요 */
+const WEEKDAYS = ["월","화","수","목","금","토","일"];
+const CONTACT_CONFIG = {
+  "평일 낮":     { showDays:true,  dayLabel:"월~금", allowAnytime:false, timeRequired:true,  days:["월","화","수","목","금"], from:"10:00", to:"16:00", anytime:false },
+  "평일 저녁":   { showDays:true,  dayLabel:"월~금", allowAnytime:false, timeRequired:true,  days:["월","화","수","목","금"], from:"17:00", to:"20:00", anytime:false },
+  "주말":       { showDays:true,  dayLabel:"토~일", allowAnytime:true,  timeRequired:false, days:["토","일"],               from:"",      to:"",      anytime:true  },
+  "요일 상관없음":{ showDays:false, dayLabel:"",     allowAnytime:true,  timeRequired:false, days:[],                        from:"",      to:"",      anytime:true  },
+  "직접 입력":   { showDays:true,  editableDays:true, dayLabel:"", allowAnytime:false, timeRequired:true, days:[],          from:"",      to:"",      anytime:false },
+};
+function _timeOptions(sel){
+  let out = `<option value="">--:--</option>`;
+  for(let h=0; h<=24; h++){ const t = String(h).padStart(2,"0")+":00"; out += `<option value="${t}" ${sel===t?"selected":""}>${t}</option>`; }
+  return out;
+}
+/* 선택된 칩과 슬롯(contact_slots) 동기화 — 새로 선택되면 기본값, 해제되면 제거 */
+function syncContactSlots(){
+  const sel = ORBIT._pf.contact_hours || [];
+  const slots = ORBIT._pf.contact_slots || (ORBIT._pf.contact_slots={});
+  sel.forEach(l=>{ if(!slots[l]){ const c = CONTACT_CONFIG[l] || {days:[],from:"",to:"",anytime:false};
+    slots[l] = {days:[...c.days], from:c.from, to:c.to, anytime:!!c.anytime}; } });
+  Object.keys(slots).forEach(l=>{ if(!sel.includes(l)) delete slots[l]; });
+}
+function contactSlotHtml(label){
+  const cfg = CONTACT_CONFIG[label] || {};
+  const s = (ORBIT._pf.contact_slots||{})[label] || {days:[],from:"",to:"",anytime:false};
+  const dayPart = cfg.editableDays
+    ? `<div style="font-size:12px; color:#475569; margin-bottom:6px;">요일 선택</div>
+       <div class="chips">${WEEKDAYS.map(w=>`<span class="chip ${s.days.includes(w)?'on':''}" onclick="toggleSlotDay('${esc(label)}','${w}')">${w}</span>`).join("")}</div>`
+    : (cfg.showDays
+        ? `<div style="font-size:12px; color:#475569; margin-bottom:2px;">요일 <b style="color:var(--navy)">${esc(cfg.dayLabel)}</b> <span style="color:var(--muted); font-size:10.5px;">(고정)</span></div>`
+        : "");
+  const anytimeToggle = cfg.allowAnytime
+    ? `<div class="chips" style="margin-top:8px"><span class="chip ${s.anytime?'on':''}" onclick="toggleSlotAnytime('${esc(label)}')">🕘 시간 상관없음</span></div>` : "";
+  const showTime = !(cfg.allowAnytime && s.anytime);   // '시간 상관없음'이면 시간 숨김
+  const reqTag = cfg.timeRequired
+    ? `<span style="font-size:10.5px;font-weight:800;color:#047857;">시간 필수</span>`
+    : `<span style="font-size:10.5px;font-weight:700;color:var(--muted);">시간 선택</span>`;
+  const timeRow = showTime ? `
+      <div style="display:flex; align-items:center; gap:8px; margin-top:10px;">
+        <select class="pf-in" style="width:auto" onchange="setSlotTime('${esc(label)}','from',this.value)">${_timeOptions(s.from)}</select>
+        <span style="color:var(--muted); font-weight:800;">~</span>
+        <select class="pf-in" style="width:auto" onchange="setSlotTime('${esc(label)}','to',this.value)">${_timeOptions(s.to)}</select>
+        ${reqTag}
+      </div>` : "";
+  return `
+    <div class="slot-box">
+      <div style="font-size:12.5px; font-weight:800; color:var(--navy); margin-bottom:8px;">📞 ${esc(label)}</div>
+      ${dayPart}${anytimeToggle}${timeRow}
+    </div>`;
+}
+function updateContactDetail(){
+  const box = document.getElementById("pf-contact-detail"); if(!box) return;
+  syncContactSlots();
+  const sel = ORBIT._pf.contact_hours || [];
+  box.innerHTML = sel.map(contactSlotHtml).join("");
+}
+function toggleSlotDay(label, w){
+  const s = (ORBIT._pf.contact_slots||{})[label]; if(!s) return;
+  const i = s.days.indexOf(w); if(i>=0) s.days.splice(i,1); else s.days.push(w);
+  updateContactDetail();
+}
+function toggleSlotAnytime(label){
+  const s = (ORBIT._pf.contact_slots||{})[label]; if(!s) return;
+  s.anytime = !s.anytime;
+  updateContactDetail();
+}
+function setSlotTime(label, key, val){
+  const s = (ORBIT._pf.contact_slots||{})[label]; if(s) s[key] = val;
+}
+/* 주당 투입 — '직접 입력' 선택 시 '주 [N] 시간' 입력 */
+function capacityCustomHtml(){
+  if(ORBIT._pf.weekly_capacity !== "직접 입력") return "";
+  const v = ORBIT._pf.weekly_capacity_custom || "";
+  return `<div style="display:flex; align-items:center; gap:8px; margin-top:10px;">
+      <span style="font-size:13px; color:#475569;">주</span>
+      <input class="pf-in" id="pf-capacity-hours" type="number" min="1" step="1" style="width:120px" placeholder="시간 수" value="${esc(v)}" oninput="ORBIT._pf.weekly_capacity_custom=this.value" />
+      <span style="font-size:13px; color:#475569;">시간</span>
+    </div>`;
+}
+function updateCapacityCustom(){
+  const box = document.getElementById("pf-capacity-custom"); if(box) box.innerHTML = capacityCustomHtml();
+}
+/* 선택한 대표 직군에 해당하는 스킬 그룹만 노출 (미선택→null=안내, 기타→전체) */
+function visibleSkillEntries(){
+  const role = ORBIT._pf.primary_role;
+  if(!role) return null;
+  if(SKILL_GROUPS[role]) return [[role, SKILL_GROUPS[role]]];
+  return Object.entries(SKILL_GROUPS);  // '기타' 등 매핑 없는 직군 → 전체
+}
+function skillChipsHtml(){
+  const entries = visibleSkillEntries();
+  if(!entries) return `<div style="font-size:12.5px; color:var(--muted); padding:8px 2px;">↑ 대표 직군을 먼저 선택하면 관련 역량만 보여드려요.</div>`;
+  const sel = ORBIT._pf.skills || [];
+  const showCat = entries.length > 1;  // 한 그룹만 보일 땐 분류 라벨 생략(직군과 중복)
+  return entries.map(([cat,opts])=>`
+    ${showCat?`<div style="margin:8px 0 2px; font-size:11px; font-weight:800; color:var(--muted);">${esc(cat)}</div>`:``}
+    <div class="chips" style="margin-top:${showCat?'0':'6px'}">
+      ${opts.map(o=>`<span class="chip ${sel.includes(o)?'on':''}" onclick="pfSkillToggle('${esc(o)}')">${esc(o)}</span>`).join("")}
+    </div>`).join("");
+}
+/* 대표 직군이 바뀌면 역량 목록 갱신 + 새 직군에 없는 기존 선택 제거 */
+function onRoleChange(){
+  ORBIT._pf.primary_role = document.getElementById("pf-role").value;
+  const entries = visibleSkillEntries();
+  if(entries){
+    const visible = new Set(entries.flatMap(([,opts])=>opts));
+    ORBIT._pf.skills = (ORBIT._pf.skills||[]).filter(s=>visible.has(s));
+  }
+  document.getElementById("pf-skills-box").innerHTML = skillChipsHtml();
+}
+function pfSkillToggle(o){
+  const arr = ORBIT._pf.skills || (ORBIT._pf.skills=[]);
+  const i = arr.indexOf(o); if(i>=0) arr.splice(i,1); else arr.push(o);
+  document.getElementById("pf-skills-box").innerHTML = skillChipsHtml();
+}
+/* 칩 선택 + 직접 입력을 함께 쓰는 필드 정의 (역량·관심분야) */
+const CUSTOM_FIELDS = {
+  skills:           { input:"pf-skill-custom",  box:"pf-custom-box",        selKey:"skills",           customKey:"customSkills"  },
+  interest_domains: { input:"pf-domain-custom", box:"pf-domain-custom-box", selKey:"interest_domains", customKey:"customDomains" },
+};
+/* 직접 입력한 항목(목록 외) — 삭제 가능한 칩 */
+function customChipsHtml(fieldKey){
+  const cfg = CUSTOM_FIELDS[fieldKey];
+  const arr = ORBIT._pf[cfg.customKey] || [];
+  if(!arr.length) return "";
+  return `<div class="chips" style="margin-top:8px">${arr.map(s=>
+    `<span class="chip custom" onclick="removeCustom('${fieldKey}','${esc(s)}')">${esc(s)}<span class="x">✕</span></span>`).join("")}</div>`;
+}
+function addCustomTokens(fieldKey, tokens){
+  const cfg = CUSTOM_FIELDS[fieldKey];
+  const c = ORBIT._pf[cfg.customKey] || (ORBIT._pf[cfg.customKey]=[]);
+  const existing = new Set([...(ORBIT._pf[cfg.selKey]||[]), ...c]);
+  (tokens||[]).map(x=>x.trim()).filter(Boolean).forEach(x=>{ if(!existing.has(x)){ c.push(x); existing.add(x); } });
+  const box = document.getElementById(cfg.box); if(box) box.innerHTML = customChipsHtml(fieldKey);
+}
+/* 쉼표 입력 시 완성된 조각을 자동 등록(마지막 입력 중 조각은 남김) */
+function pfCustomInput(e, fieldKey){
+  const inp = e.target;
+  if(inp.value.includes(",")){
+    const parts = inp.value.split(",");
+    const remainder = parts.pop();
+    addCustomTokens(fieldKey, parts);
+    inp.value = remainder;
+  }
+}
+/* Enter → 남은 입력 전부 등록 */
+function pfCustomKeydown(e, fieldKey){ if(e.key==="Enter"){ e.preventDefault(); flushCustom(fieldKey); } }
+/* 입력칸에 남은 텍스트를 칩으로 비워냄(저장·blur 시 누락 방지) */
+function flushCustom(fieldKey){
+  const cfg = CUSTOM_FIELDS[fieldKey];
+  const inp = document.getElementById(cfg.input); if(!inp) return;
+  addCustomTokens(fieldKey, inp.value.split(","));
+  inp.value = "";
+}
+function removeCustom(fieldKey, s){
+  const cfg = CUSTOM_FIELDS[fieldKey];
+  ORBIT._pf[cfg.customKey] = (ORBIT._pf[cfg.customKey]||[]).filter(x=>x!==s);
+  document.getElementById(cfg.box).innerHTML = customChipsHtml(fieldKey);
+}
+function pfToggle(k,o){
+  const cfg = PF_OPTS[k];
+  if(cfg.single){                                   // 단일 선택(라디오형) — 배열 길이 ≤1 유지
+    ORBIT._pf[k] = (ORBIT._pf[k]||[]).includes(o) ? [] : [o];
+  } else if(cfg.multi){
+    const arr = ORBIT._pf[k] || (ORBIT._pf[k]=[]);
+    const i = arr.indexOf(o); if(i>=0) arr.splice(i,1); else arr.push(o);
+  } else {
+    ORBIT._pf[k] = (ORBIT._pf[k]===o) ? "" : o;
+  }
+  document.getElementById("pfg-"+k).innerHTML = pfChips(k);
+  if(k==="contact_hours") updateContactDetail();
+  if(k==="weekly_capacity") updateCapacityCustom();
+}
+function renderRiderProfile(){
+  document.getElementById("rider-intro").classList.add("hidden");
+  const p = ORBIT.profile || {};
+  /* 편집 중 선택 상태(칩) 초기화 — 기존 프로필이 있으면 복원 */
+  const _allGroupSkills = new Set(Object.values(SKILL_GROUPS).flat());
+  const _savedSkills = Array.isArray(p.skills) ? p.skills : [];
+  const _domainOpts = new Set(PF_OPTS.interest_domains.opts);
+  const _savedDomains = Array.isArray(p.interest_domains) ? p.interest_domains : [];
+  const _capOpts = new Set(PF_OPTS.weekly_capacity.opts.filter(o=>o!=="직접 입력"));
+  const _savedCap = p.weekly_capacity || "";
+  const _capCustom = _savedCap && !_capOpts.has(_savedCap);  // 목록 외 값 → 직접 입력
+  ORBIT._pf = {
+    primary_role: p.primary_role || "",
+    skills: _savedSkills.filter(s=>_allGroupSkills.has(s)),        // 목록에서 선택
+    customSkills: _savedSkills.filter(s=>!_allGroupSkills.has(s)), // 직접 입력
+    collab_mode: p.collab_mode || "",
+    weekly_capacity: _capCustom ? "직접 입력" : _savedCap,
+    weekly_capacity_custom: _capCustom ? String((_savedCap.match(/\d+/)||[""])[0]) : "",
+    contact_hours: [...(p.contact_hours||[])],
+    contact_slots: (()=>{ const src=p.contact_slots||{}, out={};
+      (Array.isArray(p.contact_hours)?p.contact_hours:[]).forEach(l=>{ const d=src[l]||CONTACT_CONFIG[l]||{days:[],from:"",to:"",anytime:false};
+        out[l]={days:[...(d.days||[])], from:d.from||"", to:d.to||"", anytime:!!d.anytime}; }); return out; })(),
+    interest_domains: _savedDomains.filter(d=>_domainOpts.has(d)),        // 목록에서 선택
+    customDomains: _savedDomains.filter(d=>!_domainOpts.has(d)),          // 직접 입력
+    participation_motivation: [...(p.participation_motivation||[])],
+  };
+  /* 직군에 맞지 않는 기존 선택 스킬 정리(직군 선택돼 있을 때만) */
+  const _vis = visibleSkillEntries();
+  if(_vis){ const set=new Set(_vis.flatMap(([,o])=>o)); ORBIT._pf.skills = ORBIT._pf.skills.filter(s=>set.has(s)); }
+  const roleOpts = `<option value="">— 직군을 선택하세요 —</option>` +
+    ROLE_OPTS.map(r=>`<option value="${esc(r)}" ${p.primary_role===r?'selected':''}>${esc(r)}</option>`).join("");
+  const linkOf = (lbl)=> ((p.links||[]).find(l=>l.label===lbl)||{}).url || "";
+  const pf = document.getElementById("rider-profile");
+  pf.classList.remove("hidden");
+  pf.innerHTML = `
+    <div class="card inputcard fade" style="margin-top:14px">
+      <h2>당신에 대해 알려주세요</h2>
+      <p class="sub">내 프로필이에요. 아래 정보로 아이디어와의 <b>적합도</b>를 계산합니다 — <b>기술 40 · 관심 30 · 목적 20 · 시간 10</b>.</p>
+
+      <div class="pf-sec">
+        <div class="pf-sec-t">기본 정보</div>
+        ${pfLabel("🙋 한 줄 자기소개", true)}
+        <input class="pf-in" id="pf-headline" placeholder="예) 감성 모바일 웹 잘 만드는 프론트엔드" value="${esc(p.headline||"")}" />
+        ${pfLabel("🧭 대표 직군", true)}
+        <select class="pf-in" id="pf-role" onchange="onRoleChange()">${roleOpts}</select>
+        ${pfLabel("🛠 역량·기술", true, "복수 선택 · 직접 입력 가능")}
+        <div id="pf-skills-box">${skillChipsHtml()}</div>
+        <input class="pf-in" id="pf-skill-custom" style="margin-top:10px" placeholder="목록에 없으면 직접 입력 후 쉼표(,) 또는 Enter — 여러 개 가능" oninput="pfCustomInput(event,'skills')" onkeydown="pfCustomKeydown(event,'skills')" onblur="flushCustom('skills')" />
+        <div id="pf-custom-box">${customChipsHtml('skills')}</div>
+      </div>
+
+      <div class="pf-sec">
+        <div class="pf-sec-t">협업 조건</div>
+        ${pfGroup("collab_mode")}
+        ${pfGroup("weekly_capacity")}
+        <div id="pf-capacity-custom">${capacityCustomHtml()}</div>
+        ${pfGroup("contact_hours")}
+        <div id="pf-contact-detail">${(ORBIT._pf.contact_hours||[]).map(contactSlotHtml).join("")}</div>
+      </div>
+
+      <div class="pf-sec">
+        <div class="pf-sec-t">나와 잘 맞는 일</div>
+        ${pfGroup("interest_domains")}
+        <input class="pf-in" id="pf-domain-custom" style="margin-top:10px" placeholder="목록에 없으면 직접 입력 후 쉼표(,) 또는 Enter — 여러 개 가능" oninput="pfCustomInput(event,'interest_domains')" onkeydown="pfCustomKeydown(event,'interest_domains')" onblur="flushCustom('interest_domains')" />
+        <div id="pf-domain-custom-box">${customChipsHtml('interest_domains')}</div>
+        ${pfGroup("participation_motivation")}
+      </div>
+
+      <div class="pf-sec">
+        <div class="pf-sec-t">추가 정보 <span class="secopt">· 선택</span></div>
+        ${pfLabel("🔗 개인 링크", false)}
+        <div class="link-in"><span class="link-ic">${LINK_ICONS.linkedin}</span>
+          <input class="pf-in" id="pf-linkedin" placeholder="LinkedIn 주소 (예: linkedin.com/in/your-id)" value="${esc(linkOf('LinkedIn'))}" /></div>
+        <div class="link-in"><span class="link-ic">${LINK_ICONS.notion}</span>
+          <input class="pf-in" id="pf-notion" placeholder="Notion 주소 (예: notion.so/...)" value="${esc(linkOf('Notion'))}" /></div>
+        <div class="link-in"><span class="link-ic">${LINK_ICONS.web}</span>
+          <input class="pf-in" id="pf-other" placeholder="기타 링크 (포트폴리오 등)" value="${esc(linkOf('기타'))}" /></div>
+        ${pfLabel("📝 덧붙이고 싶은 말", false)}
+        <textarea id="pf-bio" style="margin-top:2px" placeholder="예) 꼭 강조하고 싶은 경험이나, 합류하면 해보고 싶은 것 등">${esc(p.bio||"")}</textarea>
+      </div>
+
+      <div style="display:flex; gap:9px; margin-top:22px">
+        <button class="btn ghost" onclick="goExplore()">건너뛰고 둘러보기</button>
+        <button class="btn green" style="flex:1" onclick="saveProfile()">저장하고 아이디어 둘러보기 →</button>
+      </div>
+    </div>`;
+}
+function saveProfile(){
+  const headline = document.getElementById("pf-headline").value.trim();
+  const primary_role = document.getElementById("pf-role").value.trim();
+  flushCustom("skills"); flushCustom("interest_domains");  // 입력칸에 남은 직접 입력분 반영(누락 방지)
+  syncContactSlots();  // 선택 칩 ↔ 요일/시간 슬롯 정합
+  const s = ORBIT._pf || {};
+  const skills = [...new Set([...(s.skills||[]), ...(s.customSkills||[])])];              // 선택 + 직접 입력
+  const interest_domains = [...new Set([...(s.interest_domains||[]), ...(s.customDomains||[])])];  // 선택 + 직접 입력
+  const bio = document.getElementById("pf-bio").value.trim();
+  /* 주당 투입 — '직접 입력'이면 '주 N시간'으로 확정 */
+  const capEl = document.getElementById("pf-capacity-hours"); if(capEl) s.weekly_capacity_custom = capEl.value;
+  let weekly_capacity = s.weekly_capacity;
+  if(weekly_capacity === "직접 입력"){ const h = String(s.weekly_capacity_custom||"").trim(); weekly_capacity = h ? `주 ${h}시간` : ""; }
+  const links = [
+    {label:"LinkedIn", url:normUrl(document.getElementById("pf-linkedin").value)},
+    {label:"Notion",   url:normUrl(document.getElementById("pf-notion").value)},
+    {label:"기타",      url:normUrl(document.getElementById("pf-other").value)},
+  ].filter(l=>l.url);
+  /* experts MVP 필수 검증 */
+  const miss = [];
+  if(!headline) miss.push("한 줄 소개");
+  if(!primary_role) miss.push("대표 직군");
+  if(!skills.length) miss.push("역량·기술");
+  if(!s.collab_mode) miss.push("협업 방식");
+  if(!weekly_capacity) miss.push("주당 투입 가능 시간");
+  if(!(s.contact_hours||[]).length) miss.push("연락 가능 시간");
+  (s.contact_hours||[]).forEach(l=>{ const cfg=CONTACT_CONFIG[l]||{}; const slot=(s.contact_slots||{})[l]||{};
+    if(cfg.editableDays && !(slot.days||[]).length) miss.push(`연락 요일(${l})`);
+    if(cfg.timeRequired && (!slot.from || !slot.to)) miss.push(`연락 시간(${l})`); });
+  if(!interest_domains.length) miss.push("관심 분야");
+  if(!(s.participation_motivation||[]).length) miss.push("참여 목적");
+  if(miss.length){ alert("아래 필수 항목을 채워주세요:\n· " + miss.join("\n· ")); return; }
+  ORBIT.profile = {
+    name: ORBIT.user || "나",
+    headline, primary_role, skills, bio, links,
+    skill_tags: expertSkillTags(skills),   // [{skill, category}] — experts.expert_skills 구조
+    collab_mode: s.collab_mode,
+    weekly_capacity,
+    contact_hours: s.contact_hours,
+    contact_slots: s.contact_slots,
+    interest_domains,
+    participation_motivation: s.participation_motivation,
+  };
+  alert("✅ 프로필을 저장했어요!\n이제 아이디어와의 매칭률·적합도가 더 정확하게 계산됩니다.");
+  goExplore();
+}
+/* 저장된 experts 프로필 → 매칭 API용 applicant 객체 (없으면 null) */
+function profileApplicant(){
+  const p = ORBIT.profile; if(!p) return null;
+  const tags = p.skill_tags || expertSkillTags(p.skills||[]);
+  return {
+    name: p.name || ORBIT.user || "나",
+    headline: p.headline,
+    primaryRole: p.primary_role,
+    skills: (p.skills||[]).join(", "),                              // 기술 40%
+    expertSkills: tags,                                             // [{skill, category}]
+    skillCategories: [...new Set(tags.map(t=>t.category))].join(", "), // dev/design/...
+
+    interestDomains: (p.interest_domains||[]).join(", "),           // 관심 30%
+    participationMotivation: (p.participation_motivation||[]).join(", "), // 목적 20%
+    collabMode: p.collab_mode,                                      // 하드필터
+    weeklyCapacity: p.weekly_capacity,                              // 시간 10% / 하드필터
+    contactHours: (p.contact_hours||[]).join(", "),
+    contactWindow: (()=>{ const cs=p.contact_slots||{}; return Object.entries(cs).map(([l,d])=>{
+      const days=(d.days||[]).join(""); const t = d.anytime ? "시간 상관없음" : ((d.from||d.to)?`${d.from||"--"}~${d.to||"--"}`:"");
+      return `${l}(${[days,t].filter(Boolean).join(" ")})`; }).join(", "); })(),
+    bio: p.bio || "",
+    // 평가 프롬프트가 참조하는 traits 키 — 참여목적·관심분야로 성향 신호 구성
+    traits: [...(p.participation_motivation||[]), ...(p.interest_domains||[])].join(", "),
+  };
+}
+/* 둘러보기 카드에 '예상 적합도' 배지 채우기 (프로필 있을 때만, AI 없이 즉시) */
+async function attachPreview(prefix, visions){
+  const applicant = profileApplicant(); if(!applicant) return;
+  try{
+    const r = await api("/api/preview", { applicant, projects:(visions||[]).map(v=>v.matchProfile||null) });
+    (r.scores||[]).forEach((s,i)=>{
+      const el = document.getElementById(prefix+"-"+i); if(!el) return;
+      if(!s){ return; }
+      if(!s.hardPass){ el.textContent = "⚠️ 합류 조건 확인 필요"; el.style.background="#fee2e2"; el.style.color="#b91c1c"; return; }
+      el.textContent = `🎯 예상 적합도 ${s.score}%`;
+      el.style.background = s.score>=70 ? "#d1fae5" : "#fef3c7";
+      el.style.color = s.score>=70 ? "#047857" : "#92400e";
+    });
+  }catch(e){ /* 미리보기는 실패해도 목록엔 영향 없음 */ }
+}
 /* 비로그인 진입 — 팀원으로 둘러보기 (목록만 먼저) */
 function goExplore(){
   go("explore");
   window._explore = ORBIT.loggedIn ? [...ORBIT.myIdeas.map(it=>it.vision), ...DEMO_IDEAS] : [DEMO_PROJECT, ...DEMO_IDEAS];
   document.getElementById("explore-list").innerHTML = window._explore.map((v,i)=>`
     <div class="browsecard" onclick="exploreOpen(${i})">
-      <span class="fitpct">🔥 팀원 모집 중</span>
+      <span class="fitpct" id="xfit-${i}">🔥 팀원 모집 중</span>
       <div class="bt" style="margin-top:9px">${esc(v.serviceName)} — ${esc(v.tagline)}</div>
       <div class="bd">${esc(v.lead)}</div>
     </div>`).join("");
+  attachPreview("xfit", window._explore);
 }
 function exploreOpen(i){
   const v = (window._explore||[])[i]; if(!v) return;
   if(!ORBIT.loggedIn){ ORBIT._pending={type:"detail", vision:v}; go("login"); return; }
   openDetail(v);
 }
-function logout(){ ORBIT.loggedIn=false; ORBIT.user=null; ORBIT.myIdeas=[]; ORBIT.applied=[]; go("landing"); }
+function logout(){ ORBIT.loggedIn=false; ORBIT.user=null; ORBIT.myIdeas=[]; ORBIT.applied=[]; ORBIT.profile=null; go("landing"); }
 function pickMode(m){ showMy(m); }
 
 function renderNav(){
@@ -1057,11 +1536,17 @@ async function openDetail(v, isOwner){
   }
 }
 function recoRow(p,i){
-  const star = p.fitLevel==="높음" ? "⭐⭐⭐" : "⭐⭐";
+  const star = p.fitLevel==="높음" ? "⭐⭐⭐" : (p.fitLevel==="보류" ? "⚠️" : "⭐⭐");
+  const hasScore = typeof p.score === "number";
+  const scorePill = hasScore ? `<span class="pill ${p.score>=70?'green':'amber'}">매칭 ${p.score}%</span>` : ``;
+  const bd = p.breakdown;
+  const detail = bd ? `<div class="pl" style="font-style:normal; color:#64748b; font-size:11px; margin-top:5px;">
+      ${(bd.components||[]).map(c=>`${esc(c.key)} ${c.got}/${c.weight}`).join(" · ")}
+      ${!bd.hardPass?` · <span style="color:#dc2626;font-weight:800">⚠️ ${esc((bd.hardReasons||[]).join(", "))}</span>`:``}</div>` : ``;
   return `<div class="prop">
     <div class="pav">${esc(p.name[0])}</div>
-    <div style="flex:1"><div class="pn">${esc(p.name)} <span class="pill blue">${star} ${esc(p.fitLevel||"")}</span></div>
-      <div class="pr">${esc(p.fitsRole)}</div><div class="pl">${esc(p.reason)}</div></div>
+    <div style="flex:1"><div class="pn">${esc(p.name)} ${scorePill}<span class="pill blue">${star} ${esc(p.fitLevel||"")}</span></div>
+      <div class="pr">${esc(p.fitsRole)}</div><div class="pl">${esc(p.reason)}</div>${detail}</div>
     <button class="btn sm" id="inv-${i}" onclick="inviteTeammate(${i})">🛰️ ORBIT 초대</button>
   </div>`;
 }
@@ -1075,7 +1560,9 @@ function inviteTeammate(i){
 async function joinApply(){
   const v = ORBIT.detailVision;
   const questions = [ (v.aiQuestions||[])[0], (v.aiQuestions||[])[1], v.founderQuestion ].filter(Boolean);
-  const applicant = { name:RESUME.name, headline:RESUME.headline, skills:RESUME.skills.join(", "), traits:RESUME.traits.join(", ") };
+  /* Rider가 입력한 experts 프로필이 있으면 그 구조를 평가에 그대로 전달, 없으면 기본 이력서로 폴백 */
+  const applicant = profileApplicant()
+    || { name:RESUME.name, headline:RESUME.headline, skills:RESUME.skills.join(", "), traits:RESUME.traits.join(", ") };
   const box = document.getElementById("joinResult");
   box.innerHTML = `<div class="card">${spinner(ORBIT.user + " 님(나)의 매칭률을 평가하는 중...")}</div>`;
   try{
@@ -1094,12 +1581,26 @@ function renderJoin(r){
     const lv=f.level||""; const color = lv==="보통"?"#d97706":"var(--green)"; const ic = lv==="보통"?"⚠️":(lv==="정확"?"🛠":"🌱");
     return `<div class="fit"><span class="ic">${ic}</span><div><div class="t">${esc(f.title)}</div><div class="d">${esc(f.desc)}</div></div><span class="pct" style="color:${color}">${esc(lv)}</span></div>`;
   }).join("");
+  const bd = r.breakdown;
+  const breakdownHtml = bd ? `
+      <div style="height:1px; background:var(--line); margin:14px 0;"></div>
+      <p class="eyebrow" style="color:var(--navy)">📊 적합도 계산 근거 <span style="font-size:10.5px;color:var(--muted);font-weight:700">· 기술40·관심30·목적20·시간10</span></p>
+      ${!bd.hardPass ? `<div class="banner" style="background:#fef2f2;border-color:#fecaca;color:#b91c1c;">⚠️ <b>필수 조건 미충족</b> — ${esc((bd.hardReasons||[]).join(" · "))} (점수 상한 적용)</div>` : ``}
+      ${(bd.components||[]).map(c=>`
+        <div style="margin:9px 0 4px; display:flex; align-items:center; gap:8px; font-size:12.5px;">
+          <span style="font-weight:800; color:var(--navy); flex:0 0 78px;">${esc(c.key)}</span>
+          <div class="bar" style="flex:1; max-width:none;"><div class="fill" style="width:${c.pct}%; background:${c.pct>=67?'var(--green)':c.pct>=34?'#d97706':'#dc2626'};"></div></div>
+          <span style="font-weight:900; color:var(--navy); flex:0 0 56px; text-align:right;">${c.got} / ${c.weight}</span>
+        </div>
+        <div style="font-size:11px; color:var(--muted); margin:0 0 6px 86px;">${esc(c.detail)}</div>`).join("")}
+  ` : ``;
   let html = `
     <div class="card fade"><p class="eyebrow">✅ ${esc(ORBIT.user)} 님(나)이 3질문에 답했어요</p>${answers}</div>
     <div class="card fade"><p class="eyebrow">🤝 나와 이 팀의 매칭률</p>
       ${r.bestRole?`<p style="text-align:center; font-size:13px; color:var(--blue); font-weight:700; margin:0 0 12px;">🎯 ${esc(ORBIT.user)}님에게 가장 맞는 자리 — ${esc(r.bestRole)}</p>`:``}
       <div class="score"><div class="n">${rate}<span style="font-size:20px">%</span></div><div class="l">${esc(r.verdict||"")}</div><div class="bar"><div class="fill" id="barfill"></div></div></div>
-      <div style="margin-top:14px">${fits}</div><div class="verdict">${esc(r.summary||"")}</div></div>`;
+      <div style="margin-top:14px">${fits}</div><div class="verdict">${esc(r.summary||"")}</div>
+      ${breakdownHtml}</div>`;
   html += `
     <div class="card fade"><p class="eyebrow">📨 합류 신청</p>
       <p style="font-size:13px; color:#475569; margin:0 0 11px;">이 아이디어의 제공자에게 합류를 신청합니다. 제공자가 수락하면 슬랙으로 함께 시작해요.</p>
@@ -1258,7 +1759,7 @@ function renderMyTeam(){
   let html = `<h3 class="myh">🔍 아이디어 둘러보기</h3>`;
   html += window._browse.map((v,i)=>`
     <div class="browsecard" onclick="openDetailIdx(${i})">
-      <span class="fitpct">🔥 합류 가능</span>
+      <span class="fitpct" id="mfit-${i}">🔥 합류 가능</span>
       <div class="bt" style="margin-top:9px">${esc(v.serviceName)} — ${esc(v.tagline)}</div>
       <div class="bd">${esc(v.lead)}</div>
     </div>`).join("");
@@ -1269,6 +1770,7 @@ function renderMyTeam(){
       <span class="pill ${a.status==='accepted'?'green':'amber'}">${a.status==='accepted'?'수락됨 ✓':'수락 대기'}</span></div></div>`).join("");
   }
   box.innerHTML = html;
+  attachPreview("mfit", window._browse);
 }
 function openDetailIdx(i){ openDetail((window._browse||[])[i]); }
 function showResume(){ go("resume"); document.getElementById("resume-body").innerHTML = resumeCard(); }

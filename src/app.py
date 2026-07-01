@@ -66,6 +66,15 @@ def api_match():
     return jsonify(main.match_teammates(vision))
 
 
+@app.post("/api/preview")
+def api_preview():
+    """[둘러보기] 프로필 보유 Rider에게 카드별 예상 적합도를 즉시(AI 없이) 계산."""
+    data = request.json or {}
+    applicant = data.get("applicant") or {}
+    projects = data.get("projects") or []
+    return jsonify(main.preview_scores(applicant, projects))
+
+
 @app.post("/api/evaluate")
 def api_evaluate():
     """[4단계] 합류 지원자의 매칭률 평가."""
