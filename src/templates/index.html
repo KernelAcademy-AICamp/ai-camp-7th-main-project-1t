@@ -219,6 +219,22 @@
   .link-in:last-child{margin-bottom:0;}
   .link-in .link-ic{position:absolute; left:12px; top:50%; transform:translateY(-50%); width:18px; height:18px; display:flex; align-items:center; justify-content:center; pointer-events:none;}
   .link-in .pf-in{padding-left:40px; margin-bottom:0;}
+  /* 프로필 위저드(단계형 문답) */
+  .wiz-top{display:flex; align-items:center; gap:12px; margin-bottom:20px;}
+  .wiz-prog{flex:1; height:8px; background:#eef2f7; border-radius:999px; overflow:hidden;}
+  .wiz-prog-fill{height:100%; background:var(--green); border-radius:999px; transition:width .3s ease;}
+  .wiz-count{font-size:12px; font-weight:800; color:var(--muted); white-space:nowrap;}
+  .wiz-q{font-size:18px; font-weight:800; color:var(--navy); letter-spacing:-.01em; line-height:1.45; margin:0 0 16px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+  .wiz-q .rq{font-size:10.5px; font-weight:800; color:#047857; background:#d1fae5; border-radius:999px; padding:2px 8px;}
+  .wiz-q .rq.optn{color:#64748b; background:#eef2f7;}
+  .wiz-q .pf-note{font-size:11px; font-weight:700; color:var(--muted);}
+  .wiz-body{min-height:56px; margin-bottom:22px;}
+  .wiz-nav{display:flex; gap:9px;}
+  /* C 타입 — 섹션 제목 + 섹션 내 여러 문항 */
+  .wiz-sec-title{font-size:19px; font-weight:900; color:var(--navy); letter-spacing:-.02em; margin:0 0 14px;}
+  .wiz-field{margin-bottom:18px;}
+  .wiz-field:last-child{margin-bottom:0;}
+  .wiz-field .pf-lbl:first-child{margin-top:0;}
   /* 연락 가능 시간 상세 슬롯 */
   .slot-box{border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-top:10px; background:#fafbfc;}
   /* 역량 직접 입력 */
@@ -358,6 +374,27 @@
   .askfor li{margin:7px 0; color:#475569;}
   .sec-title{font-size:21px; color:var(--navy); margin:24px 0 14px; letter-spacing:-.02em;}
   .pagepad{padding:24px 0 80px;}
+  /* 대시보드 */
+  .dash-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media(max-width:680px){ .dash-grid{grid-template-columns:1fr;} }
+  .dashcard{background:var(--card); border:1px solid var(--line); border-radius:18px; padding:20px 22px; box-shadow:0 10px 30px rgba(15,23,42,.04); display:flex; flex-direction:column;}
+  .dashcard .dc-top{display:flex; align-items:center; gap:10px; margin-bottom:13px;}
+  .dashcard .dc-ic{width:40px; height:40px; border-radius:11px; background:var(--sky); color:var(--blue); display:flex; align-items:center; justify-content:center; font-size:20px; flex:0 0 auto;}
+  .dashcard .dc-t{font-size:15.5px; font-weight:800; color:var(--navy);}
+  .dashcard .dc-n{margin-left:auto; font-size:12px; font-weight:800; padding:3px 10px; border-radius:999px; background:var(--sky); color:var(--blue);}
+  .dashcard .dc-body{flex:1; margin-bottom:14px;}
+  .dashcard .dc-empty{color:var(--muted); font-size:13px; line-height:1.55; padding:6px 0;}
+  .dash-row{display:flex; align-items:center; gap:9px; padding:8px 0; border-bottom:1px solid var(--line);}
+  .dash-row:last-child{border-bottom:0;}
+  .dash-row .pav{width:28px; height:28px; font-size:12px;}
+  .dashcard.clickable{cursor:pointer; transition:.15s;}
+  .dashcard.clickable:hover{border-color:var(--blue); box-shadow:0 14px 34px rgba(37,99,235,.1);}
+  /* 프로필 상세 */
+  .pd-row{display:grid; grid-template-columns:130px 1fr; gap:12px; padding:9px 0; border-bottom:1px solid var(--line);}
+  .pd-row:last-child{border-bottom:0;}
+  .pd-k{font-size:12.5px; font-weight:800; color:var(--navy);}
+  .pd-v{font-size:13px; color:#334155; line-height:1.7;}
+  .pd-v .chip{margin:0 6px 6px 0; cursor:default;}
 </style>
 </head>
 <body>
@@ -540,9 +577,26 @@
 </section>
 
 <!-- ===== 마이페이지 ===== -->
+<!-- ===== 대시보드 (기 가입 고객 로그인 시) ===== -->
+<section class="screen hidden" id="s-dashboard">
+  <div class="narrow pagepad">
+    <div class="myhead">
+      <div class="myhi">👋 <b id="dashName">홍길동</b>님, 다시 오신 걸 환영해요</div>
+      <div class="mymode">오늘도 좋은 팀을 만들어봐요 🛰️</div>
+    </div>
+    <div id="dash-grid" class="dash-grid"></div>
+  </div>
+</section>
+
+<!-- ===== 내 프로필 상세 ===== -->
+<section class="screen hidden" id="s-profile-detail">
+  <div class="narrow pagepad" id="pd-body"></div>
+</section>
+
 <section class="screen hidden" id="s-my">
   <div class="narrow pagepad">
     <div class="myhead">
+      <button class="btn ghost" style="margin-bottom:14px" onclick="showDashboard()">← 대시보드</button>
       <div class="myhi">👋 <b id="myName">홍길동</b>님, 환영합니다</div>
       <div class="mymode" id="myModeLabel"></div>
     </div>
@@ -806,7 +860,114 @@ function doLogin(){
   if(p && p.type==="idea"){ goIdeaIntro(); const ti=document.getElementById("idea"); if(ti) ti.value=p.idea; ideaStart(); return; }
   if(p && p.type==="detail"){ openDetail(p.vision); return; }
   if(p && p.type==="profile"){ go("rider"); renderRiderProfile(); return; }
-  showMy("idea");
+  showDashboard();   // 기 가입 고객 로그인 → 대시보드
+}
+/* ===== 대시보드 (기 가입 고객) ===== */
+function showDashboard(){ go("dashboard"); renderDashboard(); }
+function renderDashboard(){
+  document.getElementById("dashName").textContent = ORBIT.user || "";
+  const ideas = ORBIT.myIdeas || [];
+  const proposals = ideas.flatMap(it => (it.proposals||[]).map(pr=>({...pr, idea:it.vision.serviceName})));
+  const pending = proposals.filter(pr=>pr.status==="pending");
+  const applied = ORBIT.applied || [];
+  const profile = ORBIT.profile;
+
+  // 1) 내 아이디어
+  const ideaBody = ideas.length
+    ? ideas.slice(0,3).map(it=>`<div class="dash-row"><div style="flex:1"><b style="color:var(--navy);font-size:13.5px">${esc(it.vision.serviceName)}</b><div style="font-size:12px;color:var(--muted);margin-top:2px">${esc(it.vision.tagline)}</div></div></div>`).join("")
+    : `<div class="dc-empty">아직 등록한 아이디어가 없어요.<br>한 줄이면 ORBIT이 비전과 팀원까지 만들어드려요.</div>`;
+  const c1 = `<div class="dashcard">
+    <div class="dc-top"><div class="dc-ic">🚀</div><div class="dc-t">내 아이디어</div>${ideas.length?`<span class="dc-n">${ideas.length}</span>`:``}</div>
+    <div class="dc-body">${ideaBody}</div>
+    <button class="btn ${ideas.length?'ghost':'full'} full" onclick="${ideas.length?"showMy('idea')":"newIdea()"}">${ideas.length?'아이디어 관리 →':'＋ 새 아이디어 ORBIT 하기'}</button>
+  </div>`;
+
+  // 2) 내 프로필
+  const profBody = profile
+    ? `<div><b style="color:var(--navy);font-size:13.5px">${esc(profile.headline||"")}</b>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px">${esc(profile.primary_role||"")}${(profile.skills||[]).length?` · ${esc((profile.skills||[]).slice(0,3).join(", "))}`:""}</div></div>`
+    : `<div class="dc-empty">프로필을 등록하면 아이디어와의 <b>적합도</b>를 더 정확히 계산해요.</div>`;
+  const c2 = `<div class="dashcard ${profile?'clickable':''}" ${profile?`onclick="showProfileDetail()"`:``}>
+    <div class="dc-top"><div class="dc-ic" style="background:var(--mint);color:#047857">🛰️</div><div class="dc-t">내 프로필</div>${profile?`<span class="dc-n" style="background:var(--mint);color:#047857">등록됨</span>`:``}</div>
+    <div class="dc-body">${profBody}</div>
+    <button class="btn ${profile?'ghost':'green'} full" onclick="${profile?'showProfileDetail()':'riderStartProfile()'}">${profile?'프로필 상세 보기 →':'프로필 작성하기 →'}</button>
+  </div>`;
+
+  // 3) 합류 제안 보기 (내 아이디어에 들어온 제안)
+  const propBody = pending.length
+    ? pending.slice(0,3).map(pr=>`<div class="dash-row"><div class="pav">${esc(pr.name[0])}</div><div style="flex:1"><b style="color:var(--navy);font-size:13px">${esc(pr.name)}</b><div style="font-size:11.5px;color:var(--muted)">${esc(pr.role)} · ${esc(pr.idea)}</div></div><span class="pill blue">${pr.rate}%</span></div>`).join("")
+    : `<div class="dc-empty">아직 받은 합류 제안이 없어요.</div>`;
+  const c3 = `<div class="dashcard">
+    <div class="dc-top"><div class="dc-ic">📨</div><div class="dc-t">합류 제안 보기</div>${pending.length?`<span class="dc-n">${pending.length}건</span>`:``}</div>
+    <div class="dc-body">${propBody}</div>
+    <button class="btn ghost full" onclick="showMy('idea')">${pending.length?'제안 확인하고 수락 →':'내 아이디어로 이동 →'}</button>
+  </div>`;
+
+  // 4) 요청 수락 현황 (내가 합류 신청한 아이디어)
+  const appBody = applied.length
+    ? applied.slice(0,3).map(a=>`<div class="dash-row"><div style="flex:1"><b style="color:var(--navy);font-size:13px">${esc(a.title)}</b><div style="font-size:11.5px;color:var(--muted)">${esc(a.role)} · 매칭률 ${a.rate}%</div></div><span class="pill ${a.status==='accepted'?'green':'amber'}">${a.status==='accepted'?'수락됨 ✓':'수락 대기'}</span></div>`).join("")
+    : `<div class="dc-empty">아직 합류 신청한 아이디어가 없어요.</div>`;
+  const c4 = `<div class="dashcard">
+    <div class="dc-top"><div class="dc-ic">✅</div><div class="dc-t">요청 수락 현황</div>${applied.length?`<span class="dc-n">${applied.length}</span>`:``}</div>
+    <div class="dc-body">${appBody}</div>
+    <button class="btn ghost full" onclick="${applied.length?"showMy('team')":"goExplore()"}">${applied.length?'신청 현황 보기 →':'아이디어 둘러보기 →'}</button>
+  </div>`;
+
+  document.getElementById("dash-grid").innerHTML = c1 + c2 + c3 + c4;
+}
+/* 내 프로필 상세 — 한 페이지 요약 + 수정/삭제 */
+function showProfileDetail(){ if(!ORBIT.profile){ riderStartProfile(); return; } go("profile-detail"); renderProfileDetail(); }
+function renderProfileDetail(){
+  const p = ORBIT.profile; if(!p){ showDashboard(); return; }
+  const chips = (arr)=> (arr||[]).length ? (arr||[]).map(x=>`<span class="chip on">${esc(x)}</span>`).join("") : "-";
+  const row = (label, valHtml)=> `<div class="pd-row"><div class="pd-k">${esc(label)}</div><div class="pd-v">${valHtml}</div></div>`;
+  const contact = (p.contact_hours||[]).map(l=>{
+    const d=(p.contact_slots||{})[l]||{}; const days=(d.days||[]).join("");
+    const t = d.anytime ? "시간 상관없음" : ((d.from||d.to)?`${d.from||"--"}~${d.to||"--"}`:"");
+    const detail=[days,t].filter(Boolean).join(" ");
+    return `<b style="color:var(--navy)">${esc(l)}</b>${detail?` · ${esc(detail)}`:""}`;
+  }).join("<br>") || "-";
+  const links = (p.links||[]).length
+    ? (p.links||[]).map(l=>`<a href="${esc(l.url)}" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:underline;margin-right:14px;white-space:nowrap">${esc(l.label)} ↗</a>`).join("")
+    : "-";
+  document.getElementById("pd-body").innerHTML = `
+    <button class="btn ghost" onclick="showDashboard()">← 대시보드</button>
+    <div class="card" style="margin-top:16px">
+      <div style="display:flex; align-items:center; gap:13px;">
+        <div class="pav" style="width:46px;height:46px;font-size:18px">${esc((p.name||ORBIT.user||"나")[0])}</div>
+        <div><div style="font-size:18px;font-weight:800;color:var(--navy)">${esc(p.name||ORBIT.user||"")}</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:2px">${esc(p.headline||"")}</div></div>
+      </div>
+    </div>
+    <div class="card"><p class="eyebrow">🧭 기본 정보</p>
+      ${row("한 줄 자기소개", esc(p.headline||"-"))}
+      ${row("대표 직군", esc(p.primary_role||"-"))}
+      ${row("역량·기술", chips(p.skills))}
+    </div>
+    <div class="card"><p class="eyebrow">🤝 협업 조건</p>
+      ${row("협업 방식", esc(p.collab_mode||"-"))}
+      ${row("주당 투입 가능 시간", esc(p.weekly_capacity||"-"))}
+      ${row("연락 가능 시간", contact)}
+    </div>
+    <div class="card"><p class="eyebrow">💡 나와 잘 맞는 일</p>
+      ${row("관심 분야", chips(p.interest_domains))}
+      ${row("참여 목적", chips(p.participation_motivation))}
+    </div>
+    <div class="card"><p class="eyebrow">📎 추가 정보</p>
+      ${row("개인 링크", links)}
+      ${row("덧붙이고 싶은 말", esc(p.bio||"-"))}
+    </div>
+    <div style="display:flex; gap:9px;">
+      <button class="btn ghost" style="flex:1" onclick="deleteProfile()">🗑 삭제</button>
+      <button class="btn green" style="flex:2" onclick="editProfile()">✎ 수정하기</button>
+    </div>`;
+}
+function editProfile(){ ORBIT._editReturn = "detail"; riderStartProfile(); }
+function deleteProfile(){
+  if(!confirm("프로필을 삭제할까요?\n삭제하면 아이디어와의 적합도 계산에 기본값이 사용됩니다.")) return;
+  ORBIT.profile = null;
+  alert("프로필을 삭제했어요.");
+  showDashboard();
 }
 
 /* 비로그인 진입 — 아이디어 올리기 */
@@ -883,10 +1044,11 @@ function pfChips(k){
     return `<span class="chip ${sel?'on':''}" onclick="pfToggle('${k}','${esc(o)}')">${esc(o)}</span>`;
   }).join("");
 }
-function pfGroup(k){
+function pfGroup(k, labelText){
   const cfg = PF_OPTS[k];
   const note = cfg.single ? "1개 선택" : (cfg.multi ? "복수 선택" : null);
-  return pfLabel(`${cfg.icon} ${esc(cfg.label)}`, true, note) +
+  const label = labelText || `${cfg.icon} ${esc(cfg.label)}`;
+  return pfLabel(label, true, note) +
     `<div class="chips" id="pfg-${k}" style="margin-top:2px">${pfChips(k)}</div>`;
 }
 /* 연락 가능 시간 — 칩마다 개별 요일·시간. 평일 낮/저녁=시간 필수, 주말/요일 상관없음='언제든' 선택 시 시간 불필요 */
@@ -997,7 +1159,7 @@ function onRoleChange(){
     const visible = new Set(entries.flatMap(([,opts])=>opts));
     ORBIT._pf.skills = (ORBIT._pf.skills||[]).filter(s=>visible.has(s));
   }
-  document.getElementById("pf-skills-box").innerHTML = skillChipsHtml();
+  const box = document.getElementById("pf-skills-box"); if(box) box.innerHTML = skillChipsHtml();
 }
 function pfSkillToggle(o){
   const arr = ORBIT._pf.skills || (ORBIT._pf.skills=[]);
@@ -1087,100 +1249,145 @@ function renderRiderProfile(){
     interest_domains: _savedDomains.filter(d=>_domainOpts.has(d)),        // 목록에서 선택
     customDomains: _savedDomains.filter(d=>!_domainOpts.has(d)),          // 직접 입력
     participation_motivation: [...(p.participation_motivation||[])],
+    headline: p.headline || "",
+    bio: p.bio || "",
+    link_linkedin: ((p.links||[]).find(l=>l.label==="LinkedIn")||{}).url || "",
+    link_notion:   ((p.links||[]).find(l=>l.label==="Notion")||{}).url || "",
+    link_other:    ((p.links||[]).find(l=>l.label==="기타")||{}).url || "",
   };
   /* 직군에 맞지 않는 기존 선택 스킬 정리(직군 선택돼 있을 때만) */
   const _vis = visibleSkillEntries();
   if(_vis){ const set=new Set(_vis.flatMap(([,o])=>o)); ORBIT._pf.skills = ORBIT._pf.skills.filter(s=>set.has(s)); }
-  const roleOpts = `<option value="">— 직군을 선택하세요 —</option>` +
-    ROLE_OPTS.map(r=>`<option value="${esc(r)}" ${p.primary_role===r?'selected':''}>${esc(r)}</option>`).join("");
-  const linkOf = (lbl)=> ((p.links||[]).find(l=>l.label===lbl)||{}).url || "";
-  const pf = document.getElementById("rider-profile");
-  pf.classList.remove("hidden");
-  pf.innerHTML = `
+  const uname = esc(ORBIT.user || "회원");
+  const Q = {
+    headline: `🙋 ${uname} 님을 한 줄로 소개한다면요?`,
+    role: `🧭 ${uname} 님의 대표 직군은 무엇인가요?`,
+    skills: `🛠 어떤 역량·기술을 가지고 계신가요?`,
+    collab_mode: `🤝 어떤 방식으로 협업하고 싶으신가요?`,
+    weekly_capacity: `⏱ 일주일에 얼마나 참여할 수 있나요?`,
+    contact_hours: `📞 언제 연락이 가능한가요?`,
+    interest_domains: `💡 ${uname} 님의 관심 분야는 무엇인가요?`,
+    participation_motivation: `🎯 ORBIT 참여 목적은 무엇인가요?`,
+    links: `🔗 공유하고 싶은 링크가 있나요?`,
+    bio: `📝 덧붙이고 싶은 말이 있나요?`,
+  };
+  /* C 타입 — 섹션별 그룹을 단계로. 각 필드는 위저드형 질문 라벨(Q) + 입력 블록 */
+  const FIELD = {
+    headline: ()=> pfLabel(Q.headline, true) +
+      `<input class="pf-in" id="pf-headline" placeholder="예) 감성 모바일 웹 잘 만드는 프론트엔드" value="${esc(ORBIT._pf.headline||"")}" oninput="ORBIT._pf.headline=this.value" />`,
+    role: ()=>{ const opts=`<option value="">— 직군을 선택하세요 —</option>`+ROLE_OPTS.map(r=>`<option value="${esc(r)}" ${ORBIT._pf.primary_role===r?'selected':''}>${esc(r)}</option>`).join("");
+      return pfLabel(Q.role, true) + `<select class="pf-in" id="pf-role" onchange="onRoleChange()">${opts}</select>`; },
+    skills: ()=> pfLabel(Q.skills, true, "복수 선택 · 직접 입력 가능") +
+      `<div id="pf-skills-box">${skillChipsHtml()}</div>
+       <input class="pf-in" id="pf-skill-custom" style="margin-top:10px" placeholder="목록에 없으면 직접 입력 후 쉼표(,) 또는 Enter — 여러 개 가능" oninput="pfCustomInput(event,'skills')" onkeydown="pfCustomKeydown(event,'skills')" onblur="flushCustom('skills')" />
+       <div id="pf-custom-box">${customChipsHtml('skills')}</div>`,
+    collab_mode: ()=> pfLabel(Q.collab_mode, true, "1개 선택") +
+      `<div class="chips" id="pfg-collab_mode" style="margin-top:2px">${pfChips("collab_mode")}</div>`,
+    weekly_capacity: ()=> pfLabel(Q.weekly_capacity, true, "1개 선택") +
+      `<div class="chips" id="pfg-weekly_capacity" style="margin-top:2px">${pfChips("weekly_capacity")}</div><div id="pf-capacity-custom">${capacityCustomHtml()}</div>`,
+    contact_hours: ()=> pfLabel(Q.contact_hours, true, "1개 선택") +
+      `<div class="chips" id="pfg-contact_hours" style="margin-top:2px">${pfChips("contact_hours")}</div><div id="pf-contact-detail">${(ORBIT._pf.contact_hours||[]).map(contactSlotHtml).join("")}</div>`,
+    interest_domains: ()=> pfLabel(Q.interest_domains, true, "복수 선택 · 직접 입력 가능") +
+      `<div class="chips" id="pfg-interest_domains" style="margin-top:2px">${pfChips("interest_domains")}</div>
+       <input class="pf-in" id="pf-domain-custom" style="margin-top:10px" placeholder="목록에 없으면 직접 입력 후 쉼표(,) 또는 Enter — 여러 개 가능" oninput="pfCustomInput(event,'interest_domains')" onkeydown="pfCustomKeydown(event,'interest_domains')" onblur="flushCustom('interest_domains')" />
+       <div id="pf-domain-custom-box">${customChipsHtml('interest_domains')}</div>`,
+    participation_motivation: ()=> pfLabel(Q.participation_motivation, true, "복수 선택") +
+      `<div class="chips" id="pfg-participation_motivation" style="margin-top:2px">${pfChips("participation_motivation")}</div>`,
+    links: ()=> pfLabel(Q.links, false) +
+      `<div class="link-in"><span class="link-ic">${LINK_ICONS.linkedin}</span><input class="pf-in" id="pf-linkedin" placeholder="LinkedIn 주소 (예: linkedin.com/in/your-id)" value="${esc(ORBIT._pf.link_linkedin||"")}" oninput="ORBIT._pf.link_linkedin=this.value" /></div>
+       <div class="link-in"><span class="link-ic">${LINK_ICONS.notion}</span><input class="pf-in" id="pf-notion" placeholder="Notion 주소 (예: notion.so/...)" value="${esc(ORBIT._pf.link_notion||"")}" oninput="ORBIT._pf.link_notion=this.value" /></div>
+       <div class="link-in"><span class="link-ic">${LINK_ICONS.web}</span><input class="pf-in" id="pf-other" placeholder="기타 링크 (포트폴리오 등)" value="${esc(ORBIT._pf.link_other||"")}" oninput="ORBIT._pf.link_other=this.value" /></div>`,
+    bio: ()=> pfLabel(Q.bio, false) +
+      `<textarea id="pf-bio" style="margin-top:2px" placeholder="예) 꼭 강조하고 싶은 경험이나, 합류하면 해보고 싶은 것 등" oninput="ORBIT._pf.bio=this.value">${esc(ORBIT._pf.bio||"")}</textarea>`,
+  };
+  const VALID = {
+    headline: ()=> (ORBIT._pf.headline||"").trim() ? null : "한 줄 자기소개를 입력해 주세요.",
+    role: ()=> ORBIT._pf.primary_role ? null : "대표 직군을 선택해 주세요.",
+    skills: ()=>{ flushCustom('skills'); return [...(ORBIT._pf.skills||[]),...(ORBIT._pf.customSkills||[])].length ? null : "역량·기술을 1개 이상 선택하거나 입력해 주세요."; },
+    collab_mode: ()=> ORBIT._pf.collab_mode ? null : "협업 방식을 선택해 주세요.",
+    weekly_capacity: ()=>{ const capEl=document.getElementById("pf-capacity-hours"); if(capEl) ORBIT._pf.weekly_capacity_custom=capEl.value;
+      if(!ORBIT._pf.weekly_capacity) return "주당 투입 가능 시간을 선택해 주세요.";
+      if(ORBIT._pf.weekly_capacity==="직접 입력" && !String(ORBIT._pf.weekly_capacity_custom||"").trim()) return "주당 투입 시간을 입력해 주세요.";
+      return null; },
+    contact_hours: ()=>{ syncContactSlots(); const sel=ORBIT._pf.contact_hours||[];
+      if(!sel.length) return "연락 가능 시간을 선택해 주세요.";
+      for(const l of sel){ const cfg=CONTACT_CONFIG[l]||{}; const slot=(ORBIT._pf.contact_slots||{})[l]||{};
+        if(cfg.editableDays && !(slot.days||[]).length) return `연락 요일을 선택해 주세요. (${l})`;
+        if(cfg.timeRequired && (!slot.from||!slot.to)) return `연락 시간을 선택해 주세요. (${l})`; }
+      return null; },
+    interest_domains: ()=>{ flushCustom('interest_domains'); return [...(ORBIT._pf.interest_domains||[]),...(ORBIT._pf.customDomains||[])].length ? null : "관심 분야를 1개 이상 선택하거나 입력해 주세요."; },
+    participation_motivation: ()=> (ORBIT._pf.participation_motivation||[]).length ? null : "참여 목적을 1개 이상 선택해 주세요.",
+  };
+  const sections = [
+    { title:"나와 잘 맞는 일", fields:["interest_domains","participation_motivation"] },
+    { title:"협업 조건",       fields:["collab_mode","weekly_capacity","contact_hours"] },
+    { title:"기본 정보",       fields:["headline","role","skills"] },
+    { title:"추가 정보",       fields:["links","bio"], optional:true },
+  ];
+  const steps = sections.map(sec=>({
+    title: sec.title, optional: sec.optional,
+    body: ()=> sec.fields.map(f=>`<div class="wiz-field">${FIELD[f]()}</div>`).join(""),
+    validate: ()=>{ for(const f of sec.fields){ const v = VALID[f] ? VALID[f]() : null; if(v) return v; } return null; },
+  }));
+  ORBIT._wiz = { step:0, steps, uname };
+  document.getElementById("rider-profile").classList.remove("hidden");
+  renderWizard();
+}
+function renderWizard(){
+  const w = ORBIT._wiz; const st = w.steps[w.step]; const total = w.steps.length;
+  const isLast = w.step === total-1;
+  document.getElementById("rider-profile").innerHTML = `
     <div class="card inputcard fade" style="margin-top:14px">
-      <h2>당신에 대해 알려주세요</h2>
-      <p class="sub">내 프로필이에요. 아래 정보로 아이디어와의 <b>적합도</b>를 계산합니다 — <b>기술 40 · 관심 30 · 목적 20 · 시간 10</b>.</p>
-
-      <div class="pf-sec">
-        <div class="pf-sec-t">기본 정보</div>
-        ${pfLabel("🙋 한 줄 자기소개", true)}
-        <input class="pf-in" id="pf-headline" placeholder="예) 감성 모바일 웹 잘 만드는 프론트엔드" value="${esc(p.headline||"")}" />
-        ${pfLabel("🧭 대표 직군", true)}
-        <select class="pf-in" id="pf-role" onchange="onRoleChange()">${roleOpts}</select>
-        ${pfLabel("🛠 역량·기술", true, "복수 선택 · 직접 입력 가능")}
-        <div id="pf-skills-box">${skillChipsHtml()}</div>
-        <input class="pf-in" id="pf-skill-custom" style="margin-top:10px" placeholder="목록에 없으면 직접 입력 후 쉼표(,) 또는 Enter — 여러 개 가능" oninput="pfCustomInput(event,'skills')" onkeydown="pfCustomKeydown(event,'skills')" onblur="flushCustom('skills')" />
-        <div id="pf-custom-box">${customChipsHtml('skills')}</div>
+      <div class="wiz-top">
+        <div class="wiz-prog"><div class="wiz-prog-fill" style="width:${Math.round((w.step+1)/total*100)}%"></div></div>
+        <div class="wiz-count">${w.step+1} / ${total}</div>
       </div>
-
-      <div class="pf-sec">
-        <div class="pf-sec-t">협업 조건</div>
-        ${pfGroup("collab_mode")}
-        ${pfGroup("weekly_capacity")}
-        <div id="pf-capacity-custom">${capacityCustomHtml()}</div>
-        ${pfGroup("contact_hours")}
-        <div id="pf-contact-detail">${(ORBIT._pf.contact_hours||[]).map(contactSlotHtml).join("")}</div>
-      </div>
-
-      <div class="pf-sec">
-        <div class="pf-sec-t">나와 잘 맞는 일</div>
-        ${pfGroup("interest_domains")}
-        <input class="pf-in" id="pf-domain-custom" style="margin-top:10px" placeholder="목록에 없으면 직접 입력 후 쉼표(,) 또는 Enter — 여러 개 가능" oninput="pfCustomInput(event,'interest_domains')" onkeydown="pfCustomKeydown(event,'interest_domains')" onblur="flushCustom('interest_domains')" />
-        <div id="pf-domain-custom-box">${customChipsHtml('interest_domains')}</div>
-        ${pfGroup("participation_motivation")}
-      </div>
-
-      <div class="pf-sec">
-        <div class="pf-sec-t">추가 정보 <span class="secopt">· 선택</span></div>
-        ${pfLabel("🔗 개인 링크", false)}
-        <div class="link-in"><span class="link-ic">${LINK_ICONS.linkedin}</span>
-          <input class="pf-in" id="pf-linkedin" placeholder="LinkedIn 주소 (예: linkedin.com/in/your-id)" value="${esc(linkOf('LinkedIn'))}" /></div>
-        <div class="link-in"><span class="link-ic">${LINK_ICONS.notion}</span>
-          <input class="pf-in" id="pf-notion" placeholder="Notion 주소 (예: notion.so/...)" value="${esc(linkOf('Notion'))}" /></div>
-        <div class="link-in"><span class="link-ic">${LINK_ICONS.web}</span>
-          <input class="pf-in" id="pf-other" placeholder="기타 링크 (포트폴리오 등)" value="${esc(linkOf('기타'))}" /></div>
-        ${pfLabel("📝 덧붙이고 싶은 말", false)}
-        <textarea id="pf-bio" style="margin-top:2px" placeholder="예) 꼭 강조하고 싶은 경험이나, 합류하면 해보고 싶은 것 등">${esc(p.bio||"")}</textarea>
-      </div>
-
-      <div style="display:flex; gap:9px; margin-top:22px">
-        <button class="btn ghost" onclick="goExplore()">건너뛰고 둘러보기</button>
-        <button class="btn green" style="flex:1" onclick="saveProfile()">저장하고 아이디어 둘러보기 →</button>
+      <div class="wiz-sec-title">${esc(st.title)}${st.optional?` <span class="secopt">· 선택</span>`:""}</div>
+      <div class="wiz-body">${st.body()}</div>
+      <div class="wiz-nav">
+        ${w.step>0 ? `<button class="btn ghost" onclick="wizPrev()">← 이전</button>`
+                   : `<button class="btn ghost" onclick="goRider()">← 처음으로</button>`}
+        <button class="btn green" style="flex:1" onclick="wizNext()">${isLast ? "저장하고 둘러보기 →" : "다음 →"}</button>
       </div>
     </div>`;
 }
+function wizNext(){
+  const w = ORBIT._wiz; const st = w.steps[w.step];
+  const err = st.validate ? st.validate() : null;
+  if(err){ alert(err); return; }
+  if(w.step === w.steps.length-1){ saveProfile(); return; }
+  w.step++; renderWizard();
+}
+function wizPrev(){ const w = ORBIT._wiz; if(w.step>0){ w.step--; renderWizard(); } }
 function saveProfile(){
-  const headline = document.getElementById("pf-headline").value.trim();
-  const primary_role = document.getElementById("pf-role").value.trim();
-  flushCustom("skills"); flushCustom("interest_domains");  // 입력칸에 남은 직접 입력분 반영(누락 방지)
-  syncContactSlots();  // 선택 칩 ↔ 요일/시간 슬롯 정합
   const s = ORBIT._pf || {};
+  flushCustom("skills"); flushCustom("interest_domains");  // 입력칸에 남은 직접 입력분 반영
+  syncContactSlots();                                       // 선택 칩 ↔ 요일/시간 슬롯 정합
+  const capEl = document.getElementById("pf-capacity-hours"); if(capEl) s.weekly_capacity_custom = capEl.value;
+  /* 모든 값은 위저드 이동 시 _pf 에 저장됨 → DOM 대신 _pf 에서 읽음 */
+  const headline = (s.headline||"").trim();
+  const primary_role = s.primary_role || "";
+  const bio = (s.bio||"").trim();
   const skills = [...new Set([...(s.skills||[]), ...(s.customSkills||[])])];              // 선택 + 직접 입력
   const interest_domains = [...new Set([...(s.interest_domains||[]), ...(s.customDomains||[])])];  // 선택 + 직접 입력
-  const bio = document.getElementById("pf-bio").value.trim();
-  /* 주당 투입 — '직접 입력'이면 '주 N시간'으로 확정 */
-  const capEl = document.getElementById("pf-capacity-hours"); if(capEl) s.weekly_capacity_custom = capEl.value;
   let weekly_capacity = s.weekly_capacity;
   if(weekly_capacity === "직접 입력"){ const h = String(s.weekly_capacity_custom||"").trim(); weekly_capacity = h ? `주 ${h}시간` : ""; }
   const links = [
-    {label:"LinkedIn", url:normUrl(document.getElementById("pf-linkedin").value)},
-    {label:"Notion",   url:normUrl(document.getElementById("pf-notion").value)},
-    {label:"기타",      url:normUrl(document.getElementById("pf-other").value)},
+    {label:"LinkedIn", url:normUrl(s.link_linkedin)},
+    {label:"Notion",   url:normUrl(s.link_notion)},
+    {label:"기타",      url:normUrl(s.link_other)},
   ].filter(l=>l.url);
-  /* experts MVP 필수 검증 */
+  /* 안전망 검증 (위저드가 단계별로 막지만 한 번 더) */
   const miss = [];
-  if(!headline) miss.push("한 줄 소개");
+  if(!headline) miss.push("한 줄 자기소개");
   if(!primary_role) miss.push("대표 직군");
   if(!skills.length) miss.push("역량·기술");
   if(!s.collab_mode) miss.push("협업 방식");
   if(!weekly_capacity) miss.push("주당 투입 가능 시간");
   if(!(s.contact_hours||[]).length) miss.push("연락 가능 시간");
-  (s.contact_hours||[]).forEach(l=>{ const cfg=CONTACT_CONFIG[l]||{}; const slot=(s.contact_slots||{})[l]||{};
-    if(cfg.editableDays && !(slot.days||[]).length) miss.push(`연락 요일(${l})`);
-    if(cfg.timeRequired && (!slot.from || !slot.to)) miss.push(`연락 시간(${l})`); });
   if(!interest_domains.length) miss.push("관심 분야");
   if(!(s.participation_motivation||[]).length) miss.push("참여 목적");
-  if(miss.length){ alert("아래 필수 항목을 채워주세요:\n· " + miss.join("\n· ")); return; }
+  if(miss.length){ alert("아래 항목을 확인해 주세요:\n· " + miss.join("\n· ")); return; }
   ORBIT.profile = {
     name: ORBIT.user || "나",
     headline, primary_role, skills, bio, links,
@@ -1193,6 +1400,8 @@ function saveProfile(){
     participation_motivation: s.participation_motivation,
   };
   alert("✅ 프로필을 저장했어요!\n이제 아이디어와의 매칭률·적합도가 더 정확하게 계산됩니다.");
+  const ret = ORBIT._editReturn; ORBIT._editReturn = null;
+  if(ret === "detail"){ showProfileDetail(); return; }   // 상세에서 수정한 경우 → 상세로 복귀
   goExplore();
 }
 /* 저장된 experts 프로필 → 매칭 API용 applicant 객체 (없으면 null) */
@@ -1260,6 +1469,7 @@ function renderNav(){
   if(!ORBIT.loggedIn){ r.innerHTML = `<button class="linkbtn" onclick="goExplore()">둘러보기</button><button class="linkbtn" onclick="go('login')">로그인</button><button class="navcta" onclick="goIdeaIntro()">ORBIT 시작</button>`; return; }
   const team = ORBIT.myTab === 'team';
   r.innerHTML = `
+    <button class="linkbtn" onclick="showDashboard()">🏠 대시보드</button>
     <div class="modesw ${team?'team':''}">
       <button class="seg ${!team?'on':''}" onclick="showMy('idea')">🚀 Shooter</button>
       <button class="seg ${team?'on':''}" onclick="showMy('team')">🛰️ Rider</button>
