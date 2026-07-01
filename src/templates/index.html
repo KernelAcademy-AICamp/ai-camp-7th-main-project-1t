@@ -19,7 +19,7 @@
   .nav{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); padding:13px 0;}
   .nav .in{width:min(1080px,92%); margin:0 auto; display:flex; align-items:center; gap:10px;}
   .navmenu{display:flex; gap:24px; margin-left:34px;}
-  .navmenu a{font-size:13.5px; font-weight:700; color:#475569; cursor:pointer;}
+  .navmenu a{display:inline-flex; align-items:center; gap:5px; font-size:13.5px; font-weight:700; color:#475569; cursor:pointer; line-height:1;}
   .navmenu a:hover{color:var(--blue);}
   .navcta{background:var(--navy); color:#fff; border:none; border-radius:9px; padding:8px 15px; font-size:13px; font-weight:800; cursor:pointer;}
   .navcta:hover{background:#1a2342;}
@@ -37,7 +37,7 @@
   .nav .modesw .seg.on{color:#fff;}
   .nav .modesw .knob{position:absolute; top:4px; bottom:4px; left:4px; width:calc(50% - 4px); border-radius:999px; background:var(--blue); box-shadow:0 2px 6px rgba(37,99,235,.35); transition:left .25s cubic-bezier(.4,0,.2,1), background .2s; z-index:1;}
   .nav .modesw.team .knob{left:50%; background:#10b981; box-shadow:0 2px 6px rgba(16,185,129,.35);}
-  .linkbtn{background:none; border:none; color:var(--muted); font-size:12.5px; cursor:pointer;}
+  .linkbtn{display:inline-flex; align-items:center; gap:4px; line-height:1; background:none; border:none; color:var(--muted); font-size:12.5px; cursor:pointer;}
   .linkbtn:hover{color:var(--blue);}
 
   .wrap{width:min(960px,92%); margin:0 auto;}
@@ -175,6 +175,11 @@
   .lemail{width:100%; border:1px solid var(--line); border-radius:12px; padding:13px 15px; font-size:14px; margin-bottom:10px; font-family:inherit; color:var(--text);}
   .lemail:focus{outline:none; border-color:var(--blue);}
   .demo-note{font-size:11.5px; color:#92400e; background:#fffbeb; border:1px solid #fef3c7; border-radius:10px; padding:10px 12px; margin-top:18px; line-height:1.5;}
+  .demo-accounts{margin:12px 0 2px; padding-top:12px; border-top:1px dashed var(--line);}
+  .da-label{display:block; font-size:11px; color:#b0b8c4; text-align:center; margin-bottom:8px;}
+  .da-row{display:flex; gap:6px; justify-content:center; flex-wrap:wrap;}
+  .da-row button{font-size:11px; color:var(--muted); background:#f8fafc; border:1px solid var(--line); border-radius:8px; padding:6px 9px; cursor:pointer; transition:.15s;}
+  .da-row button:hover{background:#eef2f7; color:var(--navy);}
   .lterms{font-size:11px; color:var(--muted); margin-top:16px;}
   .lterms u{cursor:pointer;}
 
@@ -402,7 +407,7 @@
 <!-- 상단 네비 -->
 <div class="nav"><div class="in">
   <button class="mark" onclick="go('landing')"><img src="/static/orbit-logo.png" alt="ORBIT" class="logo-img"></button>
-  <nav class="navmenu">
+  <nav class="navmenu" id="navMenu">
     <a onclick="scrollSec('about')">서비스 소개</a>
     <a onclick="scrollSec('how')">이용 방법</a>
     <a onclick="scrollSec('example')">프로젝트 예시</a>
@@ -571,7 +576,37 @@
       <input class="lemail" placeholder="이메일 주소" />
       <button class="btn dark full" onclick="doLogin()">이메일로 계속하기</button>
       <p class="demo-note">🔸 데모 버전 — 어떤 버튼이든 누르면 로그인된 것처럼 진행됩니다. (실제 계정 연동은 준비중)</p>
+      <div class="demo-accounts">
+        <span class="da-label">🧪 데모 계정 바로 체험</span>
+        <div class="da-row">
+          <button onclick="doLogin('new')">🌱 새싹·신규</button>
+          <button onclick="doLogin('rider')">🛰️ 이라이더·프로필有</button>
+          <button onclick="doLogin('shooter')">🚀 박슈터·아이디어有</button>
+        </div>
+      </div>
       <p class="lterms">계속하면 <u>이용약관</u>과 <u>개인정보처리방침</u>에 동의하게 됩니다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 역할 선택 (신규 로그인 시) ===== -->
+<section class="screen hidden" id="s-rolepick">
+  <div class="lwrap" style="max-width:780px; padding:52px 0;">
+    <h2 style="text-align:center; font-size:26px; color:var(--navy); margin:0 0 8px; letter-spacing:-.02em;">어떻게 시작할까요?</h2>
+    <p style="text-align:center; color:var(--muted); font-size:14px; margin:0 0 32px;">고른 뒤에도 상단에서 언제든 역할을 바꿀 수 있어요.</p>
+    <div class="role-pick">
+      <button class="rolecard shooter" onclick="chooseRole('shooter')">
+        <div class="rc-emoji">🚀</div>
+        <div class="rc-title">Shooter</div>
+        <div class="rc-sub">아이디어 쏘아 올리기</div>
+        <div class="rc-hint">내 아이디어로 팀을 모아요</div>
+      </button>
+      <button class="rolecard rider" onclick="chooseRole('rider')">
+        <div class="rc-emoji">🛰️</div>
+        <div class="rc-title">Rider</div>
+        <div class="rc-sub">빛나는 아이디어에 올라타기</div>
+        <div class="rc-hint">관심 가는 프로젝트에 합류해요</div>
+      </button>
     </div>
   </div>
 </section>
@@ -688,7 +723,30 @@
 
 <script>
 const ORBIT = { loggedIn:false, user:null, myTab:"idea", vision:null, founderQuestion:"", boost:null, picks:[],
-  applicant:null, myIdeas:[], applied:[], detailVision:null, detailRole:"", detailRate:0, profile:null };
+  applicant:null, myIdeas:[], applied:[], detailVision:null, detailRole:"", detailRate:0, profile:null,
+  role:null, profileDone:false };
+
+/* 데모 계정 3종 — 각기 다른 진입 시나리오 (실제 회원 DB 없이 상태만 다르게) */
+const DEMO_ACCOUNTS = {
+  'new':     { user:"새싹",    role:null,      profileDone:false, hasIdea:false },
+  'rider':   { user:"이라이더", role:"rider",   profileDone:true,  hasIdea:false,
+    profile:{
+      name:"이라이더",
+      headline:"0에서 팬덤을 만드는 SNS 마케터",
+      primary_role:"마케팅·콘텐츠",
+      skills:["인스타그램 운영","숏폼 콘텐츠 기획","브랜드 스토리텔링"],
+      bio:"작은 브랜드를 0에서 팬덤까지 키운 경험이 있어요. Gen Z 트렌드에 밝습니다.",
+      links:[],
+      skill_tags:[],
+      collab_mode:"온라인만",
+      weekly_capacity:"주 10시간",
+      contact_hours:["평일 저녁","주말"],
+      contact_slots:{},
+      interest_domains:["콘텐츠","ESG","지역 커뮤니티"],
+      participation_motivation:["포트폴리오","사회적 가치","네트워킹"],
+    } },
+  'shooter': { user:"박슈터",   role:"shooter", profileDone:false, hasIdea:true  },
+};
 
 /* 대표 데모 프로젝트 — 홍길동이 낸 아이디어 (로그인 시 미리 등록) */
 const DEMO_PROJECT = {
@@ -851,16 +909,40 @@ function scrollSec(id){
     window.scrollTo({top:y, behavior:"smooth"});
   }, 60);
 }
-function doLogin(){
-  ORBIT.loggedIn = true; ORBIT.user = "홍길동";
-  if(!ORBIT.myIdeas.length){
-    ORBIT.myIdeas.push({ vision:DEMO_PROJECT, proposals:DEMO_PROJECT_PROPOSALS.map(p=>({...p})) });
-  }
+function doLogin(accKey){
+  const acc = DEMO_ACCOUNTS[accKey] || DEMO_ACCOUNTS['new'];
+  ORBIT.loggedIn = true;
+  ORBIT.user = acc.user;
+  ORBIT.role = acc.role;
+  ORBIT.profileDone = acc.profileDone;
+  ORBIT.myIdeas = acc.hasIdea ? [{ vision:DEMO_PROJECT, proposals:DEMO_PROJECT_PROPOSALS.map(p=>({...p})) }] : [];
+  ORBIT.applied = []; ORBIT.profile = acc.profile || null;
+  // 랜딩에서 하던 액션 이어가기 (있으면 그 역할로 확정)
   const p = ORBIT._pending; ORBIT._pending = null;
-  if(p && p.type==="idea"){ goIdeaIntro(); const ti=document.getElementById("idea"); if(ti) ti.value=p.idea; ideaStart(); return; }
-  if(p && p.type==="detail"){ openDetail(p.vision); return; }
-  if(p && p.type==="profile"){ go("rider"); renderRiderProfile(); return; }
-  showDashboard();   // 기 가입 고객 로그인 → 대시보드
+  if(p && p.type==="idea"){ ORBIT.role="shooter"; ORBIT.myTab="idea"; goIdeaIntro(); const ti=document.getElementById("idea"); if(ti) ti.value=p.idea; ideaStart(); return; }
+  if(p && p.type==="detail"){ ORBIT.role = ORBIT.role||"rider"; ORBIT.myTab="team"; openDetail(p.vision); return; }
+  if(p && p.type==="profile"){ ORBIT.role="rider"; ORBIT.myTab="team"; go("rider"); renderRiderProfile(); return; }
+  routeByRole();
+}
+/* 로그인 후: 신규(역할 미정)면 역할 선택, 기 가입이면 대시보드 */
+function routeByRole(){
+  if(!ORBIT.role){ go("rolepick"); return; }
+  ORBIT.myTab = (ORBIT.role==="rider") ? "team" : "idea";
+  showDashboard();
+}
+/* 역할 선택 화면에서 고름 */
+function chooseRole(role){
+  ORBIT.role = role;
+  if(role==="shooter"){ ORBIT.myTab="idea"; goIdeaIntro(); return; }
+  ORBIT.myTab="team";
+  if(ORBIT.profileDone) showMy("team");   // 프로필 완료 Rider → 둘러보기
+  else goRider();                          // 미완 → 온보딩
+}
+/* 상단 토글 Rider — 프로필 미완이면 온보딩, 완료면 둘러보기 */
+function goRiderTab(){
+  ORBIT.myTab="team";
+  if(ORBIT.profileDone) showMy("team");
+  else goRider();
 }
 /* ===== 대시보드 (기 가입 고객) ===== */
 function showDashboard(){ go("dashboard"); renderDashboard(); }
@@ -1399,6 +1481,7 @@ function saveProfile(){
     interest_domains,
     participation_motivation: s.participation_motivation,
   };
+  ORBIT.profileDone = true; ORBIT.role = "rider"; ORBIT.myTab = "team";
   alert("✅ 프로필을 저장했어요!\n이제 아이디어와의 매칭률·적합도가 더 정확하게 계산됩니다.");
   const ret = ORBIT._editReturn; ORBIT._editReturn = null;
   if(ret === "detail"){ showProfileDetail(); return; }   // 상세에서 수정한 경우 → 상세로 복귀
@@ -1461,22 +1544,26 @@ function exploreOpen(i){
   if(!ORBIT.loggedIn){ ORBIT._pending={type:"detail", vision:v}; go("login"); return; }
   openDetail(v);
 }
-function logout(){ ORBIT.loggedIn=false; ORBIT.user=null; ORBIT.myIdeas=[]; ORBIT.applied=[]; ORBIT.profile=null; go("landing"); }
+function logout(){ ORBIT.loggedIn=false; ORBIT.user=null; ORBIT.myIdeas=[]; ORBIT.applied=[]; ORBIT.profile=null; ORBIT.role=null; ORBIT.profileDone=false; ORBIT.myTab="idea"; go("landing"); }
 function pickMode(m){ showMy(m); }
 
 function renderNav(){
+  const menu = document.getElementById("navMenu");
   const r = document.getElementById("navRight");
-  if(!ORBIT.loggedIn){ r.innerHTML = `<button class="linkbtn" onclick="goExplore()">둘러보기</button><button class="linkbtn" onclick="go('login')">로그인</button><button class="navcta" onclick="goIdeaIntro()">ORBIT 시작</button>`; return; }
+  if(!ORBIT.loggedIn){
+    if(menu) menu.innerHTML = `<a onclick="scrollSec('about')">서비스 소개</a><a onclick="scrollSec('how')">이용 방법</a><a onclick="scrollSec('example')">프로젝트 예시</a>`;
+    r.innerHTML = `<button class="linkbtn" onclick="go('login')">로그인</button><button class="navcta" onclick="go('login')">시작하기</button>`;
+    return;
+  }
+  // 로그인: 소개 메뉴 숨기고, 역할 정해졌으면 왼쪽에 Shooter/Rider 토글
   const team = ORBIT.myTab === 'team';
+  if(menu){
+    menu.innerHTML = ORBIT.role ? `
+      <a onclick="showMy('idea')" style="${!team?'color:var(--blue); font-weight:900':''}">🚀 Shooter</a>
+      <a onclick="goRiderTab()" style="${team?'color:#047857; font-weight:900':''}">🛰️ Rider</a>` : ``;
+  }
   r.innerHTML = `
-    <button class="linkbtn" onclick="showDashboard()">🏠 대시보드</button>
-    <div class="modesw ${team?'team':''}">
-      <button class="seg ${!team?'on':''}" onclick="showMy('idea')">🚀 Shooter</button>
-      <button class="seg ${team?'on':''}" onclick="showMy('team')">🛰️ Rider</button>
-      <span class="knob"></span>
-    </div>
-    ${team ? '<button class="linkbtn" onclick="showResume()">📄 내 이력서</button>' : ''}
-    <span style="font-size:12.5px; color:var(--muted)">${esc(ORBIT.user||"")}님</span>
+    <button class="linkbtn" onclick="showDashboard()">⭐ ${esc(ORBIT.user||"")}님</button>
     <button class="linkbtn" onclick="logout()">로그아웃</button>`;
 }
 
