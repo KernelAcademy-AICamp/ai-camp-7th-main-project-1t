@@ -81,6 +81,7 @@ def api_evaluate():
     data = request.json or {}
     vision = data.get("vision", {})
     question_texts = data.get("questions", [])
+    user_answers = data.get("answers")  # 지원자가 직접 입력한 답변(있으면 추정 대신 그대로 평가)
     # 이력서(프로필 객체)를 직접 받으면 그대로 사용, 없으면 이름으로 데모 팀원 풀에서 조회
     applicant = data.get("applicant")
     if not applicant:
@@ -89,7 +90,7 @@ def api_evaluate():
             (p for p in main.TEAMMATE_POOL if p["name"] == applicant_name),
             {"name": applicant_name},
         )
-    return jsonify(main.evaluate_applicant(vision, question_texts, applicant))
+    return jsonify(main.evaluate_applicant(vision, question_texts, applicant, user_answers))
 
 
 if __name__ == "__main__":
