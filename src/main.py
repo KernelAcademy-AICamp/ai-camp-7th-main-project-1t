@@ -754,12 +754,16 @@ def _verdict_for(breakdown: dict) -> str:
     return "강력 추천" if s >= 75 else "추천" if s >= 55 else "보류"
 
 
-def evaluate_applicant(vision: dict, question_texts: list, applicant: dict) -> dict:
+def evaluate_applicant(vision: dict, question_texts: list, applicant: dict,
+                       user_answers: list = None) -> dict:
     """지원자 프로필과 필수 질문 3개로, 프로젝트와의 매칭률(%)을 평가합니다.
 
     지원자가 experts 스키마 프로필을 갖추고(기획안에 matchProfile 이 있으면),
     가중치(기술40·관심30·목적20·시간10)+하드필터로 matchRate 를 '결정적으로' 계산하고,
     AI 는 그 점수/근거에 맞춰 답변·궁합·요약만 생성합니다.
+
+    user_answers 가 주어지면(지원자가 직접 답한 경우) 그 답변을 추정 대신 그대로 평가하고,
+    answers.answer 필드는 실제 입력을 진실원천으로 확정합니다.
     """
     match_profile = vision.get("matchProfile")
     is_expert = any(applicant.get(k) for k in
@@ -780,6 +784,17 @@ def evaluate_applicant(vision: dict, question_texts: list, applicant: dict) -> d
             "matchRate 는 위 score 값을 그대로 쓰고, summary·fitItems·answers 를 이 점수와 항목별 근거에 "
             "모순 없게 작성하세요. (하드필터 탈락 시 약점을 솔직히 짚으세요.)\n"
         )
+    answers_hint = ""
+    if user_answers:
+        qa = [{"question": q, "answer": a}
+              for q, a in zip(question_texts, user_answers)]
+        answers_hint = (
+            "\n[지원자가 각 질문에 직접 작성한 답변 — 추정하지 말고 이 답변을 그대로 평가하세요]\n"
+            f"{json.dumps(qa, ensure_ascii=False, indent=2)}\n"
+            "answers 의 answer 는 위 지원자 답변을 그대로 옮기고(창작·수정 금지), "
+            "comment 는 그 답변이 이 자리에 적합한지 한 줄로 평가하세요. "
+            "matchRate·fitItems·summary 도 실제 답변 내용을 반영해 판단하세요.\n"
+        )
     user_prompt = (
         "[사업 기획안]\n"
         f"{json.dumps(brief, ensure_ascii=False, indent=2)}\n\n"
@@ -787,7 +802,8 @@ def evaluate_applicant(vision: dict, question_texts: list, applicant: dict) -> d
         f"{json.dumps(question_texts, ensure_ascii=False, indent=2)}\n\n"
         "[합류 지원자 프로필]\n"
         f"{json.dumps(applicant, ensure_ascii=False, indent=2)}\n"
-        f"{score_hint}\n"
+        f"{score_hint}"
+        f"{answers_hint}\n"
         "이 지원자의 매칭률을 JSON 형식으로 평가하세요."
     )
     response = client.messages.create(
@@ -804,6 +820,19 @@ def evaluate_applicant(vision: dict, question_texts: list, applicant: dict) -> d
         result["matchRate"] = breakdown["score"]
         result["verdict"] = _verdict_for(breakdown)
         result["breakdown"] = breakdown
+
+    # 지원자가 직접 답한 경우, answer 필드는 실제 입력을 진실원천으로 확정(AI 코멘트만 활용)
+    if user_answers:
+        ai_answers = result.get("answers", [])
+        result["answers"] = [
+            {
+                "question": question_texts[i] if i < len(question_texts)
+                            else ai_answers[i].get("question", "") if i < len(ai_answers) else "",
+                "answer": ans,
+                "comment": ai_answers[i].get("comment", "") if i < len(ai_answers) else "",
+            }
+            for i, ans in enumerate(user_answers)
+        ]
     return result
 
 
