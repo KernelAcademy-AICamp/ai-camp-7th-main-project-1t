@@ -426,7 +426,7 @@
         <div>
           <span class="badge">✦ AI Team Building Platform</span>
           <h1>아이디어를,<br><span class="bl">ORBIT</span> 하다.</h1>
-          <p class="desc">한 줄의 아이디어를 팀원이 이해할 수 있는 언어로 바꾸고,<br>함께할 사람에게 ORBIT 초대를 보내 팀 구성까지 이어지게 합니다.</p>
+          <p class="desc">한 줄의 아이디어를 팀원이 이해할 수 있는 언어로 바꾸고,<br>함께할 사람에게 ORBIT 제안을 보내 팀 구성까지 이어지게 합니다.</p>
           <p style="font-size:13.5px; color:var(--blue); font-weight:800; margin:0;">👇 아래에서 시작 방식을 골라보세요</p>
         </div>
         <div class="heromock">
@@ -445,13 +445,13 @@
         <div>
           <span class="badge rider">🛰️ 당신의 자리를 찾는 곳</span>
           <h1>빛나는 아이디어에,<br><span class="gr">올라타다.</span></h1>
-          <p class="desc">아이디어를 쏘아올리는 3가지 질문에 답하세요.<br>딱 맞는 자리로 초대받고, 탑승하세요.</p>
+          <p class="desc">아이디어를 쏘아올리는 3가지 질문에 답하세요.<br>딱 맞는 자리로 제안받고, 탑승하세요.</p>
           <p style="font-size:13.5px; color:#047857; font-weight:800; margin:0;">👇 아래에서 시작 방식을 골라보세요</p>
         </div>
         <div class="heromock">
           <div class="hm-top"><i></i><i></i><i></i></div>
           <div class="hm-body">
-            <div class="hm-label">🛰️ 도착한 ORBIT 초대</div>
+            <div class="hm-label">🛰️ 도착한 ORBIT 제안</div>
             <div class="hm-idea">에코그립 — 버려진 뚜껑이 손안의 무드</div>
             <div class="hm-status" style="background:#047857;">✅ 당신에게 딱 맞는 자리를 찾았어요!</div>
             <div class="hm-mate"><div class="av" style="background:linear-gradient(135deg,#047857,#10b981)"></div><div><div class="mt">SNS 마케팅 전문가 · 당신의 자리</div><div class="md">Gen Z 트렌드 이해도가 높아 이 팀과 잘 맞아요.</div></div><span class="bg" style="background:#10b981;color:#fff">88%</span></div>
@@ -494,10 +494,10 @@
           <div class="fstep"><div class="fline"></div><div class="ic">💡</div><div class="ft">1. 아이디어 입력</div></div>
           <div class="fstep"><div class="fline"></div><div class="ic">📋</div><div class="ft">2. ORBIT 구체화</div></div>
           <div class="fstep"><div class="fline"></div><div class="ic">◎</div><div class="ft">3. 팀원 식별</div></div>
-          <div class="fstep"><div class="fline"></div><div class="ic">✉️</div><div class="ft">4. ORBIT 초대</div></div>
+          <div class="fstep"><div class="fline"></div><div class="ic">✉️</div><div class="ft">4. ORBIT 제안</div></div>
           <div class="fstep last"><div class="ic">🚩</div><div class="ft">5. ORBIT 완료</div></div>
         </div>
-        <div class="flowcap">아이디어 한 줄 → 구체화 → 맞는 팀원 식별 → ORBIT 초대 → 합류 합의</div>
+        <div class="flowcap">아이디어 한 줄 → 구체화 → 맞는 팀원 식별 → ORBIT 제안 → 합류 합의</div>
       </div>
     </div>
   </div>
@@ -1137,8 +1137,9 @@ function rocketLoader(text, sub){
 }
 /* 로딩 중 문구 순환 (3분 대기 지루함 완화) — 두 문구 5초마다 번갈아 */
 const LOAD_MSGS=[
-  "아이디어가 궤도에 오르는 중...",
-  "ORBIT을 함께할 팀원을 찾는 중..."
+  "아이디어가 궤도에 오르는 중",
+  "잠시만 기다려 주세요",
+  "아이디어를 기획안으로 만들고 있어요"
 ];
 let _loadTimer=null;
 function startLoadingStages(){
@@ -2109,14 +2110,14 @@ async function openDetail(v, isOwner){
         <p class="eyebrow">❓ 팀원에게 물어볼 내 질문</p>
         <div class="qcard pr"><p class="qtext">${esc(v.founderQuestion||"")}</p></div>
       </div>
-      <div class="card"><p class="eyebrow">🛰️ ORBIT이 찾은 추천 팀원 — 직접 초대해 보세요</p><div id="recoSeat">${spinner("이 아이디어에 맞는 팀원을 찾는 중...")}</div></div>
+      <div class="card"><p class="eyebrow">🛰️ ORBIT이 찾은 추천 팀원 — 직접 제안해 보세요</p><div id="recoSeat">${spinner("이 아이디어에 맞는 팀원을 찾는 중...")}</div></div>
       <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px;">
         <button class="btn ghost sm" onclick="showMy('idea')">← 내 아이디어로</button>
         <button class="btn ghost sm" onclick="deleteDetailIdea()">삭제하기</button>
       </div>`
     : `<div class="card">
         <p class="eyebrow">🧩 이 아이디어가 찾는 팀원</p>${seats}
-        <p style="font-size:12.5px; color:#475569; margin:13px 0 4px;">3가지 질문에 답하면 <b>${esc(ORBIT.user)}님의 이력서</b>를 기준으로 매칭률과 가장 잘 맞는 자리를 알려드려요.</p>
+        <p style="font-size:12.5px; color:#475569; margin:13px 0 4px;">3가지 질문에 답하면, <b>${esc(ORBIT.user)}님의 프로필</b>을 기준으로 매칭률과 딱 맞는 자리를 확인할 수 있어요.</p>
         <button class="btn full" onclick="joinApply()">3질문 답하고 합류 신청 →</button>
       </div>
       <div id="joinResult"></div>`;
@@ -2153,14 +2154,14 @@ function recoRow(p,i){
     <div class="pav">${esc(p.name[0])}</div>
     <div style="flex:1"><div class="pn">${esc(p.name)} ${scorePill}<span class="pill blue">${star} ${esc(p.fitLevel||"")}</span></div>
       <div class="pr">${esc(p.fitsRole)}</div><div class="pl">${esc(p.reason)}</div>${detail}</div>
-    <button class="btn sm" id="inv-${i}" onclick="inviteTeammate(${i})">🛰️ ORBIT 초대</button>
+    <button class="btn sm" id="inv-${i}" onclick="inviteTeammate(${i})">🛰️ ORBIT 제안</button>
   </div>`;
 }
 function inviteTeammate(i){
   const p = (ORBIT._reco||[])[i]; if(!p) return;
   const b = document.getElementById("inv-"+i);
-  if(b){ b.textContent = "초대함 ✓"; b.disabled = true; }
-  alert(`🛰️ ${p.name}님에게 ORBIT 초대를 보냈어요!\n상대가 수락하면 함께 시작합니다.`);
+  if(b){ b.textContent = "제안함 ✓"; b.disabled = true; }
+  alert(`🛰️ ${p.name}님에게 ORBIT 제안을 보냈어요!\n상대가 수락하면 함께 시작합니다.`);
 }
 
 async function joinApply(){
