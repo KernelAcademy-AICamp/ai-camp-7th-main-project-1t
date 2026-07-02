@@ -2062,6 +2062,12 @@ function togglePick(i){
 function confirmVision(){
   const fq = document.getElementById("founderQ"); if(fq) ORBIT.founderQuestion = fq.value.trim();
   const v = ORBIT.vision; v.founderQuestion = ORBIT.founderQuestion;
+  // 선택한 팀원(picks)만 남긴다 — 선택 여부와 무관하게 전체가 나오던 버그 수정
+  const _picks = (ORBIT.picks || []).slice().sort((a, b) => a - b);
+  if(_picks.length){ v.neededTeammates = _picks.map(i => (v.neededTeammates || [])[i]).filter(Boolean); }
+  // 추천 매칭도 '선택한 자리' 기준으로 — 선택한 팀원들의 역량으로 roleSkills 를 좁힌다
+  const _selSkills = [...new Set((v.neededTeammates || []).flatMap(t => t.skills || []))];
+  if(_selSkills.length && v.matchProfile){ v.matchProfile.roleSkills = _selSkills; }
   v.channels = {...(ORBIT.channels||{})};
   ORBIT.myIdeas.unshift({ vision:v, proposals: makeProposals(v) });
   alert("🚀 아이디어를 쏘아 올렸어요!\nORBIT이 이 아이디어에 맞는 팀원을 찾아드릴게요.");
@@ -2103,7 +2109,11 @@ async function openDetail(v, isOwner){
         <p class="eyebrow">❓ 팀원에게 물어볼 내 질문</p>
         <div class="qcard pr"><p class="qtext">${esc(v.founderQuestion||"")}</p></div>
       </div>
-      <div class="card"><p class="eyebrow">🛰️ ORBIT이 찾은 추천 팀원 — 직접 초대해 보세요</p><div id="recoSeat">${spinner("이 아이디어에 맞는 팀원을 찾는 중...")}</div></div>`
+      <div class="card"><p class="eyebrow">🛰️ ORBIT이 찾은 추천 팀원 — 직접 초대해 보세요</p><div id="recoSeat">${spinner("이 아이디어에 맞는 팀원을 찾는 중...")}</div></div>
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px;">
+        <button class="btn ghost sm" onclick="showMy('idea')">← 내 아이디어로</button>
+        <button class="btn ghost sm" onclick="deleteDetailIdea()">삭제하기</button>
+      </div>`
     : `<div class="card">
         <p class="eyebrow">🧩 이 아이디어가 찾는 팀원</p>${seats}
         <p style="font-size:12.5px; color:#475569; margin:13px 0 4px;">3가지 질문에 답하면 <b>${esc(ORBIT.user)}님의 이력서</b>를 기준으로 매칭률과 가장 잘 맞는 자리를 알려드려요.</p>
@@ -2312,11 +2322,10 @@ function renderMyIdea(){
       const pend = it.proposals.filter(p=>p.status==="pending").length;
       const acc = it.proposals.filter(p=>p.status==="accepted").length;
       html += `<div class="card">
-        <div style="display:flex; align-items:center; gap:10px; cursor:pointer;" onclick="viewMyIdea(${idx})">
-          <div style="flex:1"><div style="font-size:16px; font-weight:800; color:var(--navy)">${esc(it.vision.serviceName)}</div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div style="flex:1; cursor:pointer;" onclick="viewMyIdea(${idx})"><div style="font-size:16px; font-weight:800; color:var(--navy)">${esc(it.vision.serviceName)}</div>
             <div style="font-size:12.5px; color:var(--muted); margin-top:2px;">${esc(it.vision.tagline)}</div></div>
           ${pend?`<span class="pill blue">받은 제안 ${pend}건</span>`:``}${acc?`<span class="pill green">합류 ${acc}명</span>`:``}
-          <span style="color:var(--blue); font-size:13px; font-weight:700; white-space:nowrap;">기획안 보기 →</span>
         </div>
         <div style="margin-top:14px">${it.proposals.map((p,pi)=>proposalRow(idx,pi,p,it.vision.serviceName)).join("")}</div>
         ${acc ? teamChannelBlock(it.vision) : ""}
@@ -2341,6 +2350,21 @@ function acceptProposal(idx,pi){
   alert(`🎉 ${p.name}님의 합류를 수락했어요!\n아래 팀 소통 채널이 ${p.name}님에게 공개돼요. 이제 함께 시작해요!`);
 }
 function rejectProposal(idx,pi){ ORBIT.myIdeas[idx].proposals.splice(pi,1); renderMyIdea(); }
+function deleteDetailIdea(){
+  const idx = ORBIT.myIdeas.findIndex(it => it.vision === ORBIT.detailVision);
+  if(idx < 0) return;
+  if(deleteMyIdea(idx)) showMy("idea");
+}
+function deleteMyIdea(idx){
+  const it = ORBIT.myIdeas[idx]; if(!it) return false;
+  const acc = it.proposals.filter(p=>p.status==="accepted").length;
+  const warn = acc ? `\n이미 합류한 팀원 ${acc}명의 연결도 함께 사라집니다.` : "";
+  if(!confirm(`'${it.vision.serviceName}' 아이디어를 삭제할까요?${warn}\n받은 제안·매칭 현황이 모두 지워지며 되돌릴 수 없어요.`)) return false;
+  ORBIT.myIdeas.splice(idx,1);
+  if(ORBIT.vision === it.vision) ORBIT.vision = (ORBIT.myIdeas[0] && ORBIT.myIdeas[0].vision) || null;
+  renderMyIdea();
+  return true;
+}
 
 /* ===== 팀원으로 활동 (둘러보기) ===== */
 function resumeCard(){

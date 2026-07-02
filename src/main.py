@@ -48,9 +48,10 @@ SYSTEM_PROMPT = """당신은 ORBIT의 기획안 생성 AI입니다.
 - story(왜 이 사업을 하는가)는 아이디어 제공자가 1인칭('저는…')으로 들려주는 짧은 이야기 3개 문단입니다. 계기 → 발견 → 신념/다짐 흐름으로, 사람 냄새 나게.
 - whyNow(왜 지금·왜 함께)는 지금 시작해야 하는 이유 3가지. 각 {icon(이모지 1개), title(짧게), desc(한 줄)}.
 - productNote: 어떤 제품/서비스를 만드는지 한 줄 설명.
-- neededTeammates(필요한 팀원)는 3~5명. 각 {role, detail}.
+- neededTeammates(필요한 팀원)는 3~5명. 각 {role, detail, skills}.
     · role : 직무명(개발자)이 아니라 '무엇을 할 수 있는 사람'(폐플라스틱 가공 설비를 다룰 수 있는 사람)
     · detail : 합류하면 맡는 일과 왜 중요한지, 그 분야 사람이 끌릴 이유 한 줄
+    · skills : 그 자리에 필요한 핵심 역량 태그 2~4개(짧은 명사, matchProfile.roleSkills와 같은 어휘). roleSkills 는 모든 팀원 skills 를 아우르는 합집합이어야 합니다.
 - matchFactors(매칭 중요 요소): 실력 외에 이 팀에 맞으려면 중요한 성향·가치 정확히 3개.
 - aiQuestions: 합류 지원자가 답할 질문 2개. 이 아이디어 적합성을 가릴 단답형(1~2문장으로 답할 수 있는 것).
 - founderQuestion: 아이디어 제공자가 팀원에게 묻고 싶을 법한 추천 질문 1개(나중에 제공자가 직접 수정합니다).
@@ -81,9 +82,9 @@ SYSTEM_PROMPT = """당신은 ORBIT의 기획안 생성 AI입니다.
     "revenue": "어떻게 돈을 버는가"
   },
   "neededTeammates": [
-    {"role": "무엇을 할 수 있는 사람 1", "detail": "맡는 일과 끌리는 이유 한 줄"},
-    {"role": "무엇을 할 수 있는 사람 2", "detail": "맡는 일과 끌리는 이유 한 줄"},
-    {"role": "무엇을 할 수 있는 사람 3", "detail": "맡는 일과 끌리는 이유 한 줄"}
+    {"role": "무엇을 할 수 있는 사람 1", "detail": "맡는 일과 끌리는 이유 한 줄", "skills": ["프론트엔드", "디자인"]},
+    {"role": "무엇을 할 수 있는 사람 2", "detail": "맡는 일과 끌리는 이유 한 줄", "skills": ["마케팅"]},
+    {"role": "무엇을 할 수 있는 사람 3", "detail": "맡는 일과 끌리는 이유 한 줄", "skills": ["운영", "고객관리"]}
   ],
   "matchFactors": ["성향·가치 1", "성향·가치 2", "성향·가치 3"],
   "aiQuestions": ["팀원이 답할 질문 1", "팀원이 답할 질문 2"],
@@ -397,7 +398,8 @@ VISION_SCHEMA = _obj({
          "target": {"type": "string"}, "revenue": {"type": "string"}},
         ["problem", "solution", "target", "revenue"]),
     "neededTeammates": {"type": "array", "items": _obj(
-        {"role": {"type": "string"}, "detail": {"type": "string"}}, ["role", "detail"])},
+        {"role": {"type": "string"}, "detail": {"type": "string"},
+         "skills": {"type": "array", "items": {"type": "string"}}}, ["role", "detail", "skills"])},
     "matchFactors": {"type": "array", "items": {"type": "string"}},
     "aiQuestions": {"type": "array", "items": {"type": "string"}},
     "founderQuestion": {"type": "string"},
