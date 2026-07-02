@@ -8,3 +8,17 @@
 node_modules/
 __pycache__/
 *.log
+~$*
+
+# ===== IA / 서비스 구성 산출물 (로컬 참고용 — 커밋하지 않음) =====
+오르빗_데이터/ORBIT_IA_현행_v1.md
+오르빗_데이터/ORBIT_시연_대본_v1.md
+오르빗_데이터/ORBIT_IA_현행_v1.xlsx
+오르빗_데이터/ORBIT_IA_현행_v1_기능명세추가.xlsx
+오르빗_데이터/ORBIT_서비스_구성_v1.xlsx
+오르빗_데이터/ORBIT_서비스_구성_v1_new.xlsx
+오르빗_데이터/ORBIT_서비스흐름도.png
+오르빗_데이터/ORBIT_사용자순서도.png
+오르빗_데이터/ORBIT_서비스소개서_v1.pptx
+오르빗_데이터/ORBIT_서비스소개서_v1_new.pptx
+오르빗_데이터/ORBIT_시연대본_v1.pptx

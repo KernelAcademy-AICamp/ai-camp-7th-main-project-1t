@@ -649,14 +649,14 @@
       <div class="hero fade" style="margin-top:14px; background:linear-gradient(150deg,#0b1226 0%,#1e3a8a 60%,#2563eb 100%);">
         <div class="tags"><span class="hot">🚀 Shooter</span><span>아이디어 쏘아 올리기</span></div>
         <h1>어떤 아이디어를 쏘아 올릴까요?</h1>
-        <p class="lead">한 줄이면 충분해요. ORBIT이 <b style="color:#fff">비전과 필요한 팀원</b>까지 만들어 드릴게요.</p>
+        <p class="lead">한 줄이면 충분해요. ORBIT이 <b style="color:#fff">기획안과 필요한 팀원</b>까지 만들어 드릴게요.</p>
       </div>
       <div class="card inputcard">
         <textarea id="idea" placeholder="예) 버려지는 페트병 뚜껑을 모아 핸드폰 그립톡으로 업사이클링하는 사업"></textarea>
         <div class="attach" onclick="comingSoon()">📎 파일 첨부 <span class="soon">준비중</span></div>
         <button class="btn full" style="margin-top:13px" id="ideaGo" onclick="ideaStart()">ORBIT 구체화 시작 →</button>
         <div onclick="previewLoading()" style="margin-top:9px; text-align:center; font-size:12px; color:var(--muted); cursor:pointer">🚀 로딩 화면 미리보기 <span style="color:#bbb">(개발용·API 안 씀)</span></div>
-        <div onclick="previewVision()" style="margin-top:6px; text-align:center; font-size:12px; color:var(--muted); cursor:pointer">📄 비전 페이지 미리보기(에코그립) <span style="color:#bbb">(개발용·API 안 씀)</span></div>
+        <div onclick="previewVision()" style="margin-top:6px; text-align:center; font-size:12px; color:var(--muted); cursor:pointer">📄 기획안 페이지 미리보기(에코그립) <span style="color:#bbb">(개발용·API 안 씀)</span></div>
         <div class="chips">
           <span class="chip" onclick="setIdea(this)">페트병 뚜껑을 그립톡으로 재활용하는 사업</span>
           <span class="chip" onclick="setIdea(this)">할머니 손맛 반찬을 정기배송하는 서비스</span>
@@ -666,7 +666,7 @@
     </div>
     <!-- 2) 보충질문 -->
     <div id="idea-boost"></div>
-    <!-- 3) 비전 -->
+    <!-- 3) 기획안 -->
     <div id="idea-vision"></div>
   </div>
 </section>
@@ -733,7 +733,7 @@ const ORBIT = { loggedIn:false, user:null, myTab:"idea", vision:null, founderQue
 /* 데모 계정 3종 — 각기 다른 진입 시나리오 (실제 회원 DB 없이 상태만 다르게) */
 const DEMO_ACCOUNTS = {
   'new':     { user:"새싹",    role:null,      profileDone:false, hasIdea:false },
-  'rider':   { user:"이라이더", role:"rider",   profileDone:true,  hasIdea:false,
+  'rider':   { user:"이라이더", role:"rider",   profileDone:true,  hasIdea:false, hasApplied:true,
     profile:{
       name:"이라이더",
       headline:"0에서 팬덤을 만드는 SNS 마케터",
@@ -792,9 +792,21 @@ const DEMO_PROJECT = {
   channels:{ kakao:"https://open.kakao.com/o/ecogrip", slack:"https://ecogrip.slack.com", email:"team@ecogrip.kr", zoom:"https://calendly.com/ecogrip/kickoff" },
   matchProfile:{ roleSkills:["생산설비","제조","디자인","마케팅","온라인판매"], domains:["ESG"], natures:["사회적 가치","창업"], minWeeklyCapacity:"주 10시간", meetingMode:"online_only" },
 };
+/* 에코그립에 들어온 합류 제안 — 30명 팀원 풀 매칭 점수 상위 (rate=결정적 점수) */
 const DEMO_PROJECT_PROPOSALS = [
-  {name:"김도현", role:"압출 기계 및 생산 시설 관련 지식 보유자", rate:88, line:"PP/HDPE 분쇄·사출 설비를 직접 다뤄봤어요. 시제품을 빠르게 만들 수 있습니다.", status:"pending"},
-  {name:"이서연", role:"인스타 등 SNS를 활용하는 마케팅 전문가", rate:82, line:"친환경 브랜드 SNS로 0에서 팬덤을 만든 경험이 있어요. 미적 감각도 자신 있습니다.", status:"pending"},
+  {name:"구본영", role:"제조·생산", rate:66, line:"현장을 아는 생산설비 엔지니어", status:"accepted"},
+  {name:"김도현", role:"생산설비·제조", rate:66, line:"플라스틱 사출·금형을 직접 다루는 제조 엔지니어", status:"pending"},
+  {name:"박지훈", role:"마케팅", rate:58, line:"SNS·콘텐츠 마케터", status:"pending"},
+  {name:"오은별", role:"식품위생", rate:58, line:"식품 조리·위생 표준화 전문가", status:"pending"},
+  {name:"이서연", role:"디자인", rate:58, line:"브랜드·제품 디자이너", status:"pending"},
+  {name:"전하람", role:"식품·위생", rate:50, line:"안전한 먹거리를 만드는 식품 전문가", status:"pending"},
+];
+/* 이라이더가 신청한 아이디어 — 프로필 vs 30개 아이디어 매칭 점수 상위 (rate=결정적 점수) */
+const DEMO_RIDER_APPLIED = [
+  {title:"제로데이", role:"마케팅·콘텐츠 담당", rate:80, status:"accepted"},
+  {title:"귀책방", role:"마케팅·콘텐츠 담당", rate:70, status:"pending"},
+  {title:"레터라운지", role:"마케팅·콘텐츠 담당", rate:70, status:"pending"},
+  {title:"리필맵", role:"마케팅·콘텐츠 담당", rate:70, status:"pending"},
 ];
 
 /* 둘러보기용 데모 아이디어 3개 (코드에 직접 입력) */
@@ -829,6 +841,276 @@ const DEMO_IDEAS = [
     matchFactors:["반려동물에 대한 진심","안전을 최우선으로","커뮤니티 운영 감각"],
     aiQuestions:["앱/플랫폼 개발 또는 운영 경험이 있나요?","반려동물 관련 경험이나 관심이 있나요?"], founderQuestion:"낯선 사람에게 반려견을 맡기는 불안을 어떻게 줄일 수 있을까요?",
     matchProfile:{ roleSkills:["앱개발","플랫폼","마케팅","운영"], domains:["반려동물","지역 커뮤니티"], natures:["창업","수익"], minWeeklyCapacity:"주 10시간", meetingMode:"online_only" } },
+  { serviceName:"코드메이트", tagline:"청소년 곁의 1:1 코딩 선생님",
+    lead:"코딩을 배우고 싶은 청소년과 실력 있는 대학생 멘토를 1:1로 잇습니다.",
+    story:["학원은 부담되고 혼자 배우긴 막막했던 제 경험에서 시작했어요.","검증된 대학생 멘토와 1:1 온라인 코딩 수업을 매칭. 코딩에 관심 있는 중·고등학생과 학부모에게 닿고 싶어요."],
+    whyNow:[{icon:"🎓",title:"지금 이 문제가 크다",desc:"청소년은 학원비가 부담되고 진도 맞는 코딩 멘토를 찾기 어렵다"},{icon:"🧩",title:"해결의 실마리",desc:"검증된 대학생 멘토와 1:1 온라인 코딩 수업을 매칭"},{icon:"🚀",title:"함께 만들 초기 멤버",desc:"방향·타깃이 분명해 지금 합류하기 좋아요"}],
+    productNote:"검증된 대학생 멘토와 1:1 온라인 코딩 수업을 매칭",
+    plan:{problem:"청소년은 학원비가 부담되고 진도 맞는 코딩 멘토를 찾기 어렵다",solution:"검증된 대학생 멘토와 1:1 온라인 코딩 수업을 매칭",target:"코딩에 관심 있는 중·고등학생과 학부모",revenue:"수업 수수료 + 월 구독"},
+    neededTeammates:[{role:"매칭 플랫폼을 만들 개발자",detail:"수업 예약·화상 연동의 핵심"},{role:"교육 커리큘럼을 짤 사람",detail:"수준별 커리큘럼 설계"},{role:"멘토 모집·검증을 할 사람",detail:"질 좋은 멘토풀 확보"}],
+    matchFactors:["교육에 대한 진심","꾸준함과 책임감","작게 시작해 검증"],
+    aiQuestions:["앱개발·플랫폼 관련 경험이 있나요?","교육 분야에 관심이나 경험이 있나요?"], founderQuestion:"청소년을 가르칠 때 가장 중요한 태도는 무엇이라 생각하세요?",
+    matchProfile:{ roleSkills:["앱개발","플랫폼","교육","커리큘럼설계"], domains:["교육"], natures:["사회적 가치","수익"], minWeeklyCapacity:"주 10시간", meetingMode:"online_only" } },
+  { serviceName:"방과후랩", tagline:"우리 동네 방과후 클래스",
+    lead:"동네 재능러와 아이들을 잇는 소규모 방과후 클래스 매칭입니다.",
+    story:["맞벌이로 아이 방과후가 늘 고민이었어요.","검증된 동네 강사의 소규모 클래스를 매칭. 초등 자녀를 둔 맞벌이 가정에게 닿고 싶어요."],
+    whyNow:[{icon:"🧑‍🏫",title:"지금 이 문제가 크다",desc:"학부모는 믿을 만한 방과후 활동을 찾기 어렵다"},{icon:"🧩",title:"해결의 실마리",desc:"검증된 동네 강사의 소규모 클래스를 매칭"},{icon:"🚀",title:"함께 만들 초기 멤버",desc:"방향·타깃이 분명해 지금 합류하기 좋아요"}],
+    productNote:"검증된 동네 강사의 소규모 클래스를 매칭",
+    plan:{problem:"학부모는 믿을 만한 방과후 활동을 찾기 어렵다",solution:"검증된 동네 강사의 소규모 클래스를 매칭",target:"초등 자녀를 둔 맞벌이 가정",revenue:"클래스 수수료 + 정기권"},
+    neededTeammates:[{role:"동네 강사 네트워크를 뚫을 사람",detail:"공급자 발굴·검증"},{role:"예약·정산 앱을 만들 사람",detail:"운영 인프라 구축"},{role:"지역 마케팅을 할 사람",detail:"초기 학부모 모객"}],
+    matchFactors:["아이 안전을 최우선","지역 커뮤니티 감각","오프라인 운영을 즐김"],
+    aiQuestions:["오프라인운영·제휴영업 관련 경험이 있나요?","교육 분야에 관심이나 경험이 있나요?"], founderQuestion:"강사 신뢰는 어떻게 검증하는 게 좋을까요?",
+    matchProfile:{ roleSkills:["오프라인운영","제휴영업","운영","마케팅"], domains:["교육","지역 커뮤니티"], natures:["사회적 가치","수익"], minWeeklyCapacity:"주 10시간", meetingMode:"offline_optional" } },
+  { serviceName:"리뷰노트", tagline:"AI가 짚어주는 나만의 오답노트",
+    lead:"틀린 문제를 AI가 분석해 약점만 반복 학습하게 돕습니다.",
+    story:["같은 실수를 반복하는 게 늘 아쉬웠어요.","오답을 AI가 유형 분석해 맞춤 복습을 추천. 시험을 준비하는 중·고등학생에게 닿고 싶어요."],
+    whyNow:[{icon:"📝",title:"지금 이 문제가 크다",desc:"학생은 오답을 제대로 복습하지 못해 같은 실수를 반복한다"},{icon:"🧩",title:"해결의 실마리",desc:"오답을 AI가 유형 분석해 맞춤 복습을 추천"},{icon:"🚀",title:"함께 만들 초기 멤버",desc:"방향·타깃이 분명해 지금 합류하기 좋아요"}],
+    productNote:"오답을 AI가 유형 분석해 맞춤 복습을 추천",
+    plan:{problem:"학생은 오답을 제대로 복습하지 못해 같은 실수를 반복한다",solution:"오답을 AI가 유형 분석해 맞춤 복습을 추천",target:"시험을 준비하는 중·고등학생",revenue:"월 구독 + 학교/학원 B2B"},
+    neededTeammates:[{role:"학습 데이터를 다룰 개발자",detail:"오답 분석 엔진 구축"},{role:"문항 데이터를 설계할 사람",detail:"유형 분류 체계"},{role:"교육 UX를 만들 디자이너",detail:"학습 몰입 경험"}],
+    matchFactors:["데이터로 사고","교육 효과에 집착","빠른 실험"],
+    aiQuestions:["백엔드·데이터분석 관련 경험이 있나요?","교육 분야에 관심이나 경험이 있나요?"], founderQuestion:"학습 효과를 무엇으로 증명할 수 있을까요?",
+    matchProfile:{ roleSkills:["백엔드","데이터분석","머신러닝","UIUX"], domains:["교육"], natures:["학습","수익"], minWeeklyCapacity:"주 20시간 이상", meetingMode:"online_only" } },
+  { serviceName:"하루안부", tagline:"혼자 사는 이웃의 하루를 살핍니다",
+    lead:"1인 가구의 안부를 매일 가볍게 확인하고 위험 신호를 알립니다.",
+    story:["혼자 사시는 이웃 어르신 소식을 뒤늦게 들은 게 계기였어요.","간단한 체크인과 이상 감지로 보호자·기관에 알림. 고령·고립 1인 가구와 그 가족에게 닿고 싶어요."],
+    whyNow:[{icon:"🏠",title:"지금 이 문제가 크다",desc:"고립된 1인 가구의 위기 신호를 아무도 알아채지 못한다"},{icon:"🧩",title:"해결의 실마리",desc:"간단한 체크인과 이상 감지로 보호자·기관에 알림"},{icon:"🚀",title:"함께 만들 초기 멤버",desc:"방향·타깃이 분명해 지금 합류하기 좋아요"}],
+    productNote:"간단한 체크인과 이상 감지로 보호자·기관에 알림",
+    plan:{problem:"고립된 1인 가구의 위기 신호를 아무도 알아채지 못한다",solution:"간단한 체크인과 이상 감지로 보호자·기관에 알림",target:"고령·고립 1인 가구와 그 가족",revenue:"가족 구독 + 지자체 계약"},
+    neededTeammates:[{role:"알림 시스템을 만들 개발자",detail:"이상 감지·통지 로직"},{role:"지자체 복지 제휴를 뚫을 사람",detail:"공공 연계 확보"},{role:"돌봄 현장을 아는 사람",detail:"실제 케어 설계"}],
+    matchFactors:["사람에 대한 따뜻함","책임감","사회적 가치 지향"],
+    aiQuestions:["앱개발·백엔드 관련 경험이 있나요?","복지 분야에 관심이나 경험이 있나요?"], founderQuestion:"안부 확인이 감시로 느껴지지 않게 하려면요?",
+    matchProfile:{ roleSkills:["앱개발","백엔드","제휴영업","운영"], domains:["복지"], natures:["사회적 가치"], minWeeklyCapacity:"주 10시간", meetingMode:"online_only" } },
+  { serviceName:"무브투게더", tagline:"이동이 필요한 순간, 함께 갑니다",
+    lead:"장애인·거동 불편자의 외출을 돕는 동행 이동 매칭입니다.",
+    story:["휠체어를 타는 친구의 외출이 늘 큰일인 걸 보며 시작했어요.","검증된 동행 도우미와 이동을 안전하게 매칭. 거동이 불편한 당사자와 보호자에게 닿고 싶어요."],
+    whyNow:[{icon:"♿",title:"지금 이 문제가 크다",desc:"거동이 불편한 사람은 병원·외출 이동에 늘 어려움을 겪는다"},{icon:"🧩",title:"해결의 실마리",desc:"검증된 동행 도우미와 이동을 안전하게 매칭"},{icon:"🚀",title:"함께 만들 초기 멤버",desc:"방향·타깃이 분명해 지금 합류하기 좋아요"}],
+    productNote:"검증된 동행 도우미와 이동을 안전하게 매칭",
+    plan:{problem:"거동이 불편한 사람은 병원·외출 이동에 늘 어려움을 겪는다",solution:"검증된 동행 도우미와 이동을 안전하게 매칭",target:"거동이 불편한 당사자와 보호자",revenue:"이용 수수료 + 바우처 연계"},
+    neededTeammates:[{role:"매칭 앱을 만들 개발자",detail:"예약·경로의 핵심"},{role:"복지 바우처 제휴를 뚫을 사람",detail:"지속 수요 확보"},{role:"도우미 교육·검증을 할 사람",detail:"안전과 신뢰"}],
+    matchFactors:["안전을 최우선","사회적 가치","꼼꼼함"],
+    aiQuestions:["앱개발·플랫폼 관련 경험이 있나요?","복지 분야에 관심이나 경험이 있나요?"], founderQuestion:"동행 도우미의 안전 신뢰는 어떻게 쌓을까요?",
+    matchProfile:{ roleSkills:["앱개발","플랫폼","제휴영업","운영"], domains:["복지","의료"], natures:["사회적 가치","수익"], minWeeklyCapacity:"주 10시간", meetingMode:"offline_optional" } },
+  { serviceName:"멘토링크", tagline:"한 아이에게 한 어른의 시간을",
+    lead:"저소득 가정 아동과 든든한 멘토를 오래 잇는 멘토링입니다.",
+    story:["제겐 인생을 바꾼 멘토 한 분이 있었어요.","검증된 멘토와 장기 1:1 멘토링을 매칭·관리. 도움이 필요한 아동과 후원 기업에게 닿고 싶어요."],
+    whyNow:[{icon:"🤝",title:"지금 이 문제가 크다",desc:"결핍 환경의 아동에게는 꾸준히 곁에 있어줄 어른이 부족하다"},{icon:"🧩",title:"해결의 실마리",desc:"검증된 멘토와 장기 1:1 멘토링을 매칭·관리"},{icon:"🚀",title:"함께 만들 초기 멤버",desc:"방향·타깃이 분명해 지금 합류하기 좋아요"}],
+    productNote:"검증된 멘토와 장기 1:1 멘토링을 매칭·관리",
+    plan:{problem:"결핍 환경의 아동에게는 꾸준히 곁에 있어줄 어른이 부족하다",solution:"검증된 멘토와 장기 1:1 멘토링을 매칭·관리",target:"도움이 필요한 아동과 후원 기업",revenue:"기업 후원 + 정부 지원"},
+    neededTeammates:[{role:"멘토 관리 시스템을 만들 사람",detail:"매칭·기록 인프라"},{role:"기업 CSR 제휴를 뚫을 사람",detail:"후원 재원 확보"},{role:"아동 심리를 아는 사람",detail:"건강한 관계 설계"}],
+    matchFactors:["아이에 대한 진심","장기적 책임감","사회적 가치"],
+    aiQuestions:["운영·제휴영업 관련 경험이 있나요?","복지 분야에 관심이나 경험이 있나요?"], founderQuestion:"멘토와 아이의 관계가 오래가려면 무엇이 필요할까요?",
+    matchProfile:{ roleSkills:["운영","제휴영업","기획","커뮤니케이션"], domains:["복지","교육"], natures:["사회적 가치"], minWeeklyCapacity:"주 5시간", meetingMode:"offline_optional" } },
+  { serviceName:"펫차트", tagline:"반려동물 건강, 한곳에서 챙기다",
+    lead:"예방접종·투약·병원 기록을 모아 관리하고 알림을 줍니다.",
+    story:["우리 강아지 접종 시기를 놓쳐 후회한 적이 있어요.","건강 기록을 모아 관리하고 일정 알림을 제공. 반려동물을 키우는 1~2인 가구에게 닿고 싶어요."],
+    whyNow:[{icon:"🐾",title:"지금 이 문제가 크다",desc:"보호자는 반려동물 건강 이력을 흩어진 채로 놓치기 쉽다"},{icon:"🧩",title:"해결의 실마리",desc:"건강 기록을 모아 관리하고 일정 알림을 제공"},{icon:"🚀",title:"함께 만들 초기 멤버",desc:"방향·타깃이 분명해 지금 합류하기 좋아요"}],
+    productNote:"건강 기록을 모아 관리하고 일정 알림을 제공",
+    plan:{problem:"보호자는 반려동물 건강 이력을 흩어진 채로 놓치기 쉽다",solution:"건강 기록을 모아 관리하고 일정 알림을 제공",target:"반려동물을 키우는 1~2인 가구",revenue:"프리미엄 구독 + 병원 제휴"},
+    neededTeammates:[{role:"앱을 만들 개발자",detail:"기록·알림 기능"},{role:"수의 도메인을 아는 사람",detail:"건강 데이터 설계"},{role:"병원 제휴를 뚫을 사람",detail:"데이터·수요 확보"}],
+    matchFactors:["반려동물에 진심","꼼꼼함","데이터 신뢰"],
+    aiQuestions:["앱개발·백엔드 관련 경험이 있나요?","반려동물 분야에 관심이나 경험이 있나요?"], founderQuestion:"보호자가 매일 기록하게 만들 유인은 무엇일까요?",
+    matchProfile:{ roleSkills:["앱개발","백엔드","제휴영업","데이터분석"], domains:["반려동물","의료"], natures:["수익","창업"], minWeeklyCapacity:"주 10시간", meetingMode:"online_only" } },
+  { serviceName:"세컨홈", tagline:"버려진 아이에게 두 번째 집을",
+    lead:"유기 동물과 진지한 입양 희망자를 신중하게 잇습니다.",
+    story:["보호소 봉사에서 만난 아이들이 눈에 밟혔어요.","입양 전 교육·매칭·사후관리로 신중한 입양을 돕는다. 입양을 고민하는 사람과 보호단체에게 닿고 싶어요."],
+    whyNow:[{icon:"🏡",title:"지금 이 문제가 크다",desc:"유기 동물 입양은 정보와 신뢰가 부족해 파양으로 이어진다"},{icon:"🧩",title:"해결의 실마리",desc:"입양 전 교육·매칭·사후관리로 신중한 입양을 돕는다"},{icon:"🚀",title:"함께 만들 초기 멤버",desc:"방향·타깃이 분명해 지금 합류하기 좋아요"}],
+    productNote:"입양 전 교육·매칭·사후관리로 신중한 입양을 돕는다",
+    plan:{problem:"유기 동물 입양은 정보와 신뢰가 부족해 파양으로 이어진다",solution:"입양 전 교육·매칭·사후관리로 신중한 입양을 돕는다",target:"입양을 고민하는 사람과 보호단체",revenue:"후원 + 용품 제휴"},
+    neededTeammates:[{role:"플랫폼을 만들 개발자",detail:"입양 신청·매칭"},{role:"동물보호 단체 제휴를 뚫을 사람",detail:"입양 대상 확보"},{role:"입양 교육 콘텐츠를 만들 사람",detail:"파양 예방"}],
+    matchFactors:["생명에 대한 책임","신중함","커뮤니티 운영"],
+    aiQuestions:["웹개발·플랫폼 관련 경험이 있나요?","반려동물 분야에 관심이나 경험이 있나요?"], founderQuestion:"충동 입양을 어떻게 걸러낼 수 있을까요?",
+    matchProfile:{ roleSkills:["웹개발","플랫폼","콘텐츠","제휴영업"], domains:["반려동물","복지"], natures:["사회적 가치"], minWeeklyCapacity:"주 10시간", meetingMode:"online_only" } },
+  { serviceName:"냠냠박스", tagline:"우리 아이 입맛 맞춤 간식 구독",
+    lead:"반려동물 알러지·기호에 맞춘 수제 간식을 정기배송합니다.",
+    story:["우리 강아지 알러지 때문에 간식 고르기가 늘 어려웠어요.","프로필 기반 맞춤 수제 간식을 정기배송. 까다로운 입맛의 반려동물 보호자에게 닿고 싶어요."],
+    whyNow:[{icon:"🦴",title:"지금 이 문제가 크다",desc:"반려동물마다 다른 기호·알러지에 맞는 간식 찾기가 어렵다"},{icon:"🧩",title:"해결의 실마리",desc:"프로필 기반 맞춤 수제 간식을 정기배송"},{icon:"🚀",title:"함께 만들 초기 멤버",desc:"방향·타깃이 분명해 지금 합류하기 좋아요"}],
+    productNote:"프로필 기반 맞춤 수제 간식을 정기배송",
+    plan:{problem:"반려동물마다 다른 기호·알러지에 맞는 간식 찾기가 어렵다",solution:"프로필 기반 맞춤 수제 간식을 정기배송",target:"까다로운 입맛의 반려동물 보호자",revenue:"월 구독 + 단품 판매"},
+    neededTeammates:[{role:"수제 간식 생산을 아는 사람",detail:"안전한 제조·품질"},{role:"구독 커머스를 운영할 사람",detail:"정기배송 운영"},{role:"브랜드 디자이너",detail:"패키지·브랜딩"}],
+    matchFactors:["반려동물 사랑","품질에 대한 고집","작게 시작"],
+    aiQuestions:["식품위생·구독커머스 관련 경험이 있나요?","반려동물 분야에 관심이나 경험이 있나요?"], founderQuestion:"간식 안전을 어떻게 보증할 수 있을까요?",
+    matchProfile:{ roleSkills:["식품위생","구독커머스","제조","디자인"], domains:["반려동물"], natures:["수익","창업"], minWeeklyCapacity:"주 10시간", meetingMode:"offline_optional" } },
+  { serviceName:"품앗이", tagline:"동네에서 재능을 주고받다",
+    lead:"이웃끼리 재능·시간을 교환하는 하이퍼로컬 품앗이입니다.",
+    story:["이사 온 동네에서 도움받을 곳이 없어 막막했어요.","동네 단위로 재능·시간을 교환하도록 매칭. 동네에 정착하고 싶은 주민에게 닿고 싶어요."],
+    whyNow:[{icon:"🧺",title:"지금 이 문제가 크다",desc:"가까운 이웃의 도움이 필요해도 연결될 방법이 없다"},{icon:"🧩",title:"해결의 실마리",desc:"동네 단위로 재능·시간을 교환하도록 매칭"},{icon:"🚀",title:"함께 만들 초기 멤버",desc:"방향·타깃이 분명해 지금 합류하기 좋아요"}],
+    productNote:"동네 단위로 재능·시간을 교환하도록 매칭",
+    plan:{problem:"가까운 이웃의 도움이 필요해도 연결될 방법이 없다",solution:"동네 단위로 재능·시간을 교환하도록 매칭",target:"동네에 정착하고 싶은 주민",revenue:"프리미엄 + 지역 광고"},
+    neededTeammates:[{role:"동네 매칭 앱을 만들 사람",detail:"위치 기반 매칭"},{role:"커뮤니티를 운영할 사람",detail:"신뢰·활성화"},{role:"지역 마케팅을 할 사람",detail:"초기 이웃 확보"}],
+    matchFactors:["이웃에 대한 신뢰","커뮤니티 감각","따뜻함"],
+    aiQuestions:["앱개발·커뮤니티 관련 경험이 있나요?","지역 커뮤니티 분야에 관심이나 경험이 있나요?"], founderQuestion:"낯선 이웃 간 신뢰를 어떻게 쌓을까요?",
+    matchProfile:{ roleSkills:["앱개발","커뮤니티","운영","마케팅"], domains:["지역 커뮤니티"], natures:["사회적 가치","창업"], minWeeklyCapacity:"주 10시간", meetingMode:"offline_optional" } },
+  { serviceName:"모아배송", tagline:"동네 가게들의 공동 배송",
+    lead:"소상공인이 배송비를 아끼도록 동네 주문을 묶어 배달합니다.",
+    story:["작은 가게가 배송비에 눌리는 걸 자주 봤어요.","동네 주문을 묶어 공동 배송으로 비용을 낮춘다. 동네 소상공인과 주민에게 닿고 싶어요."],
+    whyNow:[{icon:"🚚",title:"지금 이 문제가 크다",desc:"소상공인은 개별 배송비 부담이 커 온라인 판매가 어렵다"},{icon:"🧩",title:"해결의 실마리",desc:"동네 주문을 묶어 공동 배송으로 비용을 낮춘다"},{icon:"🚀",title:"함께 만들 초기 멤버",desc:"방향·타깃이 분명해 지금 합류하기 좋아요"}],
+    productNote:"동네 주문을 묶어 공동 배송으로 비용을 낮춘다",
+    plan:{problem:"소상공인은 개별 배송비 부담이 커 온라인 판매가 어렵다",solution:"동네 주문을 묶어 공동 배송으로 비용을 낮춘다",target:"동네 소상공인과 주민",revenue:"건당 수수료 + 월 이용료"},
+    neededTeammates:[{role:"물류 동선을 짤 사람",detail:"공동 배송 최적화"},{role:"가게 제휴를 뚫을 사람",detail:"공급자 확보"},{role:"주문 플랫폼을 만들 개발자",detail:"주문·정산"}],
+    matchFactors:["소상공인에 대한 이해","현장 실행력","비용 감각"],
+    aiQuestions:["공급망·제휴영업 관련 경험이 있나요?","지역 커뮤니티 분야에 관심이나 경험이 있나요?"], founderQuestion:"가게들을 초기에 어떻게 모을 수 있을까요?",
+    matchProfile:{ roleSkills:["공급망","제휴영업","웹개발","운영"], domains:["지역 커뮤니티","생산성"], natures:["수익","창업"], minWeeklyCapacity:"주 20시간 이상", meetingMode:"offline_optional" } },
+  { serviceName:"옆집마켓", tagline:"우리 동네 안심 중고장터",
+    lead:"같은 동네 이웃끼리 직거래하는 안심 중고 마켓입니다.",
+    story:["중고거래 사기·먼 거리 약속이 늘 스트레스였어요.","동네 인증 기반의 안심 직거래 마켓. 중고거래를 자주 하는 지역 주민에게 닿고 싶어요."],
+    whyNow:[{icon:"🛒",title:"지금 이 문제가 크다",desc:"중고거래는 신뢰와 거리 문제로 불편과 위험이 크다"},{icon:"🧩",title:"해결의 실마리",desc:"동네 인증 기반의 안심 직거래 마켓"},{icon:"🚀",title:"함께 만들 초기 멤버",desc:"방향·타깃이 분명해 지금 합류하기 좋아요"}],
+    productNote:"동네 인증 기반의 안심 직거래 마켓",
+    plan:{problem:"중고거래는 신뢰와 거리 문제로 불편과 위험이 크다",solution:"동네 인증 기반의 안심 직거래 마켓",target:"중고거래를 자주 하는 지역 주민",revenue:"프리미엄 + 지역 광고"},
+    neededTeammates:[{role:"거래 앱을 만들 개발자",detail:"채팅·거래 인프라"},{role:"신뢰·안전 시스템을 설계할 사람",detail:"사기 방지"},{role:"동네 마케팅을 할 사람",detail:"초기 사용자"}],
+    matchFactors:["안전 우선","커뮤니티 감각","실행력"],
+    aiQuestions:["앱개발·플랫폼 관련 경험이 있나요?","지역 커뮤니티 분야에 관심이나 경험이 있나요?"], founderQuestion:"중고 거래 사기를 어떻게 줄일 수 있을까요?",
+    matchProfile:{ roleSkills:["앱개발","플랫폼","커뮤니티","마케팅"], domains:["지역 커뮤니티"], natures:["수익","창업"], minWeeklyCapacity:"주 10시간", meetingMode:"online_only" } },
+  { serviceName:"약속시간", tagline:"제때 챙기는 만성질환 복약",
+    lead:"복잡한 복약 스케줄을 알림으로 챙기고 보호자와 공유합니다.",
+    story:["할머니 약 시간을 온 가족이 챙기느라 늘 조마조마했어요.","복약 일정 알림과 복용 확인을 보호자와 공유. 만성질환 고령자와 보호자에게 닿고 싶어요."],
+    whyNow:[{icon:"💊",title:"지금 이 문제가 크다",desc:"만성질환자는 복잡한 복약 일정을 놓쳐 건강이 악화된다"},{icon:"🧩",title:"해결의 실마리",desc:"복약 일정 알림과 복용 확인을 보호자와 공유"},{icon:"🚀",title:"함께 만들 초기 멤버",desc:"방향·타깃이 분명해 지금 합류하기 좋아요"}],
+    productNote:"복약 일정 알림과 복용 확인을 보호자와 공유",
+    plan:{problem:"만성질환자는 복잡한 복약 일정을 놓쳐 건강이 악화된다",solution:"복약 일정 알림과 복용 확인을 보호자와 공유",target:"만성질환 고령자와 보호자",revenue:"가족 구독 + 약국 제휴"},
+    neededTeammates:[{role:"알림 앱을 만들 개발자",detail:"스케줄·통지"},{role:"의료/약료 도메인을 아는 사람",detail:"복약 규칙 설계"},{role:"약국 제휴를 뚫을 사람",detail:"수요·데이터 확보"}],
+    matchFactors:["건강에 대한 책임","꼼꼼함","사회적 가치"],
+    aiQuestions:["앱개발·백엔드 관련 경험이 있나요?","의료 분야에 관심이나 경험이 있나요?"], founderQuestion:"복약 순응도를 어떻게 높일 수 있을까요?",
+    matchProfile:{ roleSkills:["앱개발","백엔드","제휴영업","데이터분석"], domains:["의료","복지"], natures:["사회적 가치","수익"], minWeeklyCapacity:"주 10시간", meetingMode:"online_only" } },
+  { serviceName:"마음곁에", tagline:"털어놓을 곳이 필요한 순간",
+    lead:"검증된 상담사와 익명으로 마음을 나누는 매칭입니다.",
+    story:["힘들 때 어디에 말해야 할지 몰라 헤맨 적이 있어요.","검증된 상담사와 익명 텍스트·화상 상담을 매칭. 마음이 힘든 2030에게 닿고 싶어요."],
+    whyNow:[{icon:"💬",title:"지금 이 문제가 크다",desc:"정신적으로 힘든 사람은 문턱 낮은 상담 창구를 찾기 어렵다"},{icon:"🧩",title:"해결의 실마리",desc:"검증된 상담사와 익명 텍스트·화상 상담을 매칭"},{icon:"🚀",title:"함께 만들 초기 멤버",desc:"방향·타깃이 분명해 지금 합류하기 좋아요"}],
+    productNote:"검증된 상담사와 익명 텍스트·화상 상담을 매칭",
+    plan:{problem:"정신적으로 힘든 사람은 문턱 낮은 상담 창구를 찾기 어렵다",solution:"검증된 상담사와 익명 텍스트·화상 상담을 매칭",target:"마음이 힘든 2030",revenue:"상담 수수료 + 기업 EAP"},
+    neededTeammates:[{role:"상담 매칭 앱을 만들 개발자",detail:"예약·상담 인프라"},{role:"임상/상담 전문성을 가진 사람",detail:"상담 품질·윤리"},{role:"기업 제휴를 뚫을 사람",detail:"B2B 수요"}],
+    matchFactors:["공감 능력","윤리 의식","신뢰 구축"],
+    aiQuestions:["앱개발·플랫폼 관련 경험이 있나요?","의료 분야에 관심이나 경험이 있나요?"], founderQuestion:"상담의 신뢰와 안전을 어떻게 보장할까요?",
+    matchProfile:{ roleSkills:["앱개발","플랫폼","제휴영업","콘텐츠"], domains:["의료","복지"], natures:["사회적 가치","수익"], minWeeklyCapacity:"주 10시간", meetingMode:"online_only" } },
+  { serviceName:"리해빗", tagline:"집에서 잇는 재활 운동",
+    lead:"물리치료 후 집에서도 이어가는 맞춤 재활 코칭입니다.",
+    story:["수술 후 재활을 혼자 이어가기가 너무 막막했어요.","맞춤 운동 영상과 코치 피드백으로 재활을 이어간다. 재활이 필요한 환자와 시니어에게 닿고 싶어요."],
+    whyNow:[{icon:"🦵",title:"지금 이 문제가 크다",desc:"퇴원 후 재활은 지속이 어려워 회복이 더디다"},{icon:"🧩",title:"해결의 실마리",desc:"맞춤 운동 영상과 코치 피드백으로 재활을 이어간다"},{icon:"🚀",title:"함께 만들 초기 멤버",desc:"방향·타깃이 분명해 지금 합류하기 좋아요"}],
+    productNote:"맞춤 운동 영상과 코치 피드백으로 재활을 이어간다",
+    plan:{problem:"퇴원 후 재활은 지속이 어려워 회복이 더디다",solution:"맞춤 운동 영상과 코치 피드백으로 재활을 이어간다",target:"재활이 필요한 환자와 시니어",revenue:"월 구독 + 병원 제휴"},
+    neededTeammates:[{role:"운동 앱을 만들 개발자",detail:"영상·기록 기능"},{role:"물리치료 전문성을 가진 사람",detail:"안전한 프로그램"},{role:"병원 제휴를 뚫을 사람",detail:"환자 유입"}],
+    matchFactors:["건강에 대한 책임","꾸준함","전문성 존중"],
+    aiQuestions:["앱개발·영상편집 관련 경험이 있나요?","의료 분야에 관심이나 경험이 있나요?"], founderQuestion:"재활을 끝까지 이어가게 하는 동기는 무엇일까요?",
+    matchProfile:{ roleSkills:["앱개발","영상편집","제휴영업","데이터분석"], domains:["의료"], natures:["수익","사회적 가치"], minWeeklyCapacity:"주 10시간", meetingMode:"online_only" } },
+  { serviceName:"리필맵", tagline:"가까운 리필 스테이션을 한눈에",
+    lead:"포장 없이 담아가는 리필 매장을 지도로 찾아줍니다.",
+    story:["제로웨이스트를 실천하려 해도 매장 찾기가 어려웠어요.","리필 매장을 지도·리뷰로 모아 보여준다. 친환경 소비에 관심 있는 소비자에게 닿고 싶어요."],
+    whyNow:[{icon:"🗺️",title:"지금 이 문제가 크다",desc:"친환경 소비를 원해도 리필·제로웨이스트 매장 정보가 흩어져 있다"},{icon:"🧩",title:"해결의 실마리",desc:"리필 매장을 지도·리뷰로 모아 보여준다"},{icon:"🚀",title:"함께 만들 초기 멤버",desc:"방향·타깃이 분명해 지금 합류하기 좋아요"}],
+    productNote:"리필 매장을 지도·리뷰로 모아 보여준다",
+    plan:{problem:"친환경 소비를 원해도 리필·제로웨이스트 매장 정보가 흩어져 있다",solution:"리필 매장을 지도·리뷰로 모아 보여준다",target:"친환경 소비에 관심 있는 소비자",revenue:"매장 광고 + 제휴"},
+    neededTeammates:[{role:"지도 앱을 만들 개발자",detail:"위치·검색"},{role:"매장 데이터를 모을 사람",detail:"DB 구축·제휴"},{role:"콘텐츠 마케터",detail:"친환경 커뮤니티"}],
+    matchFactors:["환경 가치","성실함","커뮤니티 감각"],
+    aiQuestions:["앱개발·콘텐츠 관련 경험이 있나요?","ESG 분야에 관심이나 경험이 있나요?"], founderQuestion:"매장 정보를 최신으로 유지할 방법은요?",
+    matchProfile:{ roleSkills:["앱개발","콘텐츠","제휴영업","마케팅"], domains:["ESG","지역 커뮤니티"], natures:["사회적 가치","창업"], minWeeklyCapacity:"주 5시간", meetingMode:"online_only" } },
+  { serviceName:"다시가전", tagline:"한 번 더 쓰는 중고 가전",
+    lead:"점검·보증을 붙인 리퍼 가전을 안심하고 사고팔게 합니다.",
+    story:["멀쩡한 가전이 버려지는 게 늘 아까웠어요.","전문 점검·보증을 붙인 리퍼 가전 거래. 가성비·친환경 소비자에게 닿고 싶어요."],
+    whyNow:[{icon:"🔌",title:"지금 이 문제가 크다",desc:"중고 가전은 고장 걱정 때문에 거래가 꺼려진다"},{icon:"🧩",title:"해결의 실마리",desc:"전문 점검·보증을 붙인 리퍼 가전 거래"},{icon:"🚀",title:"함께 만들 초기 멤버",desc:"방향·타깃이 분명해 지금 합류하기 좋아요"}],
+    productNote:"전문 점검·보증을 붙인 리퍼 가전 거래",
+    plan:{problem:"중고 가전은 고장 걱정 때문에 거래가 꺼려진다",solution:"전문 점검·보증을 붙인 리퍼 가전 거래",target:"가성비·친환경 소비자",revenue:"판매 마진 + 점검비"},
+    neededTeammates:[{role:"점검·수리를 아는 사람",detail:"품질 보증의 핵심"},{role:"커머스를 운영할 사람",detail:"매입·판매 운영"},{role:"웹을 만들 개발자",detail:"거래 플랫폼"}],
+    matchFactors:["환경 가치","품질에 대한 고집","실행력"],
+    aiQuestions:["제조·온라인판매 관련 경험이 있나요?","ESG 분야에 관심이나 경험이 있나요?"], founderQuestion:"리퍼 품질 신뢰를 어떻게 보장할까요?",
+    matchProfile:{ roleSkills:["제조","온라인판매","웹개발","운영"], domains:["ESG","생산성"], natures:["수익","창업"], minWeeklyCapacity:"주 20시간 이상", meetingMode:"offline_optional" } },
+  { serviceName:"제로데이", tagline:"오늘의 작은 탄소 절감",
+    lead:"일상 속 탄소 절감 행동을 챌린지로 습관화합니다.",
+    story:["환경을 위해 뭘 해야 할지 막막했던 제 경험에서 시작했어요.","일상 챌린지와 리워드로 절감 습관을 만든다. 친환경에 관심 있는 2030에게 닿고 싶어요."],
+    whyNow:[{icon:"🌍",title:"지금 이 문제가 크다",desc:"개인은 탄소 절감을 실천하고 싶어도 방법과 동기가 약하다"},{icon:"🧩",title:"해결의 실마리",desc:"일상 챌린지와 리워드로 절감 습관을 만든다"},{icon:"🚀",title:"함께 만들 초기 멤버",desc:"방향·타깃이 분명해 지금 합류하기 좋아요"}],
+    productNote:"일상 챌린지와 리워드로 절감 습관을 만든다",
+    plan:{problem:"개인은 탄소 절감을 실천하고 싶어도 방법과 동기가 약하다",solution:"일상 챌린지와 리워드로 절감 습관을 만든다",target:"친환경에 관심 있는 2030",revenue:"기업 스폰서 + 리워드 수수료"},
+    neededTeammates:[{role:"앱을 만들 개발자",detail:"챌린지·리워드"},{role:"게임화 기획을 할 사람",detail:"지속 참여 설계"},{role:"기업 스폰서를 뚫을 사람",detail:"리워드 재원"}],
+    matchFactors:["환경 가치","트렌드 감각","꾸준함"],
+    aiQuestions:["앱개발·기획 관련 경험이 있나요?","ESG 분야에 관심이나 경험이 있나요?"], founderQuestion:"작은 습관을 오래 유지시키는 장치는 무엇일까요?",
+    matchProfile:{ roleSkills:["앱개발","기획","마케팅","콘텐츠"], domains:["ESG","콘텐츠"], natures:["사회적 가치","수익"], minWeeklyCapacity:"주 10시간", meetingMode:"online_only" } },
+  { serviceName:"클립팀", tagline:"숏폼 크리에이터의 팀메이트",
+    lead:"기획·촬영·편집이 필요한 크리에이터끼리 협업을 잇습니다.",
+    story:["혼자 숏폼을 만들다 지쳐 함께할 사람이 절실했어요.","역할별 크리에이터를 매칭해 협업 팀을 만든다. 성장하려는 숏폼 크리에이터에게 닿고 싶어요."],
+    whyNow:[{icon:"🎬",title:"지금 이 문제가 크다",desc:"1인 크리에이터는 기획·편집을 혼자 감당하기 벅차다"},{icon:"🧩",title:"해결의 실마리",desc:"역할별 크리에이터를 매칭해 협업 팀을 만든다"},{icon:"🚀",title:"함께 만들 초기 멤버",desc:"방향·타깃이 분명해 지금 합류하기 좋아요"}],
+    productNote:"역할별 크리에이터를 매칭해 협업 팀을 만든다",
+    plan:{problem:"1인 크리에이터는 기획·편집을 혼자 감당하기 벅차다",solution:"역할별 크리에이터를 매칭해 협업 팀을 만든다",target:"성장하려는 숏폼 크리에이터",revenue:"매칭 수수료 + 프로 멤버십"},
+    neededTeammates:[{role:"매칭 플랫폼을 만들 개발자",detail:"협업 매칭"},{role:"크리에이터 커뮤니티를 운영할 사람",detail:"활성화"},{role:"영상 편집을 아는 사람",detail:"협업 워크플로우"}],
+    matchFactors:["콘텐츠 감각","협업 지향","트렌드 이해"],
+    aiQuestions:["앱개발·콘텐츠 관련 경험이 있나요?","콘텐츠 분야에 관심이나 경험이 있나요?"], founderQuestion:"크리에이터 협업에서 가장 자주 깨지는 지점은요?",
+    matchProfile:{ roleSkills:["앱개발","콘텐츠","영상편집","커뮤니티"], domains:["콘텐츠"], natures:["창업","수익"], minWeeklyCapacity:"주 10시간", meetingMode:"online_only" } },
+  { serviceName:"귀책방", tagline:"귀로 듣는 이야기, 오디오 드라마",
+    lead:"성우·작가·사운드가 모여 오디오 드라마를 제작·유통합니다.",
+    story:["출퇴근길 오디오 콘텐츠에 빠져 직접 만들고 싶어졌어요.","제작 팀을 모으고 플랫폼으로 유통한다. 오디오 콘텐츠를 즐기는 청취자에게 닿고 싶어요."],
+    whyNow:[{icon:"🎧",title:"지금 이 문제가 크다",desc:"오디오 드라마는 만들 사람은 흩어져 있고 유통 창구가 약하다"},{icon:"🧩",title:"해결의 실마리",desc:"제작 팀을 모으고 플랫폼으로 유통한다"},{icon:"🚀",title:"함께 만들 초기 멤버",desc:"방향·타깃이 분명해 지금 합류하기 좋아요"}],
+    productNote:"제작 팀을 모으고 플랫폼으로 유통한다",
+    plan:{problem:"오디오 드라마는 만들 사람은 흩어져 있고 유통 창구가 약하다",solution:"제작 팀을 모으고 플랫폼으로 유통한다",target:"오디오 콘텐츠를 즐기는 청취자",revenue:"유료 구독 + IP 판매"},
+    neededTeammates:[{role:"작가·기획을 할 사람",detail:"스토리의 핵심"},{role:"사운드·편집을 아는 사람",detail:"몰입감 제작"},{role:"유통·마케팅을 할 사람",detail:"청취자 확보"}],
+    matchFactors:["이야기에 대한 애정","협업 지향","완성도 집착"],
+    aiQuestions:["콘텐츠·영상편집 관련 경험이 있나요?","콘텐츠 분야에 관심이나 경험이 있나요?"], founderQuestion:"오디오 드라마를 어떻게 수익화할 수 있을까요?",
+    matchProfile:{ roleSkills:["콘텐츠","영상편집","기획","마케팅"], domains:["콘텐츠"], natures:["수익","창업"], minWeeklyCapacity:"주 10시간", meetingMode:"online_only" } },
+  { serviceName:"레터라운지", tagline:"취향 저격 독립 뉴스레터",
+    lead:"분야별 큐레이터의 독립 뉴스레터를 한곳에서 구독합니다.",
+    story:["좋은 뉴스레터를 찾아 헤매던 경험에서 출발했어요.","큐레이터 뉴스레터를 모아 발견·구독·정산을 돕는다. 깊이 있는 콘텐츠를 원하는 구독자에게 닿고 싶어요."],
+    whyNow:[{icon:"✉️",title:"지금 이 문제가 크다",desc:"좋은 독립 뉴스레터는 흩어져 있어 발견과 구독이 번거롭다"},{icon:"🧩",title:"해결의 실마리",desc:"큐레이터 뉴스레터를 모아 발견·구독·정산을 돕는다"},{icon:"🚀",title:"함께 만들 초기 멤버",desc:"방향·타깃이 분명해 지금 합류하기 좋아요"}],
+    productNote:"큐레이터 뉴스레터를 모아 발견·구독·정산을 돕는다",
+    plan:{problem:"좋은 독립 뉴스레터는 흩어져 있어 발견과 구독이 번거롭다",solution:"큐레이터 뉴스레터를 모아 발견·구독·정산을 돕는다",target:"깊이 있는 콘텐츠를 원하는 구독자",revenue:"구독 수수료 + 프로 도구"},
+    neededTeammates:[{role:"발행 플랫폼을 만들 개발자",detail:"구독·발송·정산"},{role:"에디터·큐레이터",detail:"콘텐츠 품질"},{role:"그로스 마케터",detail:"구독자 확보"}],
+    matchFactors:["콘텐츠 안목","꾸준함","독자 존중"],
+    aiQuestions:["웹개발·콘텐츠 관련 경험이 있나요?","콘텐츠 분야에 관심이나 경험이 있나요?"], founderQuestion:"구독자를 오래 붙잡는 뉴스레터의 비결은요?",
+    matchProfile:{ roleSkills:["웹개발","콘텐츠","마케팅","기획"], domains:["콘텐츠"], natures:["수익","학습"], minWeeklyCapacity:"주 10시간", meetingMode:"online_only" } },
+  { serviceName:"예약노트", tagline:"1인 사장님을 위한 예약 관리",
+    lead:"전화·수기로 하던 예약을 간단한 앱으로 정리합니다.",
+    story:["작은 가게 사장님들이 예약을 수첩으로 관리하는 걸 봤어요.","간편 예약·알림·노쇼 관리를 제공한다. 예약을 받는 소상공인에게 닿고 싶어요."],
+    whyNow:[{icon:"📅",title:"지금 이 문제가 크다",desc:"소상공인은 예약·노쇼 관리를 수기로 하며 손실을 본다"},{icon:"🧩",title:"해결의 실마리",desc:"간편 예약·알림·노쇼 관리를 제공한다"},{icon:"🚀",title:"함께 만들 초기 멤버",desc:"방향·타깃이 분명해 지금 합류하기 좋아요"}],
+    productNote:"간편 예약·알림·노쇼 관리를 제공한다",
+    plan:{problem:"소상공인은 예약·노쇼 관리를 수기로 하며 손실을 본다",solution:"간편 예약·알림·노쇼 관리를 제공한다",target:"예약을 받는 소상공인",revenue:"월 구독 + 결제 수수료"},
+    neededTeammates:[{role:"SaaS를 만들 개발자",detail:"예약·알림 핵심"},{role:"소상공인 영업을 할 사람",detail:"현장 도입"},{role:"UX 디자이너",detail:"쉬운 사용성"}],
+    matchFactors:["소상공인 이해","단순함 추구","실행력"],
+    aiQuestions:["백엔드·웹개발 관련 경험이 있나요?","생산성 분야에 관심이나 경험이 있나요?"], founderQuestion:"바쁜 사장님이 새 앱을 쓰게 만들려면요?",
+    matchProfile:{ roleSkills:["백엔드","웹개발","영업","UIUX"], domains:["생산성"], natures:["수익","창업"], minWeeklyCapacity:"주 20시간 이상", meetingMode:"online_only" } },
+  { serviceName:"프리페이", tagline:"프리랜서의 정산 비서",
+    lead:"견적·계약·세금계산서·미수금을 한곳에서 관리합니다.",
+    story:["프리랜서로 일하며 정산·세금이 늘 골칫거리였어요.","견적부터 정산·세무까지 한 흐름으로 관리. 1인 프리랜서·소상공인에게 닿고 싶어요."],
+    whyNow:[{icon:"🧾",title:"지금 이 문제가 크다",desc:"프리랜서는 견적·정산·세무를 흩어진 채 처리하며 실수한다"},{icon:"🧩",title:"해결의 실마리",desc:"견적부터 정산·세무까지 한 흐름으로 관리"},{icon:"🚀",title:"함께 만들 초기 멤버",desc:"방향·타깃이 분명해 지금 합류하기 좋아요"}],
+    productNote:"견적부터 정산·세무까지 한 흐름으로 관리",
+    plan:{problem:"프리랜서는 견적·정산·세무를 흩어진 채 처리하며 실수한다",solution:"견적부터 정산·세무까지 한 흐름으로 관리",target:"1인 프리랜서·소상공인",revenue:"월 구독 + 부가 서비스"},
+    neededTeammates:[{role:"웹앱을 만들 개발자",detail:"정산·문서 자동화"},{role:"세무·회계를 아는 사람",detail:"규칙 설계"},{role:"프리랜서 마케팅을 할 사람",detail:"초기 사용자"}],
+    matchFactors:["꼼꼼함","실용주의","사용자 공감"],
+    aiQuestions:["백엔드·웹개발 관련 경험이 있나요?","생산성 분야에 관심이나 경험이 있나요?"], founderQuestion:"정산 실수를 가장 많이 줄여줄 기능은 무엇일까요?",
+    matchProfile:{ roleSkills:["백엔드","웹개발","데이터분석","마케팅"], domains:["생산성"], natures:["수익"], minWeeklyCapacity:"주 10시간", meetingMode:"online_only" } },
+  { serviceName:"미팅봇", tagline:"회의가 끝나면 회의록이 완성",
+    lead:"녹음을 요약해 결정·할 일까지 자동 정리합니다.",
+    story:["회의 후 회의록 작성에 매번 시간을 뺏겼어요.","녹음을 AI로 요약해 결정·액션아이템을 정리. 회의가 많은 스타트업·팀에게 닿고 싶어요."],
+    whyNow:[{icon:"🤖",title:"지금 이 문제가 크다",desc:"팀은 회의록 작성에 시간을 쓰고도 핵심을 놓친다"},{icon:"🧩",title:"해결의 실마리",desc:"녹음을 AI로 요약해 결정·액션아이템을 정리"},{icon:"🚀",title:"함께 만들 초기 멤버",desc:"방향·타깃이 분명해 지금 합류하기 좋아요"}],
+    productNote:"녹음을 AI로 요약해 결정·액션아이템을 정리",
+    plan:{problem:"팀은 회의록 작성에 시간을 쓰고도 핵심을 놓친다",solution:"녹음을 AI로 요약해 결정·액션아이템을 정리",target:"회의가 많은 스타트업·팀",revenue:"시트 구독 + 기업 계약"},
+    neededTeammates:[{role:"음성·AI를 다룰 개발자",detail:"요약 엔진"},{role:"협업 도구 연동을 아는 사람",detail:"노션·슬랙 연동"},{role:"B2B 세일즈를 할 사람",detail:"기업 도입"}],
+    matchFactors:["생산성 집착","데이터 신뢰","빠른 실험"],
+    aiQuestions:["백엔드·머신러닝 관련 경험이 있나요?","생산성 분야에 관심이나 경험이 있나요?"], founderQuestion:"요약 품질을 팀이 신뢰하게 하려면요?",
+    matchProfile:{ roleSkills:["백엔드","머신러닝","API연동","B2B"], domains:["생산성"], natures:["수익","창업"], minWeeklyCapacity:"주 20시간 이상", meetingMode:"online_only" } },
+  { serviceName:"위키파일럿", tagline:"팀 지식을 물어보면 답하는 봇",
+    lead:"흩어진 사내 문서를 학습해 질문에 바로 답합니다.",
+    story:["필요한 사내 문서를 찾느라 늘 시간을 허비했어요.","사내 문서를 학습해 질문에 근거와 함께 답한다. 문서가 많은 팀·기업에게 닿고 싶어요."],
+    whyNow:[{icon:"📚",title:"지금 이 문제가 크다",desc:"팀은 지식이 문서에 흩어져 필요한 정보를 못 찾는다"},{icon:"🧩",title:"해결의 실마리",desc:"사내 문서를 학습해 질문에 근거와 함께 답한다"},{icon:"🚀",title:"함께 만들 초기 멤버",desc:"방향·타깃이 분명해 지금 합류하기 좋아요"}],
+    productNote:"사내 문서를 학습해 질문에 근거와 함께 답한다",
+    plan:{problem:"팀은 지식이 문서에 흩어져 필요한 정보를 못 찾는다",solution:"사내 문서를 학습해 질문에 근거와 함께 답한다",target:"문서가 많은 팀·기업",revenue:"시트 구독 + 온프레미스"},
+    neededTeammates:[{role:"RAG를 다룰 개발자",detail:"검색·응답 엔진"},{role:"데이터 파이프라인을 아는 사람",detail:"문서 수집·정제"},{role:"B2B 세일즈를 할 사람",detail:"기업 도입"}],
+    matchFactors:["생산성 집착","보안 감각","학습 지향"],
+    aiQuestions:["백엔드·머신러닝 관련 경험이 있나요?","생산성 분야에 관심이나 경험이 있나요?"], founderQuestion:"사내 지식의 보안과 정확도를 어떻게 지킬까요?",
+    matchProfile:{ roleSkills:["백엔드","머신러닝","데이터분석","B2B"], domains:["생산성"], natures:["수익","학습"], minWeeklyCapacity:"주 20시간 이상", meetingMode:"online_only" } },
+  { serviceName:"북키퍼", tagline:"초보 창업가의 첫 회계",
+    lead:"복잡한 장부를 쉬운 질문 몇 개로 정리해줍니다.",
+    story:["처음 창업했을 때 회계가 가장 두려웠어요.","쉬운 흐름으로 장부·세무 신고를 돕는다. 1인·초기 창업가에게 닿고 싶어요."],
+    whyNow:[{icon:"📒",title:"지금 이 문제가 크다",desc:"초기 창업가는 회계 지식이 없어 장부·세금에서 헤맨다"},{icon:"🧩",title:"해결의 실마리",desc:"쉬운 흐름으로 장부·세무 신고를 돕는다"},{icon:"🚀",title:"함께 만들 초기 멤버",desc:"방향·타깃이 분명해 지금 합류하기 좋아요"}],
+    productNote:"쉬운 흐름으로 장부·세무 신고를 돕는다",
+    plan:{problem:"초기 창업가는 회계 지식이 없어 장부·세금에서 헤맨다",solution:"쉬운 흐름으로 장부·세무 신고를 돕는다",target:"1인·초기 창업가",revenue:"월 구독 + 세무 제휴"},
+    neededTeammates:[{role:"웹앱을 만들 개발자",detail:"장부 자동화"},{role:"세무·회계 전문가",detail:"규칙과 신고"},{role:"창업가 대상 마케터",detail:"초기 사용자"}],
+    matchFactors:["꼼꼼함","초보자 공감","실용주의"],
+    aiQuestions:["백엔드·웹개발 관련 경험이 있나요?","생산성 분야에 관심이나 경험이 있나요?"], founderQuestion:"회계를 모르는 사장님도 쓰게 하려면요?",
+    matchProfile:{ roleSkills:["백엔드","웹개발","데이터분석","제휴영업"], domains:["생산성"], natures:["수익"], minWeeklyCapacity:"주 10시간", meetingMode:"online_only" } },
+  { serviceName:"스톡핏", tagline:"작은 가게의 똑똑한 재고",
+    lead:"잘 나가는 것과 재고를 데이터로 알려줍니다.",
+    story:["재고 때문에 자금이 묶이는 가게들을 자주 봤어요.","판매 데이터로 발주·재고를 추천한다. 재고를 다루는 소상공인에게 닿고 싶어요."],
+    whyNow:[{icon:"📦",title:"지금 이 문제가 크다",desc:"소상공인은 감으로 재고를 관리해 과잉·품절을 반복한다"},{icon:"🧩",title:"해결의 실마리",desc:"판매 데이터로 발주·재고를 추천한다"},{icon:"🚀",title:"함께 만들 초기 멤버",desc:"방향·타깃이 분명해 지금 합류하기 좋아요"}],
+    productNote:"판매 데이터로 발주·재고를 추천한다",
+    plan:{problem:"소상공인은 감으로 재고를 관리해 과잉·품절을 반복한다",solution:"판매 데이터로 발주·재고를 추천한다",target:"재고를 다루는 소상공인",revenue:"월 구독 + 발주 제휴"},
+    neededTeammates:[{role:"데이터를 다룰 개발자",detail:"수요 예측"},{role:"리테일을 아는 사람",detail:"현장 규칙"},{role:"소상공인 영업을 할 사람",detail:"도입 확대"}],
+    matchFactors:["데이터 사고","현장 이해","실행력"],
+    aiQuestions:["백엔드·데이터분석 관련 경험이 있나요?","생산성 분야에 관심이나 경험이 있나요?"], founderQuestion:"감에 의존하던 사장님을 어떻게 설득할까요?",
+    matchProfile:{ roleSkills:["백엔드","데이터분석","영업","운영"], domains:["생산성","지역 커뮤니티"], natures:["수익","창업"], minWeeklyCapacity:"주 10시간", meetingMode:"online_only" } },
 ];
 
 /* 로그인 유저(홍길동)의 팀원 이력서 */
@@ -885,7 +1167,7 @@ function previewLoading(){
   box.scrollIntoView({ behavior:"smooth", block:"center" });
   startLoadingStages();
 }
-/* 개발용: API 안 부르고 에코그립 예시로 비전 페이지 미리보기 (비용 0) */
+/* 개발용: API 안 부르고 에코그립 예시로 기획안 페이지 미리보기 (비용 0) */
 function previewVision(){
   const v = JSON.parse(JSON.stringify(DEMO_PROJECT));
   ORBIT.vision = v; ORBIT.founderQuestion = v.founderQuestion || ""; ORBIT.picks = []; ORBIT.editing = null;
@@ -920,7 +1202,8 @@ function doLogin(accKey){
   ORBIT.role = acc.role;
   ORBIT.profileDone = acc.profileDone;
   ORBIT.myIdeas = acc.hasIdea ? [{ vision:DEMO_PROJECT, proposals:DEMO_PROJECT_PROPOSALS.map(p=>({...p})) }] : [];
-  ORBIT.applied = []; ORBIT.profile = acc.profile || null;
+  ORBIT.applied = acc.hasApplied ? DEMO_RIDER_APPLIED.map(a=>({...a})) : [];
+  ORBIT.profile = acc.profile || null;
   // 랜딩에서 하던 액션 이어가기 (있으면 그 역할로 확정)
   const p = ORBIT._pending; ORBIT._pending = null;
   if(p && p.type==="idea"){ ORBIT.role="shooter"; ORBIT.myTab="idea"; goIdeaIntro(); const ti=document.getElementById("idea"); if(ti) ti.value=p.idea; ideaStart(); return; }
@@ -967,7 +1250,7 @@ function renderDashboard(){
   // 1) 내 아이디어
   const ideaBody = ideas.length
     ? ideas.slice(0,3).map(it=>`<div class="dash-row"><div style="flex:1"><b style="color:var(--navy);font-size:13.5px">${esc(it.vision.serviceName)}</b><div style="font-size:12px;color:var(--muted);margin-top:2px">${esc(it.vision.tagline)}</div></div></div>`).join("")
-    : `<div class="dc-empty">아직 등록한 아이디어가 없어요.<br>한 줄이면 ORBIT이 비전과 팀원까지 만들어드려요.</div>`;
+    : `<div class="dc-empty">아직 등록한 아이디어가 없어요.<br>한 줄이면 ORBIT이 기획안과 팀원까지 만들어드려요.</div>`;
   const c1 = `<div class="dashcard">
     <div class="dc-top"><div class="dc-ic">🚀</div><div class="dc-t">내 아이디어</div>${ideas.length?`<span class="dc-n">${ideas.length}</span>`:``}</div>
     <div class="dc-body">${ideaBody}</div>
@@ -1597,7 +1880,7 @@ async function ideaStart(){
   if(!ORBIT.loggedIn){ ORBIT._pending={type:"idea", idea}; go("login"); return; }
   const btn = document.getElementById("ideaGo"); btn.disabled=true;
   const box = document.getElementById("idea-boost");
-  box.innerHTML = `<div class="card">${spinner("AI가 비전을 또렷하게 만들 질문을 준비하는 중...")}</div>`;
+  box.innerHTML = `<div class="card">${spinner("AI가 기획안을 또렷하게 만들 질문을 준비하는 중...")}</div>`;
   box.scrollIntoView({ behavior:"smooth", block:"center" });
   try{
     const b = await api("/api/boost", { idea });
@@ -1614,9 +1897,9 @@ function renderBoost(){
     </div>`).join("");
   document.getElementById("idea-boost").innerHTML = `
     <div class="card fade">
-      <p class="eyebrow">🤖 AI 보충 질문 — 비전을 또렷하게</p>
+      <p class="eyebrow">🤖 AI 보충 질문 — 기획안을 또렷하게</p>
       ${qs}
-      <button class="btn full" id="boostGo" onclick="ideaMakeVision()">이 답으로 비전 만들기 →</button>
+      <button class="btn full" id="boostGo" onclick="ideaMakeVision()">이 답으로 기획안 만들기 →</button>
     </div>`;
   ORBIT._sel = {};
   document.getElementById("idea-boost").scrollIntoView({ behavior:"smooth", block:"center" });
@@ -1625,7 +1908,7 @@ function pickOpt(qi,oi){
   ORBIT._sel = ORBIT._sel || {};
   ORBIT._sel[qi] = oi;
   ORBIT.boost[qi].options.forEach((_,i)=>document.getElementById(`opt-${qi}-${i}`).classList.toggle("sel", i===oi));
-  // 보충 질문을 모두 선택하면 '비전 만들기' 버튼으로 부드럽게 이동
+  // 보충 질문을 모두 선택하면 '기획안 만들기' 버튼으로 부드럽게 이동
   if(Object.keys(ORBIT._sel).length >= ORBIT.boost.length){
     const btn = document.getElementById("boostGo");
     if(btn) btn.scrollIntoView({ behavior:"smooth", block:"center" });
@@ -1677,7 +1960,7 @@ function renderVision(v){
   const ch = ORBIT.channels = ORBIT.channels || (v.channels ? {...v.channels} : {kakao:"",slack:"",email:"",zoom:""});
 
   document.getElementById("idea-vision").innerHTML = `
-    <div class="banner fade">✍️ <b>AI가 만든 비전이에요.</b> 각 항목 옆 <b>✎ 수정</b>으로 직접 고칠 수 있어요. <b>함께 찾을 팀원</b>은 1명 이상 선택해야 합니다.</div>
+    <div class="banner fade">✍️ <b>AI가 만든 기획안이에요.</b> 각 항목 옆 <b>✎ 수정</b>으로 직접 고칠 수 있어요. <b>함께 찾을 팀원</b>은 1명 이상 선택해야 합니다.</div>
     <div class="hero fade">
       <div class="tags"><span class="hot">아이디어 단계</span><span>팀원 모집 중</span></div>
       <h1>${esc(v.serviceName)} — ${esc(v.tagline)}</h1>
@@ -1782,7 +2065,7 @@ function confirmVision(){
   v.channels = {...(ORBIT.channels||{})};
   ORBIT.myIdeas.unshift({ vision:v, proposals: makeProposals(v) });
   alert("🚀 아이디어를 쏘아 올렸어요!\nORBIT이 이 아이디어에 맞는 팀원을 찾아드릴게요.");
-  openDetail(v, true);  // 내 비전 상세로 이동 → 추천 팀원 매칭
+  openDetail(v, true);  // 내 기획안 상세로 이동 → 추천 팀원 매칭
 }
 
 /* ===== 팀원 되기 ===== */
@@ -1812,7 +2095,7 @@ async function openDetail(v, isOwner){
   const back = isOwner
     ? `<button class="btn ghost" onclick="showMy('idea')">← 내 아이디어로</button>`
     : `<button class="btn ghost" onclick="showMy('team')">← 둘러보기로</button>`;
-  const tag = isOwner ? "📄 내 비전 페이지" : "🤝 합류 검토";
+  const tag = isOwner ? "📄 내 기획안 페이지" : "🤝 합류 검토";
   const action = isOwner
     ? `<div class="card">
         <p class="eyebrow">🧩 이 아이디어가 찾는 팀원</p>${seats}
@@ -2033,7 +2316,7 @@ function renderMyIdea(){
           <div style="flex:1"><div style="font-size:16px; font-weight:800; color:var(--navy)">${esc(it.vision.serviceName)}</div>
             <div style="font-size:12.5px; color:var(--muted); margin-top:2px;">${esc(it.vision.tagline)}</div></div>
           ${pend?`<span class="pill blue">받은 제안 ${pend}건</span>`:``}${acc?`<span class="pill green">합류 ${acc}명</span>`:``}
-          <span style="color:var(--blue); font-size:13px; font-weight:700; white-space:nowrap;">비전 보기 →</span>
+          <span style="color:var(--blue); font-size:13px; font-weight:700; white-space:nowrap;">기획안 보기 →</span>
         </div>
         <div style="margin-top:14px">${it.proposals.map((p,pi)=>proposalRow(idx,pi,p,it.vision.serviceName)).join("")}</div>
         ${acc ? teamChannelBlock(it.vision) : ""}
