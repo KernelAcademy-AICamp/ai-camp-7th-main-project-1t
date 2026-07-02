@@ -808,7 +808,7 @@ const DEMO_PROJECT_PROPOSALS = [
 ];
 /* 이라이더가 신청한 아이디어 — 프로필 vs 30개 아이디어 매칭 점수 상위 (rate=결정적 점수) */
 const DEMO_RIDER_APPLIED = [
-  {title:"제로데이", role:"마케팅·콘텐츠 담당", rate:80, status:"accepted"},
+  {title:"제로데이", role:"마케팅·콘텐츠 담당", rate:80, status:"accepted", channels:{kakao:"https://open.kakao.com/o/zeroday", slack:"https://zeroday.slack.com", email:"team@zeroday.kr", zoom:"https://calendly.com/zeroday/kickoff"}},
   {title:"귀책방", role:"마케팅·콘텐츠 담당", rate:70, status:"pending"},
   {title:"레터라운지", role:"마케팅·콘텐츠 담당", rate:70, status:"pending"},
   {title:"리필맵", role:"마케팅·콘텐츠 담당", rate:70, status:"pending"},
@@ -1382,9 +1382,10 @@ function renderAppliedList(){
       </div>
       <div style="font-size:12.5px; color:#475569; margin-top:11px; padding-top:11px; border-top:1px solid var(--line);">
         ${acc
-          ? "🎉 제공자가 합류를 수락했어요. 팀 소통 채널에서 함께 시작하세요."
+          ? "🎉 제공자가 합류를 수락했어요. 아래 채널에서 함께 시작하세요."
           : "⏳ 제공자가 신청서를 확인하고 있어요. 수락되면 알려드릴게요."}
       </div>
+      ${acc && a.channels ? teamChannelBlock(a) : ""}
     </div>`;
   };
 
@@ -2326,7 +2327,7 @@ function renderJoin(r){
 function applyToIdea(){
   const v = ORBIT.detailVision;
   ORBIT.applied = ORBIT.applied.filter(a=>a.title!==v.serviceName);
-  ORBIT.applied.unshift({ title:v.serviceName, role:ORBIT.detailRole||"추천 자리", rate:ORBIT.detailRate||0, status:"pending" });
+  ORBIT.applied.unshift({ title:v.serviceName, role:ORBIT.detailRole||"추천 자리", rate:ORBIT.detailRate||0, status:"pending", channels:(v&&v.channels)||null });
   const note = document.getElementById("appliedNote");
   document.getElementById("applyBtn").disabled = true;
   note.innerHTML = `
