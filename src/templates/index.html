@@ -614,6 +614,7 @@
           <button onclick="doLogin('new')">🌱 새싹·신규</button>
           <button onclick="doLogin('rider')">🛰️ 이라이더·프로필有</button>
           <button onclick="doLogin('shooter')">🚀 박슈터·아이디어有</button>
+          <button onclick="doLogin('investor')">💰 정민석·투자자</button>
         </div>
       </div>
       <p class="lterms">계속하면 <u>이용약관</u>과 <u>개인정보처리방침</u>에 동의하게 됩니다.</p>
@@ -813,6 +814,19 @@ const DEMO_ACCOUNTS = {
       participation_motivation:["포트폴리오","사회적 가치","네트워킹"],
     } },
   'shooter': { user:"박슈터",   role:"shooter", profileDone:false, hasIdea:true  },
+  'investor':{ user:"정민석",   role:"rider",   profileDone:true,  hasIdea:false,
+    profile:{
+      kind:"investor",
+      name:"정민석",
+      headline:"초기 스타트업에 베팅하는 엔젤 투자자",
+      interest_domains:["ESG","콘텐츠"],
+      invest_stage:"시드", invest_ticket:"3천만~1억",
+      invest_style:"리드·팔로우 모두", decision_speed:"2~3주",
+      portfolio:["리필리(시드)","제로마켓(시드)","그립플레이(엔젤)"],
+      support:["초기 브랜딩","네트워크 연결","IR 코칭"],
+      bio:"ESG·콘텐츠 초기 스타트업을 주로 봅니다. 자금 외에 초기 브랜딩·네트워크 연결도 돕습니다.",
+      links:[{label:"투자 이력(AngelList)", url:"https://angel.co/jungminseok"}],
+    } },
 };
 
 /* 대표 데모 프로젝트 — 홍길동이 낸 아이디어 (로그인 시 미리 등록) */
@@ -1379,6 +1393,36 @@ function renderProfileDetail(){
   const p = ORBIT.profile; if(!p){ showDashboard(); return; }
   const chips = (arr)=> (arr||[]).length ? (arr||[]).map(x=>`<span class="chip on">${esc(x)}</span>`).join("") : "-";
   const row = (label, valHtml)=> `<div class="pd-row"><div class="pd-k">${esc(label)}</div><div class="pd-v">${valHtml}</div></div>`;
+  // 투자자 프로필은 투자 정보 중심으로 표시
+  if(p.kind === "investor"){
+    const infoChips = (arr,cls)=> (arr&&arr.length) ? arr.map(x=>`<span class="rc-chip ${cls||''}">${esc(x)}</span>`).join(" ") : "-";
+    const ilinks = (p.links||[]).length ? (p.links||[]).map(l=>`<a href="${esc(l.url)}" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:underline;margin-right:14px;white-space:nowrap">${esc(l.label)} ↗</a>`).join("") : "-";
+    document.getElementById("pd-body").innerHTML = `
+      <button class="btn ghost" onclick="showDashboard()">← 대시보드</button>
+      <div class="card" style="margin-top:16px">
+        <div style="display:flex; align-items:center; gap:13px;">
+          <div class="pav" style="width:46px;height:46px;font-size:18px;background:linear-gradient(135deg,#92400e,#d97706)">${esc((p.name||"투")[0])}</div>
+          <div><div style="display:flex; align-items:center; gap:8px;"><span style="font-size:18px;font-weight:800;color:var(--navy)">${esc(p.name||"")}</span> <span class="pill amber">💰 투자자</span></div>
+            <div style="font-size:13px;color:var(--muted);margin-top:2px">${esc(p.headline||"")}</div></div>
+        </div>
+      </div>
+      <div class="card"><p class="eyebrow">💰 투자 정보</p>
+        ${row("관심 분야", chips(p.interest_domains))}
+        ${row("투자 단계", esc(p.invest_stage||"-"))}
+        ${row("투자 규모", esc(p.invest_ticket||"-"))}
+        ${row("투자 성향", esc(p.invest_style||"-") + (p.decision_speed?` · 의사결정 ${esc(p.decision_speed)}`:""))}
+      </div>
+      <div class="card"><p class="eyebrow">💼 이력 & 지원</p>
+        ${row("대표 투자 이력", infoChips(p.portfolio))}
+        ${row("자금 외 지원", infoChips(p.support,'mot'))}
+      </div>
+      <div class="card"><p class="eyebrow">📎 추가 정보</p>
+        ${row("개인 링크", ilinks)}
+        ${row("덧붙이고 싶은 말", esc(p.bio||"-"))}
+      </div>
+      <p style="font-size:11.5px; color:var(--muted); text-align:center;">데모 투자자 프로필입니다.</p>`;
+    return;
+  }
   const contact = (p.contact_hours||[]).map(l=>{
     const d=(p.contact_slots||{})[l]||{}; const days=(d.days||[]).join("");
     const t = d.anytime ? "시간 상관없음" : ((d.from||d.to)?`${d.from||"--"}~${d.to||"--"}`:"");
