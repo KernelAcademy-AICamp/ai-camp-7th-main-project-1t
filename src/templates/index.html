@@ -373,6 +373,38 @@
   .pn{font-size:13.5px; font-weight:800; color:var(--navy); display:flex; align-items:center; gap:7px; flex-wrap:wrap;}
   .pr{font-size:12px; color:var(--muted); margin-top:2px;}
   .pl{font-size:12px; color:#475569; margin-top:5px; font-style:italic;}
+  .prop.investor{background:#fffdf5; border-color:#fde68a;}
+  .rc-chips{display:flex; flex-wrap:wrap; gap:6px; margin-top:9px;}
+  .rc-chip{font-size:11px; color:#475569; background:#f1f5f9; border:1px solid var(--line); border-radius:999px; padding:3px 9px;}
+  .rc-chip.dom{background:#eff6ff; border-color:#dbeafe; color:var(--blue);}
+  .rc-chip.inv{background:#fffbeb; border-color:#fde68a; color:#92400e;}
+  .reco-sub{font-size:12.5px; font-weight:800; color:var(--navy); margin:16px 0 10px; padding-top:13px; border-top:1px dashed var(--line);}
+  .reco-sub span{font-weight:600; color:var(--muted); font-size:11px; margin-left:5px;}
+  .prop[onclick]:hover{border-color:var(--blue); box-shadow:0 4px 14px rgba(37,99,235,.08);}
+  .myidea-head{display:flex; align-items:center; gap:11px; cursor:pointer; padding:8px 10px; margin:-8px -10px 2px; border-radius:11px; transition:.15s; flex-wrap:wrap;}
+  .myidea-head:hover{background:var(--sky);}
+  .myidea-title{font-size:19px; font-weight:800; color:var(--navy); transition:.15s;}
+  .myidea-head:hover .myidea-title{color:var(--blue);}
+  .myidea-cta{font-size:12.5px; font-weight:800; color:var(--blue); white-space:nowrap; background:#fff; border:1px solid #bfdbfe; border-radius:999px; padding:7px 13px; flex:0 0 auto;}
+  .myidea-head:hover .myidea-cta{background:var(--blue); color:#fff; border-color:var(--blue);}
+  .modal-overlay{position:fixed; inset:0; background:rgba(11,18,38,.5); display:flex; align-items:center; justify-content:center; z-index:100; padding:20px;}
+  .modal-overlay.hidden{display:none;}
+  .modal-card{background:#fff; border-radius:18px; width:min(600px,94vw); max-height:90vh; overflow:auto; padding:34px 34px 32px; position:relative; box-shadow:0 24px 60px rgba(0,0,0,.32);}
+  .modal-x{position:absolute; top:16px; right:16px; border:none; background:#f1f5f9; width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:14px; color:var(--muted);}
+  .modal-x:hover{background:#e2e8f0; color:var(--navy);}
+  .rd-sec{margin-top:18px;}
+  .rd-k{font-size:12px; font-weight:800; color:var(--navy); margin-bottom:9px;}
+  .rd-line{font-size:12.5px; color:#475569; margin-top:14px; line-height:1.7;}
+  #riderModalBody .rc-chips{gap:7px;}
+  #riderModalBody .rc-chip{font-size:11.5px; padding:5px 11px;}
+  .rd-bio{color:#334155;}
+  .rd-link{color:var(--blue); text-decoration:underline; margin-right:12px; white-space:nowrap;}
+  .rc-chip.mot{background:#f0fdf4; border-color:#bbf7d0; color:#047857;}
+  .rd-warn{background:#fef2f2; border:1px solid #fecaca; color:#b91c1c; border-radius:8px; padding:7px 10px; font-size:11.5px; margin-top:9px; line-height:1.5;}
+  .rider-tabs{display:flex; gap:8px; margin:16px 0 14px;}
+  .rtab{font-size:13px; font-weight:700; color:var(--muted); background:#fff; border:1px solid var(--line); border-radius:999px; padding:7px 15px; cursor:pointer;}
+  .rtab:hover{color:var(--blue); border-color:var(--blue);}
+  .rtab.on{background:var(--navy); color:#fff; border-color:var(--navy);}
   .pbtns{display:flex; flex-direction:column; gap:6px; flex:0 0 auto;}
   .btn.sm{padding:8px 14px; font-size:12.5px; border-radius:9px;}
   .slackmini{background:#4A154B; color:#fff; font-size:12px; font-weight:800; padding:7px 12px; border-radius:9px; cursor:pointer; flex:0 0 auto; text-decoration:none; align-self:center;}
@@ -633,6 +665,16 @@
   <div class="narrow pagepad" id="applied-body"></div>
 </section>
 
+<!-- ===== 라이더 둘러보기 (팀원 + 투자자) ===== -->
+<section class="screen hidden" id="s-riders">
+  <div class="narrow pagepad" id="riders-body"></div>
+</section>
+
+<!-- ===== 라이더 프로필 상세 (본문 화면) ===== -->
+<section class="screen hidden" id="s-riderdetail">
+  <div class="narrow pagepad" id="riderdetail-body"></div>
+</section>
+
 <section class="screen hidden" id="s-my">
   <div class="narrow pagepad">
     <div class="myhead">
@@ -730,10 +772,26 @@
   <div class="narrow pagepad" id="detail-body"></div>
 </section>
 
+<!-- ===== 라이더 상세 팝업(모달) ===== -->
+<div id="riderModal" class="modal-overlay hidden" onclick="closeRiderModal()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <button class="modal-x" onclick="closeRiderModal()" aria-label="닫기">✕</button>
+    <div id="riderModalBody"></div>
+  </div>
+</div>
+
+<!-- ===== 구독 게이트 모달 ===== -->
+<div id="subModal" class="modal-overlay hidden" onclick="closeSubGate()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <button class="modal-x" onclick="closeSubGate()" aria-label="닫기">✕</button>
+    <div id="subModalBody"></div>
+  </div>
+</div>
+
 <script>
 const ORBIT = { loggedIn:false, user:null, myTab:"idea", vision:null, founderQuestion:"", boost:null, picks:[],
   applicant:null, myIdeas:[], applied:[], detailVision:null, detailRole:"", detailRate:0, profile:null,
-  role:null, profileDone:false };
+  role:null, profileDone:false, subscribed:false };
 
 /* 데모 계정 3종 — 각기 다른 진입 시나리오 (실제 회원 DB 없이 상태만 다르게) */
 const DEMO_ACCOUNTS = {
@@ -799,12 +857,30 @@ const DEMO_PROJECT = {
 };
 /* 에코그립에 들어온 합류 제안 — 30명 팀원 풀 매칭 점수 상위 (rate=결정적 점수) */
 const DEMO_PROJECT_PROPOSALS = [
-  {name:"구본영", role:"제조·생산", rate:66, line:"현장을 아는 생산설비 엔지니어", status:"accepted"},
-  {name:"김도현", role:"생산설비·제조", rate:66, line:"플라스틱 사출·금형을 직접 다루는 제조 엔지니어", status:"pending"},
-  {name:"박지훈", role:"마케팅", rate:58, line:"SNS·콘텐츠 마케터", status:"pending"},
-  {name:"오은별", role:"식품위생", rate:58, line:"식품 조리·위생 표준화 전문가", status:"pending"},
-  {name:"이서연", role:"디자인", rate:58, line:"브랜드·제품 디자이너", status:"pending"},
-  {name:"전하람", role:"식품·위생", rate:50, line:"안전한 먹거리를 만드는 식품 전문가", status:"pending"},
+  {name:"구본영", role:"제조·생산", rate:66, line:"현장을 아는 생산설비 엔지니어", status:"accepted",
+   skills:"생산설비, 제조, 사출, 품질관리", interestDomains:["ESG","생산성"], weeklyCapacity:"주 20시간 이상", collabMode:"전국 오프라인 가능",
+   participationMotivation:["창업 기회","수익"], contactHours:["평일 저녁","주말"],
+   links:[{label:"작업 사례",url:"https://behance.net/gubonyoung"}], bio:"소규모 친환경 제품 양산 라인을 여러 번 구축했습니다. 초기 시제품부터 함께 만들고 싶어요."},
+  {name:"김도현", role:"생산설비·제조", rate:66, line:"플라스틱 사출·금형을 직접 다루는 제조 엔지니어", status:"pending",
+   skills:"생산설비, 제조, 사출, 금형, 시제품", interestDomains:["ESG","생산성"], weeklyCapacity:"주 20시간 이상", collabMode:"수도권 오프라인 가능",
+   participationMotivation:["창업 기회","수익"], contactHours:["평일 저녁","주말"],
+   links:[{label:"포트폴리오",url:"https://notion.so/kimdohyun-portfolio"}], bio:"폐플라스틱 재활용 설비를 직접 만들어 본 경험이 있어, 에코그립 양산 라인을 빠르게 세팅할 수 있어요."},
+  {name:"박지훈", role:"마케팅", rate:58, line:"SNS·콘텐츠 마케터", status:"pending",
+   skills:"마케팅, SNS, 콘텐츠, 브랜드스토리텔링", interestDomains:["콘텐츠","ESG"], weeklyCapacity:"주 10시간", collabMode:"온라인+화상",
+   participationMotivation:["창업 기회","네트워킹"], contactHours:["평일 저녁","주말"],
+   links:[{label:"인스타그램",url:"https://instagram.com/parkjihoon.mkt"}], bio:"작은 브랜드를 0에서 팬덤으로 키운 경험이 있어요. Gen Z 타깃 친환경 브랜딩에 강합니다."},
+  {name:"오은별", role:"식품위생", rate:58, line:"식품 조리·위생 표준화 전문가", status:"pending",
+   skills:"식품위생, HACCP, 레시피표준화, 제조", interestDomains:["복지","ESG"], weeklyCapacity:"주 10시간", collabMode:"수도권 오프라인 가능",
+   participationMotivation:["사회적 가치","수익"], contactHours:["평일 낮"],
+   links:[{label:"블로그",url:"https://blog.naver.com/oheunbyeol"}], bio:"맛과 안전을 함께 챙기는 위생·표준화 전문가입니다."},
+  {name:"이서연", role:"디자인", rate:58, line:"브랜드·제품 디자이너", status:"pending",
+   skills:"디자인, 브랜딩, 패키지, 굿즈디자인", interestDomains:["콘텐츠","ESG"], weeklyCapacity:"주 10시간", collabMode:"온라인+화상",
+   participationMotivation:["포트폴리오","창업 기회"], contactHours:["평일 저녁"],
+   links:[{label:"포트폴리오",url:"https://www.behance.net/leeseoyeon"}], bio:"제품의 미적 완성도와 브랜드 무드를 함께 잡습니다. 굿즈·패키지 디자인이 강점이에요."},
+  {name:"전하람", role:"식품·위생", rate:50, line:"안전한 먹거리를 만드는 식품 전문가", status:"pending",
+   skills:"식품위생, HACCP, 레시피표준화, 소량생산·포장", interestDomains:["복지","ESG"], weeklyCapacity:"주 10시간", collabMode:"수도권 오프라인 가능",
+   participationMotivation:["사회적 가치","수익"], contactHours:["평일 낮","주말"],
+   links:[{label:"이력",url:"https://jeonharam.example.com"}], bio:"맛과 안전을 함께, 소량생산·포장 표준화에 능합니다."},
 ];
 /* 이라이더가 신청한 아이디어 — 프로필 vs 30개 아이디어 매칭 점수 상위 (rate=결정적 점수) */
 const DEMO_RIDER_APPLIED = [
@@ -1210,6 +1286,7 @@ function doLogin(accKey){
   ORBIT.myIdeas = acc.hasIdea ? [{ vision:DEMO_PROJECT, proposals:DEMO_PROJECT_PROPOSALS.map(p=>({...p})) }] : [];
   ORBIT.applied = acc.hasApplied ? DEMO_RIDER_APPLIED.map(a=>({...a})) : [];
   ORBIT.profile = acc.profile || null;
+  ORBIT.subscribed = false;   // 로그인마다 Free로 시작(가입 무료). 상세 조회 시 구독 게이트.
   // 랜딩에서 하던 액션 이어가기 (있으면 그 역할로 확정)
   const p = ORBIT._pending; ORBIT._pending = null;
   if(p && p.type==="idea"){ ORBIT.role="shooter"; ORBIT.myTab="idea"; goIdeaIntro(); const ti=document.getElementById("idea"); if(ti) ti.value=p.idea; ideaStart(); return; }
@@ -2152,7 +2229,10 @@ function renderBrowse(){
 
 function viewMyIdea(idx){ const it=ORBIT.myIdeas[idx]; if(it) openDetail(it.vision, true); }
 async function openDetail(v, isOwner){
-  if(!v) return; ORBIT.detailVision = v;
+  if(!v) return;
+  // 둘러보기 아이디어 상세는 구독 게이트(내 아이디어 isOwner 는 무료)
+  if(!isOwner && !ORBIT.subscribed){ return showSubGate(()=>openDetail(v, isOwner)); }
+  ORBIT.detailVision = v;
   go("detail");
   const story = (v.story||[]).map(t=>`<p>${esc(t)}</p>`).join("");
   const why = (v.whyNow||[]).map(w=>`<div class="why"><div class="ic">${esc(w.icon||"✨")}</div><div class="t">${esc(w.title)}</div><div class="d">${esc(w.desc)}</div></div>`).join("");
@@ -2168,7 +2248,10 @@ async function openDetail(v, isOwner){
         <p class="eyebrow">❓ 팀원에게 물어볼 내 질문</p>
         <div class="qcard pr"><p class="qtext">${esc(v.founderQuestion||"")}</p></div>
       </div>
-      <div class="card"><p class="eyebrow">🛰️ ORBIT이 찾은 추천 팀원 — 직접 제안해 보세요</p><div id="recoSeat">${spinner("이 아이디어에 맞는 팀원을 찾는 중...")}</div></div>
+      <div class="card"><p class="eyebrow">🛰️ ORBIT이 찾은 추천 팀원·투자자 — 직접 제안해 보세요</p><div id="recoSeat">${spinner("이 아이디어에 맞는 팀원을 찾는 중...")}</div></div>
+      <!-- 전체 라이더 둘러보기 진입 버튼 — 일단 숨김 (필요 시 아래 버튼 복원)
+      <button class="btn ghost full" style="margin:2px 0 4px;" onclick="showRiders()">🛰️ 전체 라이더 둘러보기 (팀원·투자자) →</button>
+      -->
       <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px;">
         <button class="btn ghost sm" onclick="showMy('idea')">← 내 아이디어로</button>
         <button class="btn ghost sm" onclick="deleteDetailIdea()">삭제하기</button>
@@ -2189,37 +2272,330 @@ async function openDetail(v, isOwner){
     <div class="card story"><p class="eyebrow">📖 왜 이 사업을 하는가</p>${story}</div>
     <div class="card"><p class="eyebrow">⏱ 왜 지금, 왜 함께인가</p><div class="why-grid">${why}</div></div>
     ${action}`;
-  if(isOwner){
-    try{
-      const m = await api("/api/match", { vision:v });
-      ORBIT._reco = m.matches || [];
-      const seat = document.getElementById("recoSeat");
-      seat.innerHTML = ORBIT._reco.length
-        ? ORBIT._reco.map((p,i)=>recoRow(p,i)).join("") + `<p style="font-size:11.5px; color:var(--muted); margin:10px 0 0;">상대가 수락하면 함께 시작합니다. 받은 제안은 위 ‘내가 낸 아이디어’ 카드에서도 관리돼요.</p>`
-        : `<p style="color:var(--muted)">아직 맞는 팀원을 찾지 못했어요.</p>`;
-    }catch(e){ const s=document.getElementById("recoSeat"); if(s) s.innerHTML = `<div class="err">⚠️ ${esc(e.message)}</div>`; }
-  }
+  if(isOwner){ loadReco(v, false); }
 }
+/* 추천 팀원·투자자 로드 — 결과를 아이디어(v._reco)에 캐시해 재열람 시 API(토큰) 재호출 없이 재사용.
+   force=true(🔄 다시 찾기)일 때만 /api/match 재호출. */
+async function loadReco(v, force){
+  const seat = document.getElementById("recoSeat");
+  if(!seat || !v) return;
+  if(!force && v._reco){ ORBIT._reco = v._reco; renderReco(true); return; }
+  seat.innerHTML = spinner("이 아이디어에 맞는 팀원을 찾는 중...");
+  try{
+    const { _reco, ...clean } = v;               // 캐시는 서버로 안 보냄
+    const m = await api("/api/match", { vision: clean });
+    v._reco = m.matches || [];
+    ORBIT._reco = v._reco;
+    renderReco(false);
+  }catch(e){ seat.innerHTML = `<div class="err">⚠️ ${esc(e.message)}</div>`; }
+}
+function renderReco(fromCache){
+  const seat = document.getElementById("recoSeat"); if(!seat) return;
+  const list = ORBIT._reco || [];
+  const refresh = `<button class="btn ghost sm" style="margin-top:11px" onclick="loadReco(ORBIT.detailVision, true)">🔄 다시 찾기</button>`;
+  const note = fromCache
+    ? `저장된 추천이에요(추가 호출 없음). 갱신하려면 <b>다시 찾기</b>를 누르세요.`
+    : `카드를 누르면 상세 정보를 볼 수 있어요. 상대가 수락하면 함께 시작합니다.`;
+  seat.innerHTML = (list.length
+    ? list.map((p,i)=>recoRow(p,i)).join("") + `<p style="font-size:11.5px; color:var(--muted); margin:10px 0 0;">${note}</p>`
+    : `<p style="color:var(--muted)">아직 맞는 팀원을 찾지 못했어요.</p>`) + refresh;
+}
+/* 추천 목록 행(간결) — 카드 클릭 시 상세 팝업. 투자자도 동일 UX(fitsRole='투자·자문'로 구분) */
 function recoRow(p,i){
   const star = p.fitLevel==="높음" ? "⭐⭐⭐" : (p.fitLevel==="보류" ? "⚠️" : "⭐⭐");
   const hasScore = typeof p.score === "number";
   const scorePill = hasScore ? `<span class="pill ${p.score>=70?'green':'amber'}">매칭 ${p.score}%</span>` : ``;
-  const bd = p.breakdown;
-  const detail = bd ? `<div class="pl" style="font-style:normal; color:#64748b; font-size:11px; margin-top:5px;">
-      ${(bd.components||[]).map(c=>`${esc(c.key)} ${c.got}/${c.weight}`).join(" · ")}
-      ${!bd.hardPass?` · <span style="color:#dc2626;font-weight:800">⚠️ ${esc((bd.hardReasons||[]).join(", "))}</span>`:``}</div>` : ``;
-  return `<div class="prop">
-    <div class="pav">${esc(p.name[0])}</div>
-    <div style="flex:1"><div class="pn">${esc(p.name)} ${scorePill}<span class="pill blue">${star} ${esc(p.fitLevel||"")}</span></div>
-      <div class="pr">${esc(p.fitsRole)}</div><div class="pl">${esc(p.reason)}</div>${detail}</div>
-    <button class="btn sm" id="inv-${i}" onclick="inviteTeammate(${i})">🛰️ ORBIT 제안</button>
+  // 간결한 행: 이름·(투자자 배지)·매칭·등급·자리
+  const isInv = p.kind === "investor";
+  const kindPill = isInv ? `<span class="pill amber">💰 투자자</span> ` : ``;
+  return `<div class="prop" style="cursor:pointer" onclick="showRiderDetail('reco',${i})">
+    <div class="pav"${isInv?' style="background:linear-gradient(135deg,#92400e,#d97706)"':''}>${esc(p.name[0])}</div>
+    <div style="flex:1"><div class="pn">${esc(p.name)} ${kindPill}${scorePill}<span class="pill blue">${star} ${esc(p.fitLevel||"")}</span></div>
+      <div class="pr">${esc(p.fitsRole)}</div></div>
+    <span style="align-self:center; color:#cbd5e1; font-size:20px; flex:0 0 auto;">›</span>
   </div>`;
 }
 function inviteTeammate(i){
   const p = (ORBIT._reco||[])[i]; if(!p) return;
   const b = document.getElementById("inv-"+i);
   if(b){ b.textContent = "제안함 ✓"; b.disabled = true; }
-  alert(`🛰️ ${p.name}님에게 ORBIT 제안을 보냈어요!\n상대가 수락하면 함께 시작합니다.`);
+  alert(p.kind === "investor"
+    ? `🛰️ ${p.name} 투자자에게 검토 제안을 보냈어요!\n관심이 있으면 미팅으로 이어집니다.`
+    : `🛰️ ${p.name}님에게 ORBIT 제안을 보냈어요!\n상대가 수락하면 함께 시작합니다.`);
+}
+
+/* ===== 라이더 상세 팝업(모달) — 목록에서 행 클릭 시 상세 정보 카드를 띄운다 ===== */
+function currentScreen(){ const s = document.querySelector(".screen:not(.hidden)"); return s ? s.id.replace(/^s-/,"") : "dashboard"; }
+/* 라이더 프로필 상세 — 본문 화면(구독 게이트 적용). 목록 행 클릭 시 호출 */
+function showRiderDetail(src, a, b){
+  let p = null;
+  if(src === "reco"){ p = (ORBIT._reco||[])[a]; }
+  else if(src === "prop"){ const it = ORBIT.myIdeas[a]; p = it && it.proposals[b]; }
+  else if(src === "browse"){ p = (window._riders||[])[a]; }
+  if(!p) return;
+  // 합류 완료(수락된) 팀원 프로필은 무료 — 이미 내 팀이므로 게이트 제외
+  const joined = (src === "prop" && p.status === "accepted");
+  if(!joined && !ORBIT.subscribed){ return showSubGate(()=>showRiderDetail(src, a, b)); }
+  ORBIT._riderReturn = currentScreen();
+  document.getElementById("riderdetail-body").innerHTML = riderProfilePage(p, src, a, b);
+  go("riderdetail");
+}
+/* 라이더 프로필 상세 본문 — 아이디어 상세에 준하는 다중 섹션 페이지 */
+function riderProfilePage(p, src, a, b){
+  const isInv = p.kind === "investor";
+  const isProp = src === "prop";
+  const accepted = isProp && p.status === "accepted";
+  const rate = (typeof p.score==="number") ? p.score : (typeof p.rate==="number" ? p.rate : null);
+  const lvl = (rate==null) ? "" : (isProp ? (rate>=70?"높음":"보통") : (p.fitLevel || (rate>=70?"높음":"보통")));
+  const star = lvl==="높음" ? "⭐⭐⭐" : (lvl==="보류" ? "⚠️" : "⭐⭐");
+  const kindPill = isInv ? `<span class="pill amber">💰 투자자</span>` : `<span class="pill blue">🧑‍💻 팀원</span>`;
+  const headline = p.headline || p.line || "";
+  const roleLabel = isInv ? "관심 포지션" : (isProp ? "희망 자리" : "맡을 자리");
+  const roleVal = isInv ? "투자·자문" : (isProp ? (p.role||"-") : (p.fitsRole || p.primaryRole || "-"));
+  const skillsArr = isInv ? [] : (p.skills||"").split(",").map(s=>s.trim()).filter(Boolean);
+  const chips = (arr)=> (arr&&arr.length) ? arr.map(x=>`<span class="chip on">${esc(x)}</span>`).join(" ") : "-";
+  const infoChips = (arr,cls)=> (arr&&arr.length) ? arr.map(x=>`<span class="rc-chip ${cls||''}">${esc(x)}</span>`).join(" ") : "-";
+  const row = (k,v)=>`<div class="pd-row"><div class="pd-k">${esc(k)}</div><div class="pd-v">${v}</div></div>`;
+  const linksHtml = (p.links||[]).length ? (p.links||[]).map(l=>`<a href="${esc(l.url)}" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:underline;margin-right:14px;white-space:nowrap">${esc(l.label||l.url)} ↗</a>`).join("") : "-";
+
+  const bd = p.breakdown;
+  const bars = bd ? (bd.components||[]).map(c=>{
+    const pct = (typeof c.pct==="number") ? c.pct : Math.round((c.got/(c.weight||1))*100);
+    const weak = pct<34; const col = pct>=67?'var(--green)':pct>=34?'#d97706':'#dc2626';
+    return `<div style="margin:12px 0 4px; display:flex; align-items:center; gap:9px; font-size:12.5px;">
+        <span style="font-weight:800; color:var(--navy); flex:0 0 76px;">${esc(c.key)}</span>
+        <div class="bar" style="flex:1; max-width:none; height:12px;"><div class="fill" style="width:${pct}%; background:${col};"></div></div>
+        <span style="font-weight:900; color:var(--navy); flex:0 0 52px; text-align:right;">${c.got}/${c.weight}</span>
+      </div>
+      <div style="font-size:11.5px; color:${weak?'#dc2626':'var(--muted)'}; margin:2px 0 8px 85px;">${weak?'⚠️ ':''}${esc(c.detail||"")}</div>`;
+  }).join("") : "";
+
+  const matchCard = (rate!=null) ? `<div class="card"><p class="eyebrow">🤝 이 프로젝트와의 매칭</p>
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <span class="pill ${rate>=70?'green':'amber'}" style="font-size:13px; padding:5px 13px;">매칭 ${rate}%</span>
+        ${lvl?`<span class="pill blue" style="font-size:12px;">${star} ${esc(lvl)}</span>`:''}
+        <span style="font-size:13px; color:var(--muted);"><b style="color:var(--navy)">${esc(roleLabel)}</b> · ${esc(roleVal)}</span>
+      </div>
+      ${p.reason?`<div class="pl" style="margin-top:9px; line-height:1.7;">${esc(p.reason)}</div>`:''}
+      ${bd?`<div style="height:1px; background:var(--line); margin:15px 0 2px;"></div>
+        <p class="eyebrow" style="color:var(--navy)">📊 적합도 근거 <span style="font-weight:600;color:var(--muted);font-size:10.5px">${isInv?'· 관심 분야 기준':'· 기술40·관심30·목적20·시간10'}</span></p>
+        ${!bd.hardPass?`<div class="rd-warn">⚠️ <b>필수 조건 미충족</b> — ${esc((bd.hardReasons||[]).join(" · "))} (점수 상한 적용)</div>`:''}
+        ${bars}`:''}
+    </div>` : '';
+
+  const invCard = isInv ? `<div class="card"><p class="eyebrow">💰 투자 정보</p>
+      ${row("투자 단계", esc(p.investStage||"-"))}
+      ${row("투자 규모", esc(p.investTicket||"-"))}
+      ${row("투자 성향", esc(p.investStyle||"-") + (p.decisionSpeed?` · 의사결정 ${esc(p.decisionSpeed)}`:''))}
+      ${row("대표 투자 이력", infoChips(p.portfolio))}
+      ${row("자금 외 지원", infoChips(p.support,'mot'))}
+    </div>` : '';
+
+  const collabCard = isInv ? '' : `<div class="card"><p class="eyebrow">🤝 협업 조건</p>
+      ${row("협업 방식", esc(p.collabMode||"-"))}
+      ${row("주당 투입 가능 시간", esc(p.weeklyCapacity||"-"))}
+      ${row("연락 가능 시간", (p.contactHours||[]).length ? esc((p.contactHours||[]).join(", ")) : "-")}
+    </div>`;
+
+  return `<button class="btn ghost" onclick="go(ORBIT._riderReturn)">← 뒤로</button>
+    <div class="card" style="margin-top:16px">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <div class="pav" style="width:54px;height:54px;font-size:22px;${isInv?'background:linear-gradient(135deg,#92400e,#d97706)':''}">${esc(p.name[0])}</div>
+        <div style="flex:1; min-width:0;">
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;"><span style="font-size:20px;font-weight:800;color:var(--navy)">${esc(p.name)}</span> ${kindPill}${accepted?`<span class="pill green">합류 완료 ✓</span>`:''}</div>
+          ${headline?`<div style="font-size:13.5px;color:var(--muted);margin-top:4px;line-height:1.5;">${esc(headline)}</div>`:''}
+        </div>
+      </div>
+    </div>
+    ${matchCard}
+    <div class="card"><p class="eyebrow">🧭 기본 정보</p>
+      ${row(isInv?"관심 포지션":"대표 직군", esc(isInv?"투자·자문":(p.primaryRole||roleVal||"-")))}
+      ${isInv ? '' : row("역량·기술", skillsArr.length ? skillsArr.map(s=>`<span class="chip on">${esc(s)}</span>`).join(" ") : "-")}
+      ${p.traits?row("성향", esc(p.traits)):''}
+    </div>
+    ${invCard}
+    ${collabCard}
+    <div class="card"><p class="eyebrow">💡 관심 & 목적</p>
+      ${row("관심 분야", chips(p.interestDomains))}
+      ${isInv ? '' : row("참여 목적", chips(p.participationMotivation))}
+    </div>
+    <div class="card"><p class="eyebrow">📎 소개 & 링크</p>
+      ${row("덧붙이고 싶은 말", esc(p.bio||"-"))}
+      ${row("개인 링크", linksHtml)}
+    </div>
+    ${modalFooter(p, src, a, b)}`;
+}
+function closeRiderModal(){ document.getElementById("riderModal").classList.add("hidden"); }
+/* 팀원/투자자/신청자 공통 상세 카드 (칩·배지·투자정보·점수근거 포함) */
+function riderDetailCard(p, src){
+  const isInv = p.kind === "investor";
+  const isProp = src === "prop";
+  const isBrowse = src === "browse";
+  const rate = isProp ? p.rate : p.score;
+  const lvl = isProp ? (p.rate>=70 ? "높음" : "보통") : (p.fitLevel || "");
+  const star = lvl==="높음" ? "⭐⭐⭐" : (lvl==="보류" ? "⚠️" : "⭐⭐");
+  const scorePill = (typeof rate==="number") ? `<span class="pill ${rate>=70?'green':'amber'}">매칭 ${rate}%</span>` : ``;
+  const lvlPill = lvl ? `<span class="pill blue">${star} ${esc(lvl)}</span>` : ``;
+  const kindPill = isInv ? `<span class="pill amber">💰 투자자</span>` : `<span class="pill blue">🧑‍💻 팀원</span>`;
+  const headline = p.headline || p.line || "";
+  const roleLabel = isInv ? "관심 포지션" : (isProp ? "희망 자리" : (isBrowse ? "대표 직군" : "맡을 자리"));
+  const roleVal = isInv ? "투자·자문" : (isProp ? p.role : (isBrowse ? (p.primaryRole || "") : (p.fitsRole || "")));
+  const domChips = (p.interestDomains||[]).map(d=>`<span class="rc-chip dom">${esc(d)}</span>`).join("");
+  const skillChips = isInv ? "" : (p.skills||"").split(",").map(s=>s.trim()).filter(Boolean).slice(0,6).map(s=>`<span class="rc-chip">${esc(s)}</span>`).join("");
+  const info = isInv
+    ? domChips + (p.investStage?`<span class="rc-chip inv">단계 ${esc(p.investStage)}</span>`:"") + (p.investTicket?`<span class="rc-chip inv">규모 ${esc(p.investTicket)}</span>`:"")
+    : domChips + skillChips + (p.weeklyCapacity?`<span class="rc-chip">${esc(p.weeklyCapacity)}</span>`:"") + (p.collabMode?`<span class="rc-chip">${esc(p.collabMode)}</span>`:"");
+  const bd = p.breakdown;
+  const detail = bd ? `<div style="margin-top:20px; padding-top:18px; border-top:1px solid var(--line);">
+      <div class="rd-k">📊 적합도 근거 <span style="font-weight:600; color:var(--muted); font-size:10.5px">${isInv?'· 관심 분야 기준':'· 기술40·관심30·목적20·시간10'}</span></div>
+      ${!bd.hardPass ? `<div class="rd-warn">⚠️ <b>필수 조건 미충족</b> — ${esc((bd.hardReasons||[]).join(" · "))} (점수 상한 적용)</div>` : ``}
+      ${(bd.components||[]).map(c=>{
+        const pct = (typeof c.pct==="number") ? c.pct : Math.round((c.got/(c.weight||1))*100);
+        const weak = pct < 34;
+        const barColor = pct>=67?'var(--green)':pct>=34?'#d97706':'#dc2626';
+        return `<div style="margin:14px 0 4px; display:flex; align-items:center; gap:9px; font-size:12.5px;">
+            <span style="font-weight:800; color:var(--navy); flex:0 0 70px;">${esc(c.key)}</span>
+            <div class="bar" style="flex:1; max-width:none; height:12px;"><div class="fill" style="width:${pct}%; background:${barColor};"></div></div>
+            <span style="font-weight:900; color:var(--navy); flex:0 0 48px; text-align:right;">${c.got}/${c.weight}</span>
+          </div>
+          <div style="font-size:11.5px; color:${weak?'#dc2626':'var(--muted)'}; margin:2px 0 9px 79px;">${weak?'⚠️ ':''}${esc(c.detail||"")}</div>`;
+      }).join("")}
+    </div>` : ``;
+  const descTxt = p.reason || p.traits || "";
+  const reason = descTxt ? `<div class="pl" style="margin-top:14px; line-height:1.7;">${esc(descTxt)}</div>` : ``;
+  // 추가 정보 (프로필에서 이미 수집): 참여 목적 · 연락 가능 시간 · 포트폴리오 링크 · 한 줄 소개
+  const motiv = (p.participationMotivation||[]);
+  const motivHtml = motiv.length ? `<div class="rd-sec"><div class="rd-k">🎯 참여 목적</div><div class="rc-chips">${motiv.map(m=>`<span class="rc-chip mot">${esc(m)}</span>`).join("")}</div></div>` : ``;
+  const contactHtml = (p.contactHours||[]).length ? `<div class="rd-line">🕒 <b>연락 가능</b> · ${esc((p.contactHours||[]).join(", "))}</div>` : ``;
+  const linksHtml = (p.links||[]).length ? `<div class="rd-line">📎 ${(p.links||[]).map(l=>`<a href="${esc(l.url)}" target="_blank" rel="noopener" class="rd-link">${esc(l.label||l.url)} ↗</a>`).join("")}</div>` : ``;
+  const bioHtml = p.bio ? `<div class="rd-line rd-bio">💬 ${esc(p.bio)}</div>` : ``;
+  // 투자자 보강 정보: 대표 투자 이력 · 투자 성향/의사결정 · 자금 외 지원
+  const invExtra = isInv ? (
+      ((p.portfolio||[]).length ? `<div class="rd-sec"><div class="rd-k">💼 대표 투자 이력</div><div class="rc-chips">${(p.portfolio||[]).map(x=>`<span class="rc-chip">${esc(x)}</span>`).join("")}</div></div>` : ``)
+    + ((p.investStyle||p.decisionSpeed) ? `<div class="rd-line">🧭 <b>투자 성향</b> · ${esc(p.investStyle||"-")}${p.decisionSpeed?` · 의사결정 ${esc(p.decisionSpeed)}`:``}</div>` : ``)
+    + ((p.support||[]).length ? `<div class="rd-sec"><div class="rd-k">🤝 자금 외 지원</div><div class="rc-chips">${(p.support||[]).map(x=>`<span class="rc-chip mot">${esc(x)}</span>`).join("")}</div></div>` : ``)
+  ) : ``;
+  const statusNote = (isProp && p.status==="accepted") ? `<div class="pill green" style="margin-top:11px; display:inline-block">합류 완료 ✓</div>` : ``;
+  return `<div style="display:flex; align-items:flex-start; gap:14px; padding-right:24px;">
+      <div class="pav" style="width:52px;height:52px;font-size:20px;flex:0 0 auto;${isInv?'background:linear-gradient(135deg,#92400e,#d97706)':''}">${esc(p.name[0])}</div>
+      <div style="flex:1; min-width:0">
+        <div class="pn" style="font-size:18px">${esc(p.name)} ${kindPill}</div>
+        ${headline?`<div class="pr" style="margin-top:5px; line-height:1.6;">${esc(headline)}</div>`:``}
+      </div>
+    </div>
+    <div style="display:flex; gap:7px; flex-wrap:wrap; margin-top:16px">${scorePill}${lvlPill}</div>
+    <div class="pr" style="margin-top:16px; font-size:12.5px;"><b style="color:var(--navy)">${roleLabel}</b> · ${esc(roleVal)}</div>
+    ${reason}
+    ${info?`<div class="rc-chips" style="margin-top:14px">${info}</div>`:``}
+    ${invExtra}
+    ${bioHtml}
+    ${motivHtml}
+    ${contactHtml}
+    ${linksHtml}
+    ${detail}
+    ${statusNote}`;
+}
+/* 팝업 하단 액션 버튼 (제안/수락·거절) — 목록에서 팝업으로 이동 */
+function modalFooter(p, src, a, b){
+  if(src === "reco"){
+    if(p._invited) return `<button class="btn full" style="margin-top:22px; background:#cbd5e1; cursor:default" disabled>제안함 ✓</button>`;
+    const label = p.kind === "investor" ? "🛰️ 투자 제안 보내기" : "🛰️ ORBIT 제안 보내기";
+    return `<button class="btn full" style="margin-top:22px" id="modalInvBtn" onclick="inviteFromModal(${a})">${label}</button>`;
+  }
+  if(src === "prop"){
+    if(p.status === "accepted") return ``;
+    return `<div style="display:flex; gap:10px; margin-top:22px;">
+      <button class="btn green" style="flex:2" onclick="acceptFromModal(${a},${b})">수락하기</button>
+      <button class="btn ghost" style="flex:1" onclick="rejectFromModal(${a},${b})">거절</button>
+    </div>`;
+  }
+  return ``;
+}
+function inviteFromModal(i){
+  const p = (ORBIT._reco||[])[i]; if(!p) return;
+  p._invited = true;
+  const btn = document.getElementById("modalInvBtn");
+  if(btn){ btn.textContent = "제안함 ✓"; btn.disabled = true; btn.style.background = "#cbd5e1"; btn.style.cursor = "default"; }
+  alert(p.kind === "investor"
+    ? `🛰️ ${p.name} 투자자에게 검토 제안을 보냈어요!\n관심이 있으면 미팅으로 이어집니다.`
+    : `🛰️ ${p.name}님에게 ORBIT 제안을 보냈어요!\n상대가 수락하면 함께 시작합니다.`);
+}
+function acceptFromModal(a,b){ acceptProposal(a,b); go(ORBIT._riderReturn||"my"); }
+function rejectFromModal(a,b){ rejectProposal(a,b); go(ORBIT._riderReturn||"my"); }
+
+/* ===== 구독 게이트 (MVP · 의향 확인형, 실제 결제 없음) ===== */
+let _subPending = null;
+function showSubGate(fn){
+  _subPending = fn || null;
+  document.getElementById("subModalBody").innerHTML = subGateHTML();
+  document.getElementById("subModal").classList.remove("hidden");
+}
+function closeSubGate(){ document.getElementById("subModal").classList.add("hidden"); _subPending = null; }
+function confirmSub(){
+  ORBIT.subscribed = true;
+  document.getElementById("subModal").classList.add("hidden");
+  const fn = _subPending; _subPending = null;
+  if(fn) fn();
+}
+function subGateHTML(){
+  return `<div style="text-align:center; margin-bottom:6px;">
+      <div style="font-size:36px; line-height:1">🔒</div>
+      <h3 style="font-size:19px; font-weight:800; color:var(--navy); margin:10px 0 5px;">상세 정보는 <span style="color:var(--blue)">Pro 구독</span>에 공개돼요</h3>
+      <p style="font-size:13px; color:var(--muted); margin:0;">가입은 무료예요 — 상세 열람만 Pro입니다.</p>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:18px;">
+      <div style="border:1px solid var(--line); border-radius:14px; padding:15px 16px;">
+        <div style="font-size:14px; font-weight:800; color:var(--navy);">Free <span style="font-size:11.5px; font-weight:700; color:var(--muted);">가입 시</span></div>
+        <div style="font-size:12px; color:#475569; margin-top:9px; line-height:1.7;">· 둘러보기 · 추천 팀원·투자자 목록<br>· 받은 제안 목록 · 매칭률 요약</div>
+      </div>
+      <div style="border:1px solid #bfdbfe; background:var(--sky); border-radius:14px; padding:15px 16px;">
+        <div style="font-size:14px; font-weight:800; color:var(--blue);">Pro <span style="font-size:11.5px; font-weight:700; color:var(--muted);">₩9,900/월</span></div>
+        <div style="font-size:12px; color:#334155; margin-top:9px; line-height:1.7;">· 아이디어·기획안 상세 전체<br>· 라이더 프로필 상세(연락·포트폴리오)<br>· 매칭 근거 · 제안/수락</div>
+      </div>
+    </div>
+    <button class="btn full" style="margin-top:20px;" onclick="confirmSub()">무료로 구독 의향 남기기 <span style="font-weight:600; opacity:.85;">· 결제 없음</span></button>
+    <button class="btn ghost full" style="margin-top:9px;" onclick="closeSubGate()">나중에</button>
+    <p style="font-size:11px; color:var(--muted); text-align:center; margin:12px 0 0;">MVP 단계라 실제 결제는 없어요. 관심만 남겨주시면 상세가 바로 열립니다.</p>`;
+}
+
+/* ===== 라이더 둘러보기 (Shooter가 전체 팀원·투자자를 카드로 열람) ===== */
+async function showRiders(){
+  go("riders");
+  document.getElementById("riders-body").innerHTML = `
+    <button class="btn ghost" onclick="showDashboard()">← 대시보드</button>
+    <div class="myhead" style="margin-top:14px">
+      <div class="myhi">🛰️ 라이더 둘러보기</div>
+      <div class="mymode">아이디어에 올라탈 팀원과, 관심 가질 만한 투자자를 살펴보세요.</div>
+    </div>
+    <div class="rider-tabs" id="riderTabs">
+      <button class="rtab on" data-k="all" onclick="filterRiders('all')">전체</button>
+      <button class="rtab" data-k="teammate" onclick="filterRiders('teammate')">🧑‍💻 팀원</button>
+      <button class="rtab" data-k="investor" onclick="filterRiders('investor')">💰 투자자</button>
+    </div>
+    <div id="riders-list">${spinner("라이더를 불러오는 중...")}</div>`;
+  try{
+    const r = await api("/api/riders", {});
+    window._riders = r.riders || [];
+    filterRiders('all');
+  }catch(e){ document.getElementById("riders-list").innerHTML = `<div class="err">⚠️ ${esc(e.message)}</div>`; }
+}
+function filterRiders(k){
+  document.querySelectorAll("#riderTabs .rtab").forEach(b=>b.classList.toggle("on", b.dataset.k===k));
+  const items = (window._riders||[]).map((r,i)=>({r,i})).filter(x=> k==="all" ? true : (x.r.kind||"teammate")===k);
+  document.getElementById("riders-list").innerHTML = items.length
+    ? `<p style="font-size:12px; color:var(--muted); margin:0 0 10px;">${items.length}명</p>` + items.map(x=>riderCard(x.r,x.i)).join("")
+    : `<p style="color:var(--muted)">해당하는 라이더가 없어요.</p>`;
+}
+/* 둘러보기 목록 행(간결) — 클릭 시 상세 팝업 (recoRow/proposalRow와 동일 패턴) */
+function riderCard(r,i){
+  const isInv = r.kind === "investor";
+  const kindPill = isInv ? `<span class="pill amber">💰 투자자</span>` : `<span class="pill blue">🧑‍💻 팀원</span>`;
+  const roleVal = isInv ? "투자·자문" : (r.primaryRole||"");
+  return `<div class="prop" style="cursor:pointer" onclick="showRiderDetail('browse',${i})">
+    <div class="pav"${isInv?' style="background:linear-gradient(135deg,#92400e,#d97706)"':''}>${esc(r.name[0])}</div>
+    <div style="flex:1"><div class="pn">${esc(r.name)} ${kindPill}</div>
+      <div class="pr">${roleVal?esc(roleVal)+' · ':''}${esc(r.headline||"")}</div></div>
+  </div>`;
 }
 
 function joinApply(){
@@ -2421,10 +2797,13 @@ function renderMyIdea(){
       const pend = it.proposals.filter(p=>p.status==="pending").length;
       const acc = it.proposals.filter(p=>p.status==="accepted").length;
       html += `<div class="card">
-        <div style="display:flex; align-items:center; gap:10px;">
-          <div style="flex:1; cursor:pointer;" onclick="viewMyIdea(${idx})"><div style="font-size:16px; font-weight:800; color:var(--navy)">${esc(it.vision.serviceName)}</div>
-            <div style="font-size:12.5px; color:var(--muted); margin-top:2px;">${esc(it.vision.tagline)}</div></div>
+        <div class="myidea-head" onclick="viewMyIdea(${idx})" title="기획안 페이지로 이동">
+          <div style="flex:1; min-width:0;">
+            <div class="myidea-title">${esc(it.vision.serviceName)}</div>
+            <div style="font-size:13px; color:var(--muted); margin-top:3px;">${esc(it.vision.tagline)}</div>
+          </div>
           ${pend?`<span class="pill blue">받은 제안 ${pend}건</span>`:``}${acc?`<span class="pill green">합류 ${acc}명</span>`:``}
+          <span class="myidea-cta">📄 기획안 페이지 →</span>
         </div>
         <div style="margin-top:14px">${it.proposals.map((p,pi)=>proposalRow(idx,pi,p,it.vision.serviceName)).join("")}</div>
         ${acc ? teamChannelBlock(it.vision) : ""}
@@ -2435,13 +2814,13 @@ function renderMyIdea(){
 }
 function proposalRow(idx,pi,p,svc){
   if(p.status==="accepted"){
-    return `<div class="prop accepted"><div class="pav">${esc(p.name[0])}</div>
+    return `<div class="prop accepted" style="cursor:pointer" onclick="showRiderDetail('prop',${idx},${pi})"><div class="pav">${esc(p.name[0])}</div>
       <div style="flex:1"><div class="pn">${esc(p.name)} <span class="pill green">수락됨 ✓</span></div><div class="pr">${esc(p.role)} · 매칭률 ${p.rate}%</div></div>
       <span class="pill green">합류 완료</span></div>`;
   }
-  return `<div class="prop"><div class="pav">${esc(p.name[0])}</div>
+  return `<div class="prop" style="cursor:pointer" onclick="showRiderDetail('prop',${idx},${pi})"><div class="pav">${esc(p.name[0])}</div>
     <div style="flex:1"><div class="pn">${esc(p.name)} <span class="pill blue">매칭률 ${p.rate}%</span></div><div class="pr">${esc(p.role)}</div><div class="pl">"${esc(p.line)}"</div></div>
-    <div class="pbtns"><button class="btn green sm" onclick="acceptProposal(${idx},${pi})">수락</button><button class="btn ghost sm" onclick="rejectProposal(${idx},${pi})">거절</button></div></div>`;
+    <span style="align-self:center; color:#cbd5e1; font-size:20px; flex:0 0 auto;">›</span></div>`;
 }
 function acceptProposal(idx,pi){
   ORBIT.myIdeas[idx].proposals[pi].status="accepted"; renderMyIdea();

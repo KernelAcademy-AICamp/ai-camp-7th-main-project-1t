@@ -114,19 +114,25 @@ TEAMMATE_POOL = [
      "skills": "생산설비, 제조, 사출, 금형, 시제품",
      "traits": "직접 손으로 만들며 빠르게 검증하는 걸 즐김, 환경 문제에 진심",
      "interestDomains": ["ESG", "생산성"], "participationMotivation": ["창업 기회", "수익"],
-     "weeklyCapacity": "주 20시간 이상", "contactHours": ["평일 저녁", "주말"], "collabMode": "수도권 오프라인 가능"},
+     "weeklyCapacity": "주 20시간 이상", "contactHours": ["평일 저녁", "주말"], "collabMode": "수도권 오프라인 가능",
+     "links": [{"label": "포트폴리오", "url": "https://notion.so/kimdohyun-portfolio"}],
+     "bio": "폐플라스틱 재활용 설비를 직접 만들어 본 경험이 있어, 에코그립 양산 라인을 빠르게 세팅할 수 있어요."},
     {"name": "이서연", "headline": "브랜드·제품 디자이너",
      "primaryRole": "디자인",
      "skills": "디자인, 브랜딩, 패키지, 굿즈디자인",
      "traits": "미적 감각이 뛰어나고 트렌드에 민감, 작게 시작해 다듬는 걸 선호",
      "interestDomains": ["콘텐츠", "ESG"], "participationMotivation": ["포트폴리오", "창업 기회"],
-     "weeklyCapacity": "주 10시간", "contactHours": ["평일 저녁"], "collabMode": "온라인+화상"},
+     "weeklyCapacity": "주 10시간", "contactHours": ["평일 저녁"], "collabMode": "온라인+화상",
+     "links": [{"label": "포트폴리오", "url": "https://www.behance.net/leeseoyeon"}],
+     "bio": "제품의 미적 완성도와 브랜드 무드를 함께 잡습니다. 굿즈·패키지 디자인이 강점이에요."},
     {"name": "박지훈", "headline": "SNS·콘텐츠 마케터",
      "primaryRole": "마케팅",
      "skills": "마케팅, SNS, 콘텐츠, 브랜드스토리텔링",
      "traits": "Gen Z 트렌드 이해도 높음, 가치소비·친환경 메시지에 공감",
      "interestDomains": ["콘텐츠", "ESG"], "participationMotivation": ["창업 기회", "네트워킹"],
-     "weeklyCapacity": "주 10시간", "contactHours": ["평일 저녁", "주말"], "collabMode": "온라인+화상"},
+     "weeklyCapacity": "주 10시간", "contactHours": ["평일 저녁", "주말"], "collabMode": "온라인+화상",
+     "links": [{"label": "인스타그램", "url": "https://instagram.com/parkjihoon.mkt"}],
+     "bio": "작은 브랜드를 0에서 팬덤으로 키운 경험이 있어요. Gen Z 타깃 친환경 브랜딩에 강합니다."},
     {"name": "최민지", "headline": "B2B 제휴·영업 담당",
      "primaryRole": "영업·제휴",
      "skills": "영업, 제휴, B2B, 온라인판매",
@@ -234,7 +240,9 @@ TEAMMATE_POOL = [
      "skills": "생산설비, 제조, 사출, 품질관리",
      "traits": "현장 문제 해결에 강함, 손이 빠름",
      "interestDomains": ["ESG", "생산성"], "participationMotivation": ["창업 기회", "수익"],
-     "weeklyCapacity": "주 20시간 이상", "contactHours": ["평일 저녁", "주말"], "collabMode": "전국 오프라인 가능"},
+     "weeklyCapacity": "주 20시간 이상", "contactHours": ["평일 저녁", "주말"], "collabMode": "전국 오프라인 가능",
+     "links": [{"label": "작업 사례", "url": "https://behance.net/gubonyoung"}],
+     "bio": "소규모 친환경 제품 양산 라인을 여러 번 구축했습니다. 초기 시제품부터 함께 만들고 싶어요."},
     {"name": "양수빈", "headline": "품질을 지키는 QA·품질관리자",
      "primaryRole": "제조·생산",
      "skills": "품질관리, 제조, 프로세스설계",
@@ -289,6 +297,32 @@ TEAMMATE_POOL = [
      "traits": "의료 규제와 사용자 니즈를 함께 봄",
      "interestDomains": ["의료", "생산성"], "participationMotivation": ["학습", "창업 기회"],
      "weeklyCapacity": "주 10시간", "contactHours": ["평일 낮"], "collabMode": "온라인+화상"},
+
+    # ── 라이더 중 '투자자'(kind: investor) — 스킬이 아닌 '관심 분야'로 매칭한다 ──
+    {"name": "정민석", "headline": "초기 스타트업에 베팅하는 엔젤 투자자", "kind": "investor",
+     "traits": "될성부른 팀에 먼저 투자, 실행력 있는 창업자를 선호",
+     "interestDomains": ["ESG", "콘텐츠"], "investStage": "시드", "investTicket": "3천만~1억",
+     "portfolio": ["리필리(시드)", "제로마켓(시드)", "그립플레이(엔젤)"],
+     "investStyle": "리드·팔로우 모두", "decisionSpeed": "2~3주",
+     "support": ["초기 브랜딩", "네트워크 연결", "IR 코칭"],
+     "links": [{"label": "투자 이력(AngelList)", "url": "https://angel.co/jungminseok"}],
+     "bio": "ESG·콘텐츠 초기 스타트업을 주로 봅니다. 자금 외에 초기 브랜딩·네트워크 연결도 돕습니다."},
+    {"name": "한서영", "headline": "프리A 라운드를 보는 초기 VC 심사역", "kind": "investor",
+     "traits": "시장 크기와 팀을 함께 봄, 데이터로 성장을 검증",
+     "interestDomains": ["생산성", "의료"], "investStage": "프리A", "investTicket": "1억~5억",
+     "portfolio": ["헬스노트(프리A)", "워크플로우(시리즈A)"],
+     "investStyle": "팔로우 위주", "decisionSpeed": "3~4주",
+     "support": ["후속 라운드 소개", "채용 연결", "지표 코칭"],
+     "links": [{"label": "회사 소개", "url": "https://ventures.example.com"}],
+     "bio": "지표로 성장을 검증하는 팀을 선호합니다. 후속 라운드 투자자 연결을 지원합니다."},
+    {"name": "오세훈", "headline": "수익과 임팩트를 함께 보는 임팩트 투자자", "kind": "investor",
+     "traits": "사회적 가치와 지속가능성을 중시, 지역·복지에 관심",
+     "interestDomains": ["복지", "교육"], "investStage": "시드", "investTicket": "2천만~5천만",
+     "portfolio": ["돌봄이음(시드)", "배움나눔(시드)"],
+     "investStyle": "리드 투자", "decisionSpeed": "약 1개월",
+     "support": ["임팩트 측정", "지역 파트너십", "정부지원 연계"],
+     "links": [{"label": "임팩트 펀드 소개", "url": "https://impact.example.org"}],
+     "bio": "수익과 사회적 임팩트를 함께 봅니다. 지역·복지 파트너십 연결에 강점이 있어요."},
 ]
 
 # 4-3) 매칭 AI 의 역할(시스템 프롬프트).
@@ -509,7 +543,7 @@ def _match_teammates_ai(vision: dict, needed: list) -> dict:
         "[사업 기획안]\n"
         f"{json.dumps(vision_brief, ensure_ascii=False, indent=2)}\n\n"
         "[등록된 팀원 풀]\n"
-        f"{json.dumps(TEAMMATE_POOL, ensure_ascii=False, indent=2)}\n\n"
+        f"{json.dumps([p for p in TEAMMATE_POOL if p.get('kind') != 'investor'], ensure_ascii=False, indent=2)}\n\n"
         "위 팀원 풀 안에서 이 아이디어에 가장 잘 맞는 사람을 골라 JSON 형식으로 답하세요."
     )
     response = client.messages.create(
@@ -522,19 +556,76 @@ def _match_teammates_ai(vision: dict, needed: list) -> dict:
     return _extract_json(raw)
 
 
-def match_teammates(vision: dict) -> dict:
-    """등록된 팀원 풀을 기획안과 비교해 추천 팀원을 돌려줍니다.
+def compute_investor_score(investor: dict, project: dict) -> dict:
+    """투자자 라이더는 스킬 대신 '관심 분야' 겹침으로 적합도를 계산한다."""
+    mp = project or {}
+    p_domains = _as_tokens(mp.get("domains"))
+    e_domains = _as_tokens(investor.get("interestDomains"))
+    m_dom = _overlap(p_domains, e_domains)
+    ratio = (len(m_dom) / len(p_domains)) if p_domains else 1.0
+    score = round(100 * ratio)
+    return {
+        "score": int(score),
+        "hardPass": True,
+        "hardReasons": [],
+        "components": [
+            {"key": "관심 분야", "weight": 100, "got": round(100 * ratio, 1),
+             "pct": round(ratio * 100), "detail": f"겹친 분야: {', '.join(m_dom) or '없음'}"}
+        ],
+    }
 
-    기획안에 matchProfile 이 있으면 결정적 점수(기술40·관심30·목적20·시간10+하드필터)로
-    랭킹·등급을 확정하고, AI 는 상위 후보의 '맡을 자리(fitsRole)'와 '추천 이유'만 씁니다.
+
+def _match_entry(person: dict, bd: dict, fits_role: str, reason: str) -> dict:
+    """추천 카드에 필요한 정보를 담아 매칭 결과 항목을 만든다(팀원/투자자 공통)."""
+    kind = person.get("kind", "teammate")
+    entry = {
+        "name": person["name"],
+        "kind": kind,
+        "headline": person.get("headline", ""),
+        "traits": person.get("traits", ""),
+        "interestDomains": person.get("interestDomains", []),
+        "links": person.get("links", []),
+        "bio": person.get("bio", ""),
+        "fitsRole": fits_role,
+        "fitLevel": _fit_level(bd["score"], bd["hardPass"]),
+        "reason": reason,
+        "score": bd["score"],
+        "breakdown": bd,
+    }
+    if kind == "investor":
+        entry["investStage"] = person.get("investStage", "")
+        entry["investTicket"] = person.get("investTicket", "")
+        entry["portfolio"] = person.get("portfolio", [])
+        entry["investStyle"] = person.get("investStyle", "")
+        entry["decisionSpeed"] = person.get("decisionSpeed", "")
+        entry["support"] = person.get("support", [])
+    else:
+        entry["skills"] = person.get("skills", "")
+        entry["weeklyCapacity"] = person.get("weeklyCapacity", "")
+        entry["collabMode"] = person.get("collabMode", "")
+        entry["participationMotivation"] = person.get("participationMotivation", [])
+        entry["contactHours"] = person.get("contactHours", [])
+    return entry
+
+
+def match_teammates(vision: dict) -> dict:
+    """등록된 라이더 풀을 기획안과 비교해 추천 팀원(+관심 가질 만한 투자자)을 돌려줍니다.
+
+    - 팀원: 결정적 점수(기술40·관심30·목적20·시간10+하드필터)로 랭킹·등급을 확정하고,
+      AI 는 상위 후보의 '맡을 자리(fitsRole)'와 '추천 이유'만 씁니다.
+    - 투자자(kind=investor): 스킬이 아닌 '관심 분야' 겹침으로 점수를 매겨, 분야가 맞는
+      투자자만 추천 목록 뒤에 덧붙입니다(fitsRole='투자·자문').
     """
     needed = [t["role"] for t in vision.get("neededTeammates", [])]
     match_profile = vision.get("matchProfile")
     if not match_profile:
         return _match_teammates_ai(vision, needed)
 
-    # 1) 풀 전원 결정적 점수 → 하드필터 통과 우선, 점수 내림차순 랭킹
-    scored = [{"person": p, "bd": compute_match_score(p, match_profile)} for p in TEAMMATE_POOL]
+    teammates = [p for p in TEAMMATE_POOL if p.get("kind") != "investor"]
+    investors = [p for p in TEAMMATE_POOL if p.get("kind") == "investor"]
+
+    # 1) 팀원: 결정적 점수 → 하드필터 통과 우선, 점수 내림차순 랭킹
+    scored = [{"person": p, "bd": compute_match_score(p, match_profile)} for p in teammates]
     scored.sort(key=lambda s: (s["bd"]["hardPass"], s["bd"]["score"]), reverse=True)
     passing = [s for s in scored if s["bd"]["hardPass"]]
     top = (passing or scored)[:4]
@@ -566,20 +657,55 @@ def match_teammates(vision: dict) -> dict:
     ai_by_name = {m.get("name"): m for m in _extract_json(raw).get("matches", [])}
 
     # 3) 결정적 점수를 진실원천으로 병합
-    matches = []
-    for s in top:
-        nm, bd = s["person"]["name"], s["bd"]
-        a = ai_by_name.get(nm, {})
-        matches.append({
-            "name": nm,
-            "fitsRole": a.get("fitsRole") or (needed[0] if needed else ""),
-            "fitLevel": _fit_level(bd["score"], bd["hardPass"]),
-            "reason": a.get("reason") or "",
-            "score": bd["score"],
-            "breakdown": bd,
-        })
+    matches = [
+        _match_entry(
+            s["person"], s["bd"],
+            fits_role=ai_by_name.get(s["person"]["name"], {}).get("fitsRole") or (needed[0] if needed else ""),
+            reason=ai_by_name.get(s["person"]["name"], {}).get("reason") or "",
+        )
+        for s in top
+    ]
     matches.sort(key=lambda m: m["score"], reverse=True)
+
+    # 4) 투자자: 관심 분야 점수로 겹치는 사람만 목록 뒤에 추가
+    inv_scored = [{"person": p, "bd": compute_investor_score(p, match_profile)} for p in investors]
+    inv_scored.sort(key=lambda s: s["bd"]["score"], reverse=True)
+    for s in inv_scored:
+        if s["bd"]["score"] <= 0:
+            continue
+        doms = ", ".join(_overlap(_as_tokens(match_profile.get("domains")),
+                                  _as_tokens(s["person"].get("interestDomains")))) or "관심 분야"
+        matches.append(_match_entry(
+            s["person"], s["bd"], fits_role="투자·자문",
+            reason=f"관심 분야({doms})가 맞아 초기 투자·자문에 관심을 가질 수 있어요.",
+        ))
     return {"matches": matches}
+
+
+def list_riders() -> dict:
+    """등록된 라이더(팀원+투자자) 풀을 둘러보기용 카드 정보로 돌려준다."""
+    riders = []
+    for p in TEAMMATE_POOL:
+        kind = p.get("kind", "teammate")
+        r = {"name": p["name"], "kind": kind, "headline": p.get("headline", ""),
+             "traits": p.get("traits", ""), "interestDomains": p.get("interestDomains", []),
+             "links": p.get("links", []), "bio": p.get("bio", "")}
+        if kind == "investor":
+            r["investStage"] = p.get("investStage", "")
+            r["investTicket"] = p.get("investTicket", "")
+            r["portfolio"] = p.get("portfolio", [])
+            r["investStyle"] = p.get("investStyle", "")
+            r["decisionSpeed"] = p.get("decisionSpeed", "")
+            r["support"] = p.get("support", [])
+        else:
+            r["primaryRole"] = p.get("primaryRole", "")
+            r["skills"] = p.get("skills", "")
+            r["weeklyCapacity"] = p.get("weeklyCapacity", "")
+            r["collabMode"] = p.get("collabMode", "")
+            r["participationMotivation"] = p.get("participationMotivation", [])
+            r["contactHours"] = p.get("contactHours", [])
+        riders.append(r)
+    return {"riders": riders}
 
 
 def print_matches(matches: dict) -> None:
