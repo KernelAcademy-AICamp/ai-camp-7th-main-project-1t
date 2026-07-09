@@ -55,6 +55,9 @@ SYSTEM_PROMPT = """당신은 ORBIT의 기획안 생성 AI입니다.
 - matchFactors(매칭 중요 요소): 실력 외에 이 팀에 맞으려면 중요한 성향·가치 정확히 3개.
 - aiQuestions: 합류 지원자가 답할 질문 2개. 이 아이디어 적합성을 가릴 단답형(1~2문장으로 답할 수 있는 것).
 - founderQuestion: 아이디어 제공자가 팀원에게 묻고 싶을 법한 추천 질문 1개(나중에 제공자가 직접 수정합니다).
+- investorMatchFactors(투자자 매칭 중요 요소): 이 사업에 '투자·자문'할 사람을 볼 때 중요한 관점 정확히 3개.
+    팀원 궁합(matchFactors)과 겹치지 않게, 투자자 시각(시장성·성장 가능성·창업자 신뢰·회수 가능성 등)으로 쓰세요.
+- founderInvestorQuestion: 아이디어 제공자가 잠재 투자자에게 묻고 싶을 법한 추천 질문 1개(나중에 제공자가 직접 수정합니다).
 - matchProfile: 전문가(팀원) 매칭 점수 계산에 쓰는 구조화 속성. 아래 '허용 값'에서만 고르세요.
     · roleSkills : 이 프로젝트에 필요한 핵심 역량 태그 3~6개(짧은 명사. 예: 프론트엔드, 디자인, 마케팅, 생산설비, 식품위생).
     · domains    : 프로젝트 분야. [복지, 교육, 반려동물, 지역 커뮤니티, 의료, ESG, 콘텐츠, 생산성] 중 1~2개.
@@ -89,6 +92,8 @@ SYSTEM_PROMPT = """당신은 ORBIT의 기획안 생성 AI입니다.
   "matchFactors": ["성향·가치 1", "성향·가치 2", "성향·가치 3"],
   "aiQuestions": ["팀원이 답할 질문 1", "팀원이 답할 질문 2"],
   "founderQuestion": "제공자가 팀원에게 물을 추천 질문 1개",
+  "investorMatchFactors": ["투자 관점 1", "투자 관점 2", "투자 관점 3"],
+  "founderInvestorQuestion": "제공자가 투자자에게 물을 추천 질문 1개",
   "matchProfile": {
     "roleSkills": ["프론트엔드", "디자인", "마케팅"],
     "domains": ["콘텐츠"],
@@ -437,6 +442,8 @@ VISION_SCHEMA = _obj({
     "matchFactors": {"type": "array", "items": {"type": "string"}},
     "aiQuestions": {"type": "array", "items": {"type": "string"}},
     "founderQuestion": {"type": "string"},
+    "investorMatchFactors": {"type": "array", "items": {"type": "string"}},
+    "founderInvestorQuestion": {"type": "string"},
     "matchProfile": _obj({
         "roleSkills": {"type": "array", "items": {"type": "string"}},
         "domains": {"type": "array", "items": {"type": "string"}},
@@ -445,7 +452,8 @@ VISION_SCHEMA = _obj({
         "meetingMode": {"type": "string"},
     }, ["roleSkills", "domains", "natures", "minWeeklyCapacity", "meetingMode"]),
 }, ["serviceName", "tagline", "lead", "story", "whyNow", "productNote",
-    "plan", "neededTeammates", "matchFactors", "aiQuestions", "founderQuestion", "matchProfile"])
+    "plan", "neededTeammates", "matchFactors", "aiQuestions", "founderQuestion",
+    "investorMatchFactors", "founderInvestorQuestion", "matchProfile"])
 
 BOOST_SCHEMA = _obj({
     "questions": {"type": "array", "items": _obj(
@@ -667,18 +675,19 @@ def match_teammates(vision: dict) -> dict:
     ]
     matches.sort(key=lambda m: m["score"], reverse=True)
 
-    # 4) 투자자: 관심 분야 점수로 겹치는 사람만 목록 뒤에 추가
-    inv_scored = [{"person": p, "bd": compute_investor_score(p, match_profile)} for p in investors]
-    inv_scored.sort(key=lambda s: s["bd"]["score"], reverse=True)
-    for s in inv_scored:
-        if s["bd"]["score"] <= 0:
-            continue
-        doms = ", ".join(_overlap(_as_tokens(match_profile.get("domains")),
-                                  _as_tokens(s["person"].get("interestDomains")))) or "관심 분야"
-        matches.append(_match_entry(
-            s["person"], s["bd"], fits_role="투자·자문",
-            reason=f"관심 분야({doms})가 맞아 초기 투자·자문에 관심을 가질 수 있어요.",
-        ))
+    # 4) 투자자: 제공자가 '투자자 매칭'을 켠 기획안만, 관심 분야 점수로 겹치는 사람을 목록 뒤에 추가
+    if vision.get("matchInvestor"):
+        inv_scored = [{"person": p, "bd": compute_investor_score(p, match_profile)} for p in investors]
+        inv_scored.sort(key=lambda s: s["bd"]["score"], reverse=True)
+        for s in inv_scored:
+            if s["bd"]["score"] <= 0:
+                continue
+            doms = ", ".join(_overlap(_as_tokens(match_profile.get("domains")),
+                                      _as_tokens(s["person"].get("interestDomains")))) or "관심 분야"
+            matches.append(_match_entry(
+                s["person"], s["bd"], fits_role="투자·자문",
+                reason=f"관심 분야({doms})가 맞아 초기 투자·자문에 관심을 가질 수 있어요.",
+            ))
     return {"matches": matches}
 
 
@@ -959,6 +968,83 @@ def evaluate_applicant(vision: dict, question_texts: list, applicant: dict,
             }
             for i, ans in enumerate(user_answers)
         ]
+    return result
+
+
+# ── 투자자 검토 Q&A (투자자가 답하고, 제공자에게 묻고, 제공자가 답한다) ──
+INVEST_SYSTEM_PROMPT = """당신은 ORBIT의 '투자 검토 도우미'입니다.
+투자자가 사업 기획안에 관심을 남기려고 몇 가지 질문에 답하고, 제공자에게 궁금한 점을 묻습니다.
+당신은 (1) 투자자의 답변에 제공자 관점의 한 줄 코멘트를 달고, (2) 투자자의 질문에 제공자 입장에서 답하며,
+(3) 이 사업이 이 투자자에게 얼마나 맞는지 관심도를 매깁니다.
+
+규칙:
+- 반드시 아래 JSON 형식으로만 답하세요. JSON 외 다른 말이나 코드펜스를 절대 붙이지 마세요.
+- answers: 주어진 각 질문/답변을 그대로 옮기고(창작·수정 금지), comment 는 제공자 관점에서 이 답변이 투자 매력·적합성에 어떤 의미인지 한 줄.
+- founderReply: 투자자의 질문에 제공자 입장에서 기획안 내용을 근거로 성실히 답변(2~3문장). 아직 아이디어 단계이므로 없는 성과를 지어내지 마세요.
+- interestLevel: 투자자 관심 분야·단계와 이 사업의 결이 얼마나 맞는지 "높음"/"보통"/"낮음" 중 하나.
+- summary: 투자 관점 한 줄 요약. highlights: 이 투자자에게 어필할 포인트(또는 유의점) 2~3개.
+- 모두 한국어로.
+
+[응답 JSON 형식]
+{
+  "answers": [{"question":"질문","answer":"투자자 답변","comment":"제공자 관점 코멘트"}],
+  "founderReply": "제공자가 투자자 질문에 답한 내용",
+  "interestLevel": "높음",
+  "summary": "한 줄 요약",
+  "highlights": ["포인트1","포인트2"]
+}"""
+
+INVEST_SCHEMA = _obj({
+    "answers": {"type": "array", "items": _obj(
+        {"question": {"type": "string"}, "answer": {"type": "string"}, "comment": {"type": "string"}},
+        ["question", "answer", "comment"])},
+    "founderReply": {"type": "string"},
+    "interestLevel": {"type": "string"},
+    "summary": {"type": "string"},
+    "highlights": {"type": "array", "items": {"type": "string"}},
+}, ["answers", "founderReply", "interestLevel", "summary", "highlights"])
+
+
+def evaluate_investor(vision: dict, investor: dict, question_texts: list,
+                      answers: list, investor_question: str = "") -> dict:
+    """투자자가 답한 질문 + 제공자에게 묻는 질문으로 투자 관심 요약·제공자 답변을 생성합니다."""
+    brief = {
+        "serviceName": vision.get("serviceName"),
+        "oneLineDesc": vision.get("oneLineDesc"),
+        "plan": vision.get("plan", {}),
+        "investorMatchFactors": vision.get("investorMatchFactors") or vision.get("matchFactors", []),
+        "domains": (vision.get("matchProfile") or {}).get("domains", []),
+    }
+    qa = [{"question": q, "answer": (answers[i] if i < len(answers) else "")}
+          for i, q in enumerate(question_texts)]
+    user_prompt = (
+        "[사업 기획안]\n"
+        f"{json.dumps(brief, ensure_ascii=False, indent=2)}\n\n"
+        "[투자자 프로필]\n"
+        f"{json.dumps(investor, ensure_ascii=False, indent=2)}\n\n"
+        "[제공자가 투자자에게 물은 질문과 투자자의 답변]\n"
+        f"{json.dumps(qa, ensure_ascii=False, indent=2)}\n\n"
+        "[투자자가 제공자에게 묻는 질문]\n"
+        f"{investor_question or '(없음)'}\n\n"
+        "answers 의 answer 는 위 투자자 답변을 그대로 옮기고, founderReply 는 투자자 질문에 제공자 입장에서 답하세요. "
+        "이 투자자의 투자 관심 평가를 JSON 형식으로 작성하세요."
+    )
+    response = client.messages.create(
+        model="claude-sonnet-4-6", max_tokens=1000,
+        output_config={"effort": "low", "format": {"type": "json_schema", "schema": INVEST_SCHEMA}},
+        system=INVEST_SYSTEM_PROMPT,
+        messages=[{"role": "user", "content": user_prompt}],
+    )
+    raw = "".join(b.text for b in response.content if b.type == "text")
+    result = _extract_json(raw)
+    ai_answers = result.get("answers", [])
+    result["answers"] = [
+        {"question": question_texts[i] if i < len(question_texts) else "",
+         "answer": (answers[i] if i < len(answers) else ""),
+         "comment": ai_answers[i].get("comment", "") if i < len(ai_answers) else ""}
+        for i in range(len(question_texts))
+    ]
+    result["investorQuestion"] = investor_question
     return result
 
 

@@ -679,7 +679,10 @@
 <section class="screen hidden" id="s-my">
   <div class="narrow pagepad">
     <div class="myhead">
-      <button class="btn ghost" style="margin-bottom:14px" onclick="showDashboard()">← 대시보드</button>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:14px;">
+        <button class="btn ghost" onclick="goHome()">← 홈으로</button>
+        <button class="btn ghost" onclick="showDashboard()">← 이전으로</button>
+      </div>
       <div class="myhi">👋 <b id="myName">홍길동</b>님, 환영합니다</div>
       <div class="mymode" id="myModeLabel"></div>
     </div>
@@ -691,7 +694,7 @@
 <!-- ===== 아이디어 던지기 ===== -->
 <section class="screen hidden" id="s-idea">
   <div class="narrow pagepad">
-    <button class="btn ghost" onclick="go('landing')">← 처음으로</button>
+    <button class="btn ghost" onclick="goHome()">← 홈으로</button>
     <!-- 1) 입력 -->
     <div id="idea-input">
       <div class="hero fade" style="margin-top:14px; background:linear-gradient(150deg,#0b1226 0%,#1e3a8a 60%,#2563eb 100%);">
@@ -722,7 +725,7 @@
 <!-- ===== Rider 진입: 프로필 받기 / 다음에 하기 ===== -->
 <section class="screen hidden" id="s-rider">
   <div class="narrow pagepad">
-    <button class="btn ghost" onclick="go('landing')">← 처음으로</button>
+    <div id="riderBack"></div>
     <!-- 1) 인트로 + 두 갈래 -->
     <div id="rider-intro">
       <div class="hero fade" style="margin-top:14px; background:linear-gradient(150deg,#064e3b 0%,#047857 60%,#10b981 100%);">
@@ -753,7 +756,7 @@
 <!-- ===== 둘러보기 (비로그인 가능) ===== -->
 <section class="screen hidden" id="s-explore">
   <div class="narrow pagepad">
-    <button class="btn ghost" onclick="go('landing')">← 처음으로</button>
+    <button class="btn ghost" onclick="goHome()">← 홈으로</button>
     <h2 style="font-size:21px; color:var(--navy); margin:16px 0 4px; letter-spacing:-.02em;">🟩 아이디어 둘러보기</h2>
     <p style="color:var(--muted); font-size:13px; margin:0 0 18px;">관심 가는 프로젝트를 고르면 상세를 볼 수 있어요. (상세 보기·합류는 로그인 후 진행됩니다.)</p>
     <div id="explore-list"></div>
@@ -763,7 +766,10 @@
 <!-- ===== 내 이력서 ===== -->
 <section class="screen hidden" id="s-resume">
   <div class="narrow pagepad">
-    <button class="btn ghost" onclick="showMy('team')">← 둘러보기로</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+      <button class="btn ghost" onclick="goHome()">← 홈으로</button>
+      <button class="btn ghost" onclick="showMy('team')">← 이전으로</button>
+    </div>
     <div id="resume-body" style="margin-top:16px"></div>
   </div>
 </section>
@@ -790,7 +796,7 @@
 </div>
 
 <script>
-const ORBIT = { loggedIn:false, user:null, myTab:"idea", vision:null, founderQuestion:"", boost:null, picks:[],
+const ORBIT = { loggedIn:false, user:null, myTab:"idea", vision:null, founderQuestion:"", founderInvestorQuestion:"", boost:null, picks:[],
   applicant:null, myIdeas:[], applied:[], detailVision:null, detailRole:"", detailRate:0, profile:null,
   role:null, profileDone:false, subscribed:false };
 
@@ -1266,7 +1272,7 @@ function previewLoading(){
 /* 개발용: API 안 부르고 에코그립 예시로 기획안 페이지 미리보기 (비용 0) */
 function previewVision(){
   const v = JSON.parse(JSON.stringify(DEMO_PROJECT));
-  ORBIT.vision = v; ORBIT.founderQuestion = v.founderQuestion || ""; ORBIT.picks = []; ORBIT.editing = null;
+  ORBIT.vision = v; ORBIT.founderQuestion = v.founderQuestion || ""; ORBIT.founderInvestorQuestion = v.founderInvestorQuestion || ""; ORBIT.picks = []; ORBIT.editing = null;
   ORBIT.channels = v.channels ? {...v.channels} : {kakao:"",slack:"",email:""};
   document.getElementById("idea-input").classList.add("hidden");
   document.getElementById("idea-boost").innerHTML = "";
@@ -1305,7 +1311,7 @@ function doLogin(accKey){
   const p = ORBIT._pending; ORBIT._pending = null;
   if(p && p.type==="idea"){ ORBIT.role="shooter"; ORBIT.myTab="idea"; goIdeaIntro(); const ti=document.getElementById("idea"); if(ti) ti.value=p.idea; ideaStart(); return; }
   if(p && p.type==="detail"){ ORBIT.role = ORBIT.role||"rider"; ORBIT.myTab="team"; openDetail(p.vision); return; }
-  if(p && p.type==="profile"){ ORBIT.role="rider"; ORBIT.myTab="team"; go("rider"); renderRiderProfile(); return; }
+  if(p && p.type==="profile"){ ORBIT.role="rider"; ORBIT.myTab="team"; riderProfileEntry(); return; }
   routeByRole();
 }
 /* 로그인 후: 신규(역할 미정)면 역할 선택, 기 가입이면 대시보드 */
@@ -1377,7 +1383,7 @@ function renderDashboard(){
 
   // 4) 요청 수락 현황 (내가 합류 신청한 아이디어)
   const appBody = applied.length
-    ? applied.slice(0,3).map(a=>`<div class="dash-row"><div style="flex:1"><b style="color:var(--navy);font-size:13px">${esc(a.title)}</b><div style="font-size:11.5px;color:var(--muted)">${esc(a.role)} · 매칭률 ${a.rate}%</div></div><span class="pill ${a.status==='accepted'?'green':'amber'}">${a.status==='accepted'?'수락됨 ✓':'수락 대기'}</span></div>`).join("")
+    ? applied.slice(0,3).map(a=>`<div class="dash-row"><div style="flex:1"><b style="color:var(--navy);font-size:13px">${esc(a.title)}</b><div style="font-size:11.5px;color:var(--muted)">${esc(a.role)}${a.kind==='investor'?'':' · 매칭률 '+a.rate+'%'}</div></div><span class="pill ${a.status==='accepted'?'green':'amber'}">${a.status==='accepted'?'수락됨 ✓':'수락 대기'}</span></div>`).join("")
     : `<div class="dc-empty">아직 합류 신청한 아이디어가 없어요.</div>`;
   const c4 = `<div class="dashcard">
     <div class="dc-top"><div class="dc-ic">✅</div><div class="dc-t">요청 수락 현황</div>${applied.length?`<span class="dc-n">${applied.length}</span>`:``}</div>
@@ -1398,7 +1404,7 @@ function renderProfileDetail(){
     const infoChips = (arr,cls)=> (arr&&arr.length) ? arr.map(x=>`<span class="rc-chip ${cls||''}">${esc(x)}</span>`).join(" ") : "-";
     const ilinks = (p.links||[]).length ? (p.links||[]).map(l=>`<a href="${esc(l.url)}" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:underline;margin-right:14px;white-space:nowrap">${esc(l.label)} ↗</a>`).join("") : "-";
     document.getElementById("pd-body").innerHTML = `
-      <button class="btn ghost" onclick="showDashboard()">← 대시보드</button>
+      ${backBar("showDashboard()")}
       <div class="card" style="margin-top:16px">
         <div style="display:flex; align-items:center; gap:13px;">
           <div class="pav" style="width:46px;height:46px;font-size:18px;background:linear-gradient(135deg,#92400e,#d97706)">${esc((p.name||"투")[0])}</div>
@@ -1420,7 +1426,10 @@ function renderProfileDetail(){
         ${row("개인 링크", ilinks)}
         ${row("덧붙이고 싶은 말", esc(p.bio||"-"))}
       </div>
-      <p style="font-size:11.5px; color:var(--muted); text-align:center;">데모 투자자 프로필입니다.</p>`;
+      <div style="display:flex; gap:9px;">
+        <button class="btn ghost" style="flex:1" onclick="deleteProfile()">🗑 삭제</button>
+        <button class="btn green" style="flex:2" onclick="editProfile()">✎ 수정하기</button>
+      </div>`;
     return;
   }
   const contact = (p.contact_hours||[]).map(l=>{
@@ -1433,7 +1442,7 @@ function renderProfileDetail(){
     ? (p.links||[]).map(l=>`<a href="${esc(l.url)}" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:underline;margin-right:14px;white-space:nowrap">${esc(l.label)} ↗</a>`).join("")
     : "-";
   document.getElementById("pd-body").innerHTML = `
-    <button class="btn ghost" onclick="showDashboard()">← 대시보드</button>
+    ${backBar("showDashboard()")}
     <div class="card" style="margin-top:16px">
       <div style="display:flex; align-items:center; gap:13px;">
         <div class="pav" style="width:46px;height:46px;font-size:18px">${esc((p.name||ORBIT.user||"나")[0])}</div>
@@ -1493,18 +1502,19 @@ function renderAppliedList(){
   const row = a=>{
     const acc = a.status==="accepted";
     const rate = a.rate||0;
+    const isInv = a.kind==="investor";
     return `<div class="card" style="margin-bottom:11px">
       <div style="display:flex; align-items:center; gap:12px;">
         <div style="flex:1; min-width:0">
           <b style="color:var(--navy); font-size:15px">${esc(a.title)}</b>
-          <div style="font-size:12.5px; color:var(--muted); margin-top:3px">${esc(a.role||"추천 자리")} · 매칭률 ${rate}%</div>
+          <div style="font-size:12.5px; color:var(--muted); margin-top:3px">${isInv?'💰 ':''}${esc(a.role||"추천 자리")}${isInv?'':' · 매칭률 '+rate+'%'}</div>
         </div>
         <span class="pill ${acc?'green':'amber'}">${acc?'수락됨 ✓':'수락 대기'}</span>
       </div>
       <div style="font-size:12.5px; color:#475569; margin-top:11px; padding-top:11px; border-top:1px solid var(--line);">
         ${acc
-          ? "🎉 제공자가 합류를 수락했어요. 아래 채널에서 함께 시작하세요."
-          : "⏳ 제공자가 신청서를 확인하고 있어요. 수락되면 알려드릴게요."}
+          ? (isInv ? "🎉 제공자가 투자 검토를 수락했어요. 아래 채널에서 미팅을 잡아보세요." : "🎉 제공자가 합류를 수락했어요. 아래 채널에서 함께 시작하세요.")
+          : (isInv ? "⏳ 제공자가 투자 제안을 검토하고 있어요. 수락되면 알려드릴게요." : "⏳ 제공자가 신청서를 확인하고 있어요. 수락되면 알려드릴게요.")}
       </div>
       ${acc && a.channels ? teamChannelBlock(a) : ""}
     </div>`;
@@ -1516,7 +1526,7 @@ function renderAppliedList(){
         <button class="btn full" onclick="goExplore()">🛰️ 아이디어 둘러보기 →</button></div>`;
 
   document.getElementById("applied-body").innerHTML = `
-    <button class="btn ghost" onclick="showDashboard()">← 대시보드</button>
+    ${backBar("showDashboard()")}
     <div class="myhead" style="margin-top:14px">
       <div class="myhi">✅ 신청 현황</div>
       <div class="mymode">내가 합류 신청한 아이디어의 수락·대기 상태예요.</div>
@@ -1534,16 +1544,113 @@ function goIdeaIntro(){
   const ti=document.getElementById("idea"); if(ti && !ORBIT._pending) ti.value="";
 }
 /* Rider 진입 — '당신에 대해 알려주세요' (프로필 받기 / 다음에 하기) */
+/* ===== 뒤로가기 통일: 홈(허브) / 이전(직전) =====
+   - 홈에서 바로 진입 화면: 홈으로 1개
+   - 진입 경로가 있는 화면: 좌 홈으로 + 우 이전으로 (backBar) */
+function goHome(){ go('landing'); }   // 홈 = 랜딩(대문). 대시보드는 '이전으로'로 이동.
+function backBar(prev){
+  const home = `<button class="btn ghost" onclick="goHome()">← 홈으로</button>`;
+  if(!prev) return home;
+  return `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">${home}<button class="btn ghost" onclick="${prev}">← 이전으로</button></div>`;
+}
+function setRiderBack(prev){ const el=document.getElementById('riderBack'); if(el) el.innerHTML = backBar(prev); }
 function goRider(){
   go("rider");
   document.getElementById("rider-intro").classList.remove("hidden");
   const pf = document.getElementById("rider-profile");
   pf.classList.add("hidden"); pf.innerHTML="";
+  setRiderBack(null);
 }
-/* 프로필 작성하기 — 로그인(회원가입) 먼저, 이후 프로필 폼 */
+/* 프로필 작성하기 — 로그인(회원가입) 먼저, 이후 유형 선택/프로필 폼 */
 function riderStartProfile(){
   if(!ORBIT.loggedIn){ ORBIT._pending={type:"profile"}; go("login"); return; }
-  go("rider"); renderRiderProfile();
+  riderProfileEntry();
+}
+/* 기존 프로필이면 해당 편집 폼, 신규면 팀원/투자자 유형 선택 */
+function riderProfileEntry(){
+  go("rider");
+  if(ORBIT.profile){ ORBIT.profile.kind==="investor" ? renderInvestorProfile() : renderRiderProfile(); }
+  else renderRiderType();
+}
+/* 신규 — 팀원 / 투자자 유형 선택 */
+function renderRiderType(){
+  document.getElementById("rider-intro").classList.add("hidden");
+  setRiderBack("goRider()");
+  const pf=document.getElementById("rider-profile"); pf.classList.remove("hidden");
+  pf.innerHTML = `
+    <div class="card fade" style="margin-top:14px; text-align:center;">
+      <p class="eyebrow" style="justify-content:center">🛰️ 어떤 참여자인가요?</p>
+      <p style="font-size:13px; color:#475569; margin:0;">아이디어에 <b>합류</b>할지, <b>투자·자문</b>할지 선택하면 그에 맞는 프로필을 받아요.</p>
+    </div>
+    <div class="role-pick">
+      <button class="rolecard rider" onclick="renderRiderProfile()">
+        <div class="rc-emoji">🧑‍💻</div><div class="rc-title" style="font-size:20px">팀원으로</div>
+        <div class="rc-sub">아이디어에 합류해 함께 만들기</div>
+        <div class="rc-hint">역량·협업 조건 프로필</div>
+      </button>
+      <button class="rolecard" onclick="renderInvestorProfile()">
+        <div class="rc-emoji">💰</div><div class="rc-title" style="font-size:20px; color:var(--navy)">투자자로</div>
+        <div class="rc-sub" style="color:#334155">아이디어에 투자·자문하기</div>
+        <div class="rc-hint">투자 단계·규모·관심 분야</div>
+      </button>
+    </div>`;
+}
+function ipfChip(btn, single){
+  if(single){ btn.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('on')); btn.classList.add('on'); }
+  else { btn.classList.toggle('on'); }
+}
+/* 투자자 프로필 입력 폼(단일 폼) */
+function renderInvestorProfile(){
+  document.getElementById("rider-intro").classList.add("hidden");
+  setRiderBack("renderRiderType()");
+  const pf=document.getElementById("rider-profile"); pf.classList.remove("hidden");
+  const p = (ORBIT.profile && ORBIT.profile.kind==="investor") ? ORBIT.profile : {};
+  const uname = esc(ORBIT.user||"투자자");
+  const lab = t=>`<label style="display:block; font-size:13.5px; font-weight:800; color:var(--navy); margin:16px 0 8px;">${t}</label>`;
+  const group=(id,opts,sel,single)=>`<div id="${id}" style="display:flex; flex-wrap:wrap; gap:8px;">`+opts.map(o=>`<button type="button" class="chip${(single? sel===o : (sel||[]).includes(o))?' on':''}" data-v="${esc(o)}" onclick="ipfChip(this,${single})">${esc(o)}</button>`).join("")+`</div>`;
+  pf.innerHTML = `
+    <div class="card fade" style="margin-top:14px">
+      <p class="eyebrow">💰 투자자 프로필</p>
+      ${lab(`🙋 ${uname} 님을 한 줄로 소개한다면요?`)}
+      <input id="ip-headline" class="pf-in" placeholder="예) 초기 스타트업에 베팅하는 엔젤 투자자" value="${esc(p.headline||"")}">
+      ${lab("💡 관심 분야 <span style='font-weight:600;color:var(--muted)'>(복수 선택)</span>")}
+      ${group('ip-domains', PF_OPTS.interest_domains.opts, p.interest_domains, false)}
+      ${lab("📈 투자 단계")}
+      ${group('ip-stage', ["엔젤","시드","프리A","시리즈A 이상"], p.invest_stage, true)}
+      ${lab("💵 투자 규모")}
+      <input id="ip-ticket" class="pf-in" placeholder="예) 3천만~1억" value="${esc(p.invest_ticket||"")}">
+      ${lab("🧭 투자 성향")}
+      ${group('ip-style', ["리드 투자","팔로우 위주","리드·팔로우 모두"], p.invest_style, true)}
+      ${lab("💼 대표 투자 이력 <span style='font-weight:600;color:var(--muted)'>(쉼표/줄바꿈 구분)</span>")}
+      <textarea id="ip-portfolio" class="pf-in" style="min-height:64px" placeholder="예) 리필리(시드), 제로마켓(시드)">${esc((p.portfolio||[]).join(", "))}</textarea>
+      ${lab("🤝 자금 외 지원 <span style='font-weight:600;color:var(--muted)'>(복수 선택)</span>")}
+      ${group('ip-support', ["초기 브랜딩","네트워크 연결","채용 연결","후속 라운드 소개","IR 코칭","멘토링"], p.support, false)}
+      ${lab("💬 덧붙이고 싶은 말")}
+      <textarea id="ip-bio" class="pf-in" style="min-height:64px" placeholder="투자 관점·강점 등">${esc(p.bio||"")}</textarea>
+      ${lab("📎 링크 <span style='font-weight:600;color:var(--muted)'>(선택)</span>")}
+      <input id="ip-link" class="pf-in" placeholder="예) https://angel.co/your-id" value="${esc(((p.links||[])[0]||{}).url||"")}">
+      <button class="btn green full" style="margin-top:18px" onclick="saveInvestorProfile()">투자자 프로필 저장 →</button>
+    </div>`;
+}
+function saveInvestorProfile(){
+  const val=id=>{ const e=document.getElementById(id); return e?e.value.trim():""; };
+  const chosen=(id,single)=>{ const box=document.getElementById(id); if(!box) return single?"":[]; const v=[...box.querySelectorAll('.chip.on')].map(c=>c.dataset.v); return single?(v[0]||""):v; };
+  const headline=val('ip-headline'); const interest=chosen('ip-domains',false);
+  if(!headline){ alert("한 줄 소개를 입력해 주세요."); return; }
+  if(!interest.length){ alert("관심 분야를 하나 이상 선택해 주세요."); return; }
+  ORBIT.role = "rider";
+  ORBIT.profile = {
+    kind:"investor", name:ORBIT.user||"투자자", headline,
+    interest_domains:interest,
+    invest_stage:chosen('ip-stage',true), invest_ticket:val('ip-ticket'),
+    invest_style:chosen('ip-style',true),
+    portfolio: val('ip-portfolio').split(/[,\n]/).map(s=>s.trim()).filter(Boolean),
+    support:chosen('ip-support',false), bio:val('ip-bio'),
+    links: val('ip-link') ? [{label:"투자 이력", url:val('ip-link')}] : [],
+  };
+  ORBIT.profileDone = true;
+  if(ORBIT._editReturn === "detail"){ ORBIT._editReturn=null; alert("투자자 프로필을 수정했어요."); showProfileDetail(); }
+  else { alert("투자자 프로필을 저장했어요! 이제 아이디어를 둘러보세요."); goExplore(); }
 }
 /* experts 시트(ORBIT_테이블정의서 v0.2) MVP 필수 입력 — 선택형 항목 정의 */
 const PF_OPTS = {
@@ -1781,6 +1888,7 @@ function pfToggle(k,o){
 }
 function renderRiderProfile(){
   document.getElementById("rider-intro").classList.add("hidden");
+  setRiderBack(null);
   const p = ORBIT.profile || {};
   /* 편집 중 선택 상태(칩) 초기화 — 기존 프로필이 있으면 복원 */
   const _allGroupSkills = new Set(Object.values(SKILL_GROUPS).flat());
@@ -1900,8 +2008,7 @@ function renderWizard(){
       <div class="wiz-sec-title">${esc(st.title)}${st.optional?` <span class="secopt">· 선택</span>`:""}</div>
       <div class="wiz-body">${st.body()}</div>
       <div class="wiz-nav">
-        ${w.step>0 ? `<button class="btn ghost" onclick="wizPrev()">← 이전</button>`
-                   : `<button class="btn ghost" onclick="goRider()">← 처음으로</button>`}
+        ${w.step>0 ? `<button class="btn ghost" onclick="wizPrev()">← 이전으로</button>` : `<button class="btn ghost" onclick="renderRiderType()">← 이전으로</button>`}
         <button class="btn green" style="flex:1" onclick="wizNext()">${isLast ? "저장하고 둘러보기 →" : "다음 →"}</button>
       </div>
     </div>`;
@@ -2111,7 +2218,7 @@ async function ideaMakeVision(){
         box.innerHTML = `<div class="card"><p class="eyebrow">아이디어가 조금 짧아요</p><ul class="askfor">${(v.askFor||[]).map(q=>`<li>${esc(q)}</li>`).join("")}</ul></div>`;
         return;
       }
-      ORBIT.vision = v; ORBIT.founderQuestion = v.founderQuestion || ""; ORBIT.picks = [];
+      ORBIT.vision = v; ORBIT.founderQuestion = v.founderQuestion || ""; ORBIT.founderInvestorQuestion = v.founderInvestorQuestion || ""; ORBIT.picks = [];
       ORBIT.channels = v.channels ? {...v.channels} : {kakao:"",slack:"",email:"",zoom:""};
       document.getElementById("idea-input").classList.add("hidden");
       document.getElementById("idea-boost").classList.add("hidden");
@@ -2138,6 +2245,32 @@ function renderVision(v){
   const factors = (v.matchFactors||[]).map(f=>`<div class="factor"><span class="ck">✓</span>${esc(f)}</div>`).join("");
   const fq = (typeof ORBIT.founderQuestion === "string") ? ORBIT.founderQuestion : (v.founderQuestion||"");
   const ch = ORBIT.channels = ORBIT.channels || (v.channels ? {...v.channels} : {kakao:"",slack:"",email:"",zoom:""});
+
+  // 투자자 매칭(선택) — 팀원 매칭과 별개의 요소·질문
+  const invOn = !!v.matchInvestor;
+  const ifactors = (v.investorMatchFactors||[]).map(f=>`<div class="factor"><span class="ck">✓</span>${esc(f)}</div>`).join("");
+  const fiq = (typeof ORBIT.founderInvestorQuestion === "string") ? ORBIT.founderInvestorQuestion : (v.founderInvestorQuestion||"");
+  const invToggle = `<div class="card">
+      <div style="display:flex; align-items:flex-start; gap:10px;">
+        <div style="flex:1">
+          <p class="eyebrow" style="margin:0 0 4px;">💰 투자자에게도 제안받기</p>
+          <p style="font-size:12.5px; color:#475569; margin:0;">켜면 관심 분야가 맞는 <b>투자자</b>도 추천하고, 투자자 전용 매칭 요소·질문을 따로 설정해요. (팀원 매칭과 별개)</p>
+        </div>
+        <button class="btn ${invOn?'green':'ghost'} sm" style="flex:0 0 auto" onclick="toggleMatchInvestor()">${invOn?'✓ 켜짐':'꺼짐'}</button>
+      </div>
+    </div>`;
+  const invSections = invOn ? `
+    <div class="card" id="card-ifactors">
+      ${visHead("💰 투자자 매칭 시 중요 요소 (궁합)","ifactors")}
+      ${ed==='ifactors'
+        ? `<textarea class="editq" id="ed-ifactors" style="min-height:110px">${esc((v.investorMatchFactors||[]).join("\n"))}</textarea><p class="ed-hint">한 줄에 하나씩 적어요.</p>`
+        : (ifactors || `<p style="font-size:13px;color:var(--muted);margin:0">아직 없어요. <b>✎ 수정</b>으로 채워 보세요.</p>`)}
+    </div>
+    <div class="card">
+      <p class="eyebrow">❓ 투자자에게 물어볼 내 질문 <span class="qsrc prv">수정 가능</span></p>
+      <p style="font-size:12.5px; color:#475569; margin:0 0 10px;">투자 검토를 하는 투자자에게 제공자로서 직접 묻고 싶은 질문이에요. (팀원 질문과 별개)</p>
+      <textarea class="editq" id="founderIQ" oninput="ORBIT.founderInvestorQuestion=this.value">${esc(fiq)}</textarea>
+    </div>` : ``;
 
   document.getElementById("idea-vision").innerHTML = `
     <div class="banner fade">✍️ <b>AI가 만든 기획안이에요.</b> 각 항목 옆 <b>✎ 수정</b>으로 직접 고칠 수 있어요. <b>함께 찾을 팀원</b>은 1명 이상 선택해야 합니다.</div>
@@ -2194,6 +2327,9 @@ function renderVision(v){
       <p style="font-size:12px; color:var(--blue); font-weight:700; margin:9px 0 0;">✏️ 내 질문은 직접 수정할 수 있어요.</p>
     </div>
 
+    ${invToggle}
+    ${invSections}
+
     <div class="card">
       <p class="eyebrow">🔗 팀 소통 채널 <span class="qsrc prv">수락 후 공개</span></p>
       <p style="font-size:12.5px; color:#475569; margin:0 0 6px;">합류가 <b>서로 수락</b>되면 이 링크가 팀원에게 공개돼요. 지금은 나만 봅니다. (선택 입력)</p>
@@ -2217,10 +2353,12 @@ function renderVision(v){
 
 function editVisionField(key){ ORBIT.editing = key; renderVision(ORBIT.vision); setTimeout(()=>{ const e=document.getElementById("card-"+key); if(e) e.scrollIntoView({behavior:"smooth", block:"start"}); }, 60); }
 function cancelEdit(){ ORBIT.editing = null; renderVision(ORBIT.vision); }
+function toggleMatchInvestor(){ const fq=document.getElementById("founderQ"); if(fq) ORBIT.founderQuestion=fq.value; const fiq=document.getElementById("founderIQ"); if(fiq) ORBIT.founderInvestorQuestion=fiq.value; const v=ORBIT.vision; v.matchInvestor=!v.matchInvestor; ORBIT.editing=null; renderVision(v); }
 function saveVisionField(key){
   const v = ORBIT.vision; const val = id => (document.getElementById(id)||{}).value || "";
   if(key==='story') v.story = val('ed-story').split(/\n\s*\n/).map(s=>s.trim()).filter(Boolean);
   if(key==='factors') v.matchFactors = val('ed-factors').split(/\n+/).map(s=>s.trim()).filter(Boolean);
+  if(key==='ifactors') v.investorMatchFactors = val('ed-ifactors').split(/\n+/).map(s=>s.trim()).filter(Boolean);
   if(key==='plan'){ v.productNote=val('ed-productNote'); v.plan.problem=val('ed-problem'); v.plan.solution=val('ed-solution'); v.plan.target=val('ed-target'); v.plan.revenue=val('ed-revenue'); }
   ORBIT.editing = null; renderVision(v);
   setTimeout(()=>{ const e=document.getElementById("card-"+key); if(e) e.scrollIntoView({behavior:"smooth", block:"start"}); }, 60);
@@ -2241,7 +2379,9 @@ function togglePick(i){
 }
 function confirmVision(){
   const fq = document.getElementById("founderQ"); if(fq) ORBIT.founderQuestion = fq.value.trim();
+  const fiq = document.getElementById("founderIQ"); if(fiq) ORBIT.founderInvestorQuestion = fiq.value.trim();
   const v = ORBIT.vision; v.founderQuestion = ORBIT.founderQuestion;
+  v.founderInvestorQuestion = (ORBIT.founderInvestorQuestion || "").trim();
   // 선택한 팀원(picks)만 남긴다 — 선택 여부와 무관하게 전체가 나오던 버그 수정
   const _picks = (ORBIT.picks || []).slice().sort((a, b) => a - b);
   if(_picks.length){ v.neededTeammates = _picks.map(i => (v.neededTeammates || [])[i]).filter(Boolean); }
@@ -2281,31 +2421,42 @@ async function openDetail(v, isOwner){
   const story = (v.story||[]).map(t=>`<p>${esc(t)}</p>`).join("");
   const why = (v.whyNow||[]).map(w=>`<div class="why"><div class="ic">${esc(w.icon||"✨")}</div><div class="t">${esc(w.title)}</div><div class="d">${esc(w.desc)}</div></div>`).join("");
   const seats = (v.neededTeammates||[]).map(m=>`<div class="role"><span class="mk">◎</span><div><b style="color:var(--navy)">${esc(m.role)}</b><div class="rdet">${esc(m.detail)}</div></div></div>`).join("");
-  const back = isOwner
-    ? `<button class="btn ghost" onclick="showMy('idea')">← 내 아이디어로</button>`
-    : `<button class="btn ghost" onclick="showMy('team')">← 둘러보기로</button>`;
-  const tag = isOwner ? "📄 내 기획안 페이지" : "🤝 합류 검토";
+  const back = backBar(isOwner ? "showMy('idea')" : "showMy('team')");
+  const isInvestor = !isOwner && !!(ORBIT.profile && ORBIT.profile.kind === "investor");
+  const tag = isOwner ? "📄 내 기획안 페이지" : (isInvestor ? "💰 투자 검토" : "🤝 합류 검토");
+  const riderAction = `<div class="card">
+        <p class="eyebrow">🧩 이 아이디어가 찾는 팀원</p>${seats}
+        <p style="font-size:12.5px; color:#475569; margin:13px 0 4px;">3가지 질문에 답하면, <b>${esc(ORBIT.user)}님의 프로필</b>을 기준으로 매칭률과 딱 맞는 자리를 확인할 수 있어요.</p>
+        <button class="btn full" id="joinBtn" onclick="joinApply()">3질문 답하고 합류 신청 →</button>
+      </div>
+      <div id="joinResult"></div>`;
+  const investorAction = `<div class="card">
+        <p class="eyebrow">💰 투자 검토 · 제공자와 질문을 주고받아요</p>
+        <p style="font-size:12.5px; color:#475569; margin:2px 0 12px;">몇 가지 질문에 답하고 제공자에게 궁금한 점을 물으면, <b>제공자의 답변</b>과 함께 투자 관심을 남길 수 있어요.</p>
+        <button class="btn full" id="investBtn" onclick="investApply()">투자 검토 질문에 답하기 →</button>
+      </div>
+      <div id="joinResult"></div>`;
   const action = isOwner
     ? `<div class="card">
         <p class="eyebrow">🧩 이 아이디어가 찾는 팀원</p>${seats}
         <div style="height:1px; background:var(--line); margin:15px 0;"></div>
         <p class="eyebrow">❓ 팀원에게 물어볼 내 질문</p>
         <div class="qcard pr"><p class="qtext">${esc(v.founderQuestion||"")}</p></div>
+        ${v.matchInvestor ? `<div style="height:1px; background:var(--line); margin:15px 0;"></div>
+        <p class="eyebrow">💰 투자자 매칭 <span class="qsrc prv">켜짐</span></p>
+        ${(v.investorMatchFactors||[]).length ? `<div style="margin:2px 0 10px;">${(v.investorMatchFactors||[]).map(f=>`<div class="factor"><span class="ck">✓</span>${esc(f)}</div>`).join("")}</div>` : ``}
+        <p class="eyebrow" style="margin-top:8px">❓ 투자자에게 물어볼 내 질문</p>
+        <div class="qcard pr"><p class="qtext">${esc(v.founderInvestorQuestion||"")}</p></div>` : ``}
       </div>
-      <div class="card"><p class="eyebrow">🛰️ ORBIT이 찾은 추천 팀원·투자자 — 직접 제안해 보세요</p><div id="recoSeat">${spinner("이 아이디어에 맞는 팀원을 찾는 중...")}</div></div>
+      <div class="card"><p class="eyebrow">🛰️ ORBIT이 찾은 추천 팀원${v.matchInvestor?'·투자자':''} — 직접 제안해 보세요</p><div id="recoSeat">${spinner("이 아이디어에 맞는 팀원을 찾는 중...")}</div></div>
       <!-- 전체 라이더 둘러보기 진입 버튼 — 일단 숨김 (필요 시 아래 버튼 복원)
       <button class="btn ghost full" style="margin:2px 0 4px;" onclick="showRiders()">🛰️ 전체 라이더 둘러보기 (팀원·투자자) →</button>
       -->
       <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px;">
-        <button class="btn ghost sm" onclick="showMy('idea')">← 내 아이디어로</button>
+        <button class="btn ghost sm" onclick="showMy('idea')">← 이전으로</button>
         <button class="btn ghost sm" onclick="deleteDetailIdea()">삭제하기</button>
       </div>`
-    : `<div class="card">
-        <p class="eyebrow">🧩 이 아이디어가 찾는 팀원</p>${seats}
-        <p style="font-size:12.5px; color:#475569; margin:13px 0 4px;">3가지 질문에 답하면, <b>${esc(ORBIT.user)}님의 프로필</b>을 기준으로 매칭률과 딱 맞는 자리를 확인할 수 있어요.</p>
-        <button class="btn full" id="joinBtn" onclick="joinApply()">3질문 답하고 합류 신청 →</button>
-      </div>
-      <div id="joinResult"></div>`;
+    : (isInvestor ? investorAction : riderAction);
   document.getElementById("detail-body").innerHTML = `
     ${back}
     <div class="hero fade" style="margin-top:14px;">
@@ -2441,7 +2592,7 @@ function riderProfilePage(p, src, a, b){
       ${row("연락 가능 시간", (p.contactHours||[]).length ? esc((p.contactHours||[]).join(", ")) : "-")}
     </div>`;
 
-  return `<button class="btn ghost" onclick="go(ORBIT._riderReturn)">← 뒤로</button>
+  return `${backBar("go(ORBIT._riderReturn)")}
     <div class="card" style="margin-top:16px">
       <div style="display:flex; align-items:center; gap:14px;">
         <div class="pav" style="width:54px;height:54px;font-size:22px;${isInv?'background:linear-gradient(135deg,#92400e,#d97706)':''}">${esc(p.name[0])}</div>
@@ -2606,7 +2757,7 @@ function subGateHTML(){
 async function showRiders(){
   go("riders");
   document.getElementById("riders-body").innerHTML = `
-    <button class="btn ghost" onclick="showDashboard()">← 대시보드</button>
+    ${backBar("showDashboard()")}
     <div class="myhead" style="margin-top:14px">
       <div class="myhi">🛰️ 라이더 둘러보기</div>
       <div class="mymode">아이디어에 올라탈 팀원과, 관심 가질 만한 투자자를 살펴보세요.</div>
@@ -2760,6 +2911,95 @@ function applyToIdea(){
 function demoAcceptApply(){
   if(ORBIT.applied[0]) ORBIT.applied[0].status = "accepted";
   document.getElementById("applyDone").innerHTML = slackBlock(ORBIT.detailVision);
+}
+
+/* ===== 투자자 흐름 — 제공자와 질문을 주고받고 투자 제안 ===== */
+function investApply(){
+  if(!ORBIT.profile || ORBIT.profile.kind !== "investor"){ alert("투자자 계정으로 로그인해 주세요."); return; }
+  const btn = document.getElementById("investBtn"); if(btn){ btn.disabled = true; }
+  renderInvestForm();
+}
+function investQuestions(v){
+  const s = (v && v.serviceName) || "이 사업";
+  const custom = (v && v.founderInvestorQuestion && v.founderInvestorQuestion.trim())
+    ? v.founderInvestorQuestion.trim()
+    : "검토 가능한 투자 규모·단계와, 자금 외에 지원 가능한 부분은요?";
+  return [
+    `‘${s}’의 어떤 강점·기회에 투자 매력을 느끼시나요?`,
+    custom,
+  ];
+}
+function renderInvestForm(){
+  const v = ORBIT.detailVision;
+  const qs = investQuestions(v);
+  const qhtml = qs.map((q,i)=>`<div class="qcard">
+      <p class="qtext">${esc(q)}<span class="qsrc prv">제공자</span></p>
+      <textarea id="ians-${i}" style="margin-top:9px" placeholder="여기에 직접 답변을 입력해 주세요..."></textarea>
+    </div>`).join("");
+  document.getElementById("joinResult").innerHTML = `
+    <div class="card fade">
+      <p class="eyebrow">✍️ 제공자가 투자자에게 묻는 질문</p>
+      ${qhtml}
+      <p class="eyebrow" style="margin-top:16px">❓ 제공자에게 묻고 싶은 점</p>
+      <div class="qcard"><textarea id="iask" placeholder="예) 현재 확보한 초기 지표나 파일럿 결과가 있나요?"></textarea></div>
+      <button class="btn full" id="iansSubmit" style="margin-top:14px" onclick="submitInvestAnswers()">제출하고 제공자 답변 받기 →</button>
+    </div>`;
+}
+async function submitInvestAnswers(){
+  const v = ORBIT.detailVision;
+  const qs = investQuestions(v);
+  const answers = qs.map((_,i)=>{ const el=document.getElementById("ians-"+i); return el?el.value.trim():""; });
+  const iaskEl = document.getElementById("iask");
+  const investorQuestion = iaskEl ? iaskEl.value.trim() : "";
+  if(answers.some(a=>!a)){ alert("제공자의 질문 2가지에 모두 답해 주세요."); return; }
+  const p = ORBIT.profile || {};
+  const investor = { name:p.name||ORBIT.user, headline:p.headline||"", kind:"investor",
+    interestDomains:p.interest_domains||[], investStage:p.invest_stage||"", investTicket:p.invest_ticket||"",
+    investStyle:p.invest_style||"", support:p.support||[] };
+  const sb = document.getElementById("iansSubmit");
+  if(sb){ sb.disabled=true; sb.textContent="제공자 답변 받는 중..."; }
+  try{
+    const r = await api("/api/investeval", { vision:v, investor, questions:qs, answers, investorQuestion });
+    renderInvest(r, investorQuestion);
+  }catch(err){ if(sb){ sb.disabled=false; sb.textContent="제출하고 제공자 답변 받기 →"; } alert("⚠️ "+err.message); }
+}
+function renderInvest(r, investorQuestion){
+  const lv = r.interestLevel || "";
+  const lvColor = lv==="높음"?"var(--green)":(lv==="낮음"?"#dc2626":"#d97706");
+  const qa = (r.answers||[]).map(a=>`<div class="qcard"><p class="qtext">${esc(a.question)}<span class="qsrc prv">제공자</span></p><div class="ans">💬 ${esc(a.answer)}<div class="cc">↳ ${esc(a.comment)}</div></div></div>`).join("");
+  const hl = (r.highlights||[]).map(h=>`<div style="font-size:12.5px; color:#334155; margin:5px 0; display:flex; gap:7px;"><span style="color:var(--blue)">·</span><span>${esc(h)}</span></div>`).join("");
+  document.getElementById("joinResult").innerHTML = `
+    <div class="card fade"><p class="eyebrow">✅ 제공자 질문에 대한 내 답변</p>${qa}</div>
+    ${investorQuestion?`<div class="card fade"><p class="eyebrow">🗣 내가 제공자에게 물은 질문</p>
+      <div class="qcard pr"><p class="qtext">${esc(investorQuestion)}<span class="qsrc ai">투자자</span></p></div>
+      <div class="ans" style="margin-top:10px">💬 <b>제공자 답변</b><div class="cc" style="font-style:normal">${esc(r.founderReply||"")}</div></div>
+    </div>`:``}
+    <div class="card fade"><p class="eyebrow">💰 투자 관심 요약</p>
+      <div style="margin-bottom:8px;"><span class="pill amber">관심도 ${esc(lv||"-")}</span></div>
+      <div class="verdict" style="color:${lvColor}">${esc(r.summary||"")}</div>
+      ${hl?`<div style="margin-top:12px">${hl}</div>`:``}
+    </div>
+    <div class="card fade"><p class="eyebrow">📨 투자 제안</p>
+      <p style="font-size:13px; color:#475569; margin:0 0 11px;">이 아이디어의 제공자에게 투자 검토를 제안합니다. 제공자가 수락하면 미팅으로 이어져요.</p>
+      <button class="btn green full" id="iapplyBtn" onclick="applyInvestToIdea()">이 팀에 투자 제안 보내기 →</button>
+      <div id="iappliedNote"></div>
+    </div>`;
+}
+function applyInvestToIdea(){
+  const v = ORBIT.detailVision;
+  ORBIT.applied = ORBIT.applied.filter(a=>a.title!==v.serviceName);
+  ORBIT.applied.unshift({ title:v.serviceName, role:"투자 검토", rate:0, status:"pending", kind:"investor", channels:(v&&v.channels)||null });
+  document.getElementById("iapplyBtn").disabled = true;
+  document.getElementById("iappliedNote").innerHTML = `
+    <div style="margin-top:13px">
+      <div class="banner" style="background:#fffbeb; border-color:#fde68a;">📨 <b>투자 제안을 보냈어요!</b> 제공자가 확인 중이에요. (데모이므로 아래 버튼으로 수락 시뮬레이션)</div>
+      <button class="btn dark full" onclick="demoAcceptInvest()">＊ 데모: 제공자가 수락함 →</button>
+      <div id="iapplyDone"></div>
+    </div>`;
+}
+function demoAcceptInvest(){
+  if(ORBIT.applied[0]) ORBIT.applied[0].status = "accepted";
+  document.getElementById("iapplyDone").innerHTML = slackBlock(ORBIT.detailVision);
 }
 function chanRow(ic, label, val, isMail, goText){
   const href = isMail ? ("mailto:"+val) : (/^https?:\/\//.test(val) ? val : "https://"+val);
@@ -2915,7 +3155,7 @@ function renderMyTeam(){
   if(ORBIT.applied.length){
     html += `<h3 class="myh" style="margin-top:26px">📨 내가 신청한 아이디어</h3>`;
     html += ORBIT.applied.map(a=>`<div class="card" style="padding:14px 18px"><div style="display:flex;align-items:center;gap:10px">
-      <div style="flex:1"><b style="color:var(--navy)">${esc(a.title)}</b><div style="font-size:12px;color:var(--muted);margin-top:2px">${esc(a.role)} · 매칭률 ${a.rate}%</div></div>
+      <div style="flex:1"><b style="color:var(--navy)">${esc(a.title)}</b><div style="font-size:12px;color:var(--muted);margin-top:2px">${esc(a.role)}${a.kind==='investor'?'':' · 매칭률 '+a.rate+'%'}</div></div>
       <span class="pill ${a.status==='accepted'?'green':'amber'}">${a.status==='accepted'?'수락됨 ✓':'수락 대기'}</span></div></div>`).join("");
   }
   box.innerHTML = html;

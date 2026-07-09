@@ -99,6 +99,17 @@ def api_riders():
     return jsonify(main.list_riders())
 
 
+@app.post("/api/investeval")
+def api_investeval():
+    """[투자] 투자자 Q&A 검토 — 답변 코멘트·제공자 답변·관심도."""
+    data = request.json or {}
+    return jsonify(main.evaluate_investor(
+        data.get("vision", {}), data.get("investor", {}),
+        data.get("questions", []), data.get("answers", []),
+        data.get("investorQuestion", ""),
+    ))
+
+
 if __name__ == "__main__":
     # 5001 포트로 실행 (5000은 macOS 가 쓰는 경우가 있어 피했습니다)
     app.run(host="127.0.0.1", port=5001, debug=True)
