@@ -1603,7 +1603,7 @@ function showAppliedDetail(idx){
   const acc = a.status==="accepted";
   const qa = a.qa||[];
   document.getElementById("applied-body").innerHTML = `
-    <button class="btn ghost" onclick="showAppliedList()">← 신청 현황</button>
+    ${backBar("showAppliedList()")}
     <div class="card" style="margin-top:14px">
       <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
         <span style="font-size:20px; font-weight:800; color:var(--navy)">${esc(a.title)}</span>
