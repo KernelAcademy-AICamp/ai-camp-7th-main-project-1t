@@ -757,7 +757,7 @@
 <section class="screen hidden" id="s-explore">
   <div class="narrow pagepad">
     <button class="btn ghost" onclick="goHome()">← 홈으로</button>
-    <h2 style="font-size:21px; color:var(--navy); margin:16px 0 4px; letter-spacing:-.02em;">🟩 아이디어 둘러보기</h2>
+    <h2 style="font-size:21px; color:var(--navy); margin:16px 0 4px; letter-spacing:-.02em;">🟩 아이디어 둘러보기 <span id="explore-count" style="font-size:14px; font-weight:800; color:var(--blue); background:var(--sky); padding:3px 12px; border-radius:20px; vertical-align:middle; margin-left:4px;"></span></h2>
     <p style="color:var(--muted); font-size:13px; margin:0 0 18px;">관심 가는 프로젝트를 고르면 상세를 볼 수 있어요. (상세 보기·합류는 로그인 후 진행됩니다.)</p>
     <div id="explore-list"></div>
   </div>
@@ -1274,6 +1274,11 @@ const DEMO_IDEAS = [
     });
     idea.channels = ch;
   });
+})();
+
+/* 데모: 둘러보기 아이디어 30개 중 15개만 '투자 받기'(matchInvestor) — 투자자 노출 테스트용 (짝수 인덱스 = 15개) */
+(function seedInvestorOptIn(){
+  DEMO_IDEAS.forEach((idea,idx)=>{ idea.matchInvestor = (idx % 2 === 0); });
 })();
 
 /* 로그인 유저(홍길동)의 팀원 이력서 */
@@ -2197,7 +2202,12 @@ async function attachPreview(prefix, visions){
 /* 비로그인 진입 — 팀원으로 둘러보기 (목록만 먼저) */
 function goExplore(){
   go("explore");
-  window._explore = ORBIT.loggedIn ? [...ORBIT.myIdeas.map(it=>it.vision), ...DEMO_IDEAS] : [DEMO_PROJECT, ...DEMO_IDEAS];
+  const _base = ORBIT.loggedIn ? [...ORBIT.myIdeas.map(it=>it.vision), ...DEMO_IDEAS] : [DEMO_PROJECT, ...DEMO_IDEAS];
+  // 투자자는 '투자 받기(matchInvestor)' 켠 아이디어만 볼 수 있음 (슈터가 노출 통제 · OFF는 목록에서 숨김)
+  const _isInvestor = !!(ORBIT.profile && ORBIT.profile.kind === "investor");
+  window._explore = _isInvestor ? _base.filter(v => v.matchInvestor === true) : _base;
+  const _cnt = document.getElementById("explore-count");
+  if(_cnt) _cnt.textContent = window._explore.length + "개";
   document.getElementById("explore-list").innerHTML = window._explore.map((v,i)=>`
     <div class="browsecard" onclick="exploreOpen(${i})">
       <span class="fitpct" id="xfit-${i}">🔥 팀원 모집 중</span>
