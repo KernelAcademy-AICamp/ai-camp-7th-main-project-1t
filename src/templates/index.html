@@ -2205,7 +2205,9 @@ async function attachPreview(prefix, visions){
 /* 비로그인 진입 — 팀원으로 둘러보기 (목록만 먼저) */
 function goExplore(){
   go("explore");
-  const _base = ORBIT.loggedIn ? [...ORBIT.myIdeas.map(it=>it.vision), ...DEMO_IDEAS] : [DEMO_PROJECT, ...DEMO_IDEAS];
+  const _mine = ORBIT.myIdeas.map(it=>it.vision);
+  const _withDemo = _mine.includes(DEMO_PROJECT) ? _mine : [DEMO_PROJECT, ..._mine];
+  const _base = ORBIT.loggedIn ? [..._withDemo, ...DEMO_IDEAS] : [DEMO_PROJECT, ...DEMO_IDEAS];
   // 투자자는 '투자 받기(matchInvestor)' 켠 아이디어만 볼 수 있음 (슈터가 노출 통제 · OFF는 목록에서 숨김)
   const _isInvestor = !!(ORBIT.profile && ORBIT.profile.kind === "investor");
   window._explore = _isInvestor ? _base.filter(v => v.matchInvestor === true) : _base;
@@ -2966,6 +2968,7 @@ async function submitJoinAnswers(){
     return el ? el.value.trim() : "";
   });
   if(answers.some(a=>!a)){ alert("3가지 질문에 모두 답해 주세요."); return; }
+  ORBIT._joinQA = questions.map((q,i)=>({ q, a:answers[i], founder:(i===questions.length-1) }));  // 내 답변 저장 → 신청 현황 상세에서 열람
   /* Rider가 입력한 experts 프로필이 있으면 그 구조를 평가에 그대로 전달, 없으면 기본 이력서로 폴백 */
   const applicant = profileApplicant()
     || { name:RESUME.name, headline:RESUME.headline, skills:RESUME.skills.join(", "), traits:RESUME.traits.join(", ") };
@@ -3024,7 +3027,7 @@ function renderJoin(r){
 function applyToIdea(){
   const v = ORBIT.detailVision;
   ORBIT.applied = ORBIT.applied.filter(a=>a.title!==v.serviceName);
-  ORBIT.applied.unshift({ title:v.serviceName, role:ORBIT.detailRole||"추천 자리", rate:ORBIT.detailRate||0, status:"pending", channels:(v&&v.channels)||null });
+  ORBIT.applied.unshift({ title:v.serviceName, role:ORBIT.detailRole||"추천 자리", rate:ORBIT.detailRate||0, status:"pending", channels:(v&&v.channels)||null, qa: ORBIT._joinQA || null, lead: v.lead||"" });
   const note = document.getElementById("appliedNote");
   document.getElementById("applyBtn").disabled = true;
   note.innerHTML = `
@@ -3316,7 +3319,9 @@ function resumeCard(){
 function renderMyTeam(){
   const box = document.getElementById("my-team");
   const mine = ORBIT.myIdeas.map(it=>it.vision);
-  const _all = [...mine, ...DEMO_IDEAS];
+  // 에코그립(DEMO_PROJECT)이 내 아이디어가 아니면 둘러보기에 포함 (라이더·투자자도 볼 수 있게)
+  const withDemo = mine.includes(DEMO_PROJECT) ? mine : [DEMO_PROJECT, ...mine];
+  const _all = [...withDemo, ...DEMO_IDEAS];
   // 투자자는 '투자 받기(matchInvestor)' 켠 아이디어만 (s-explore 와 동일 정책 · 목록에서 숨김)
   const _isInvestor = !!(ORBIT.profile && ORBIT.profile.kind === "investor");
   window._browse = _isInvestor ? _all.filter(v => v.matchInvestor === true) : _all;
