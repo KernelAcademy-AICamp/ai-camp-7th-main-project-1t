@@ -45,7 +45,10 @@ SYSTEM_PROMPT = """당신은 ORBIT의 기획안 생성 AI입니다.
 - 반드시 아래 JSON 형식으로만 답하세요. JSON 앞뒤에 다른 말, 설명, 코드펜스(```)를 절대 붙이지 마세요.
 - 어조: 각 분야 전문가가 읽고 '나도 이 프로젝트에 합류하고 싶다'고 느낄 만큼 설득력 있고 진정성 있게 씁니다.
   단, 아직 '아이디어 단계(진척도 0%)'이므로 없는 성과를 있는 척하거나 과장하지는 마세요.
-- story(왜 이 사업을 하는가)는 아이디어 제공자가 1인칭('저는…')으로 들려주는 짧은 이야기 3개 문단입니다. 계기 → 발견 → 신념/다짐 흐름으로, 사람 냄새 나게.
+- story(왜 이 사업을 하는가)는 이 사업이 필요한 이유를 '사실에 근거해' 설명하는 3개 문단입니다.
+    · 작성자의 가상 인물·개인 일화·경험을 절대 지어내지 마세요. ("저는 ~를 키우는 견주입니다", "야근이 많아…" 같은 허구 서술 금지)
+    · 대신 (1) 문제 상황과 시장·사회적 맥락 → (2) 왜 지금 이 문제가 중요한지 → (3) 이 서비스가 무엇을 어떻게 풀려는지(의도) 흐름으로 쓰세요.
+    · 확인되지 않은 구체 수치·성과·사례를 지어내지 말고, 일반적으로 통용되는 사실과 만들려는 의도를 객관적 어조로 담으세요.
 - whyNow(왜 지금·왜 함께)는 지금 시작해야 하는 이유 3가지. 각 {icon(이모지 1개), title(짧게), desc(한 줄)}.
 - productNote: 어떤 제품/서비스를 만드는지 한 줄 설명.
 - neededTeammates(필요한 팀원)는 3~5명. 각 {role, detail, skills}.
@@ -71,7 +74,7 @@ SYSTEM_PROMPT = """당신은 ORBIT의 기획안 생성 AI입니다.
   "serviceName": "서비스 이름(짧고 기억하기 쉽게)",
   "tagline": "한 줄 슬로건",
   "lead": "히어로에 들어갈 감성적인 소개 2~3문장",
-  "story": ["1인칭 스토리 문단1", "문단2", "문단3"],
+  "story": ["문제 상황·시장/사회 맥락 문단", "왜 지금 중요한지 문단", "이 서비스가 풀려는 것(의도) 문단"],
   "whyNow": [
     {"icon": "🌍", "title": "제목", "desc": "한 줄 설명"},
     {"icon": "🧩", "title": "제목", "desc": "한 줄 설명"},
@@ -302,6 +305,114 @@ TEAMMATE_POOL = [
      "traits": "의료 규제와 사용자 니즈를 함께 봄",
      "interestDomains": ["의료", "생산성"], "participationMotivation": ["학습", "창업 기회"],
      "weeklyCapacity": "주 10시간", "contactHours": ["평일 낮"], "collabMode": "온라인+화상"},
+    {"name": "서은우", "headline": "인터랙션을 다듬는 프론트엔드 개발자",
+     "primaryRole": "프론트엔드",
+     "skills": "프론트엔드, React, UIUX, 플랫폼",
+     "traits": "사용자 흐름을 촘촘히 설계, 빠른 프로토타이핑",
+     "interestDomains": ["콘텐츠", "반려동물"], "participationMotivation": ["포트폴리오", "창업 기회"],
+     "weeklyCapacity": "주 10시간", "contactHours": ["평일 저녁", "주말"], "collabMode": "온라인만"},
+    {"name": "김하준", "headline": "안정적인 서버를 만드는 백엔드 개발자",
+     "primaryRole": "백엔드",
+     "skills": "백엔드, API연동, 플랫폼, 결제시스템",
+     "traits": "구조와 확장성을 중시, 트래픽 대응 경험",
+     "interestDomains": ["생산성", "지역 커뮤니티"], "participationMotivation": ["창업 기회", "수익"],
+     "weeklyCapacity": "주 20시간 이상", "contactHours": ["언제든"], "collabMode": "온라인+화상"},
+    {"name": "이도윤", "headline": "헬스케어 앱을 만들어본 모바일 개발자",
+     "primaryRole": "앱개발",
+     "skills": "앱개발, 플랫폼, 프론트엔드, 결제시스템",
+     "traits": "규제 도메인 경험, 안정적 릴리즈",
+     "interestDomains": ["의료", "복지"], "participationMotivation": ["학습", "사회적 가치"],
+     "weeklyCapacity": "주 10시간", "contactHours": ["평일 저녁"], "collabMode": "온라인만"},
+    {"name": "박서진", "headline": "학습 데이터를 다루는 ML 엔지니어",
+     "primaryRole": "데이터",
+     "skills": "머신러닝, 데이터분석, SQL, 백엔드",
+     "traits": "가설-실험-검증에 능함, 지표에 집착",
+     "interestDomains": ["교육", "생산성"], "participationMotivation": ["학습", "창업 기회"],
+     "weeklyCapacity": "주 10시간", "contactHours": ["평일 낮", "평일 저녁"], "collabMode": "온라인+화상"},
+    {"name": "정민재", "headline": "쓰기 쉬운 화면을 만드는 UIUX 디자이너",
+     "primaryRole": "디자인",
+     "skills": "디자인, UIUX, 프로토타이핑, 그래픽",
+     "traits": "사용자 리서치 기반 설계, 접근성 고려",
+     "interestDomains": ["콘텐츠", "복지"], "participationMotivation": ["포트폴리오", "사회적 가치"],
+     "weeklyCapacity": "주 5시간", "contactHours": ["평일 저녁"], "collabMode": "온라인+화상"},
+    {"name": "최유나", "headline": "숫자로 성장을 만드는 그로스 마케터",
+     "primaryRole": "마케팅",
+     "skills": "마케팅, 퍼포먼스마케팅, SNS, 데이터분석",
+     "traits": "실험 설계에 강함, CAC·LTV로 사고",
+     "interestDomains": ["콘텐츠", "ESG"], "participationMotivation": ["수익", "네트워킹"],
+     "weeklyCapacity": "주 10시간", "contactHours": ["평일 낮"], "collabMode": "온라인만"},
+    {"name": "한지원", "headline": "브랜드 톤을 잡는 콘텐츠 라이터",
+     "primaryRole": "마케팅",
+     "skills": "카피라이팅, 콘텐츠, 브랜드스토리텔링, SNS",
+     "traits": "메시지를 뾰족하게, 채널별 톤 조절",
+     "interestDomains": ["콘텐츠", "교육"], "participationMotivation": ["포트폴리오", "창업 기회"],
+     "weeklyCapacity": "주 5시간", "contactHours": ["평일 저녁", "주말"], "collabMode": "온라인+화상"},
+    {"name": "오하린", "headline": "지역 제휴를 뚫는 파트너십 매니저",
+     "primaryRole": "영업·제휴",
+     "skills": "제휴, 영업, 오프라인운영, 커뮤니케이션",
+     "traits": "현장을 발로 뛰며 신뢰를 쌓음",
+     "interestDomains": ["지역 커뮤니티", "복지"], "participationMotivation": ["사회적 가치", "네트워킹"],
+     "weeklyCapacity": "주 10시간", "contactHours": ["평일 낮", "주말"], "collabMode": "전국 오프라인 가능"},
+    {"name": "윤도경", "headline": "정기배송을 굴려본 구독 운영자",
+     "primaryRole": "영업·제휴",
+     "skills": "구독커머스, 운영, 온라인판매, 고객응대",
+     "traits": "리텐션 설계에 강함, CS를 데이터로 봄",
+     "interestDomains": ["반려동물", "생산성"], "participationMotivation": ["수익", "창업 기회"],
+     "weeklyCapacity": "주 10시간", "contactHours": ["평일 저녁"], "collabMode": "온라인+화상"},
+    {"name": "임세훈", "headline": "물류 동선을 최적화하는 SCM 담당",
+     "primaryRole": "영업·제휴",
+     "skills": "공급망, 운영, 자재구매, 제휴",
+     "traits": "비용·리드타임 최적화, 꼼꼼함",
+     "interestDomains": ["ESG", "지역 커뮤니티"], "participationMotivation": ["수익", "학습"],
+     "weeklyCapacity": "주 5시간", "contactHours": ["평일 낮"], "collabMode": "수도권 오프라인 가능"},
+    {"name": "강나은", "headline": "레시피를 표준화하는 식품위생 전문가",
+     "primaryRole": "식품·위생",
+     "skills": "식품위생, HACCP, 레시피표준화, 소량생산·포장",
+     "traits": "맛과 안전을 함께, 소규모 양산 경험",
+     "interestDomains": ["복지", "ESG"], "participationMotivation": ["사회적 가치", "수익"],
+     "weeklyCapacity": "주 10시간", "contactHours": ["평일 낮", "주말"], "collabMode": "수도권 오프라인 가능"},
+    {"name": "노준혁", "headline": "커리큘럼을 설계하는 교육 기획자",
+     "primaryRole": "교육·운영",
+     "skills": "교육, 커리큘럼설계, 콘텐츠, 운영",
+     "traits": "배우는 사람 입장에서 설계, 반복 가능한 구조",
+     "interestDomains": ["교육", "의료"], "participationMotivation": ["사회적 가치", "학습"],
+     "weeklyCapacity": "주 10시간", "contactHours": ["평일 저녁"], "collabMode": "온라인+화상"},
+    {"name": "배수아", "headline": "동네 신뢰를 쌓는 커뮤니티 매니저",
+     "primaryRole": "교육·운영",
+     "skills": "커뮤니티, 오프라인운영, 운영, 마케팅",
+     "traits": "사람을 편하게, 지역 단위 활성화에 강함",
+     "interestDomains": ["지역 커뮤니티", "반려동물"], "participationMotivation": ["네트워킹", "사회적 가치"],
+     "weeklyCapacity": "주 5시간", "contactHours": ["주말"], "collabMode": "수도권 오프라인 가능"},
+    {"name": "송지호", "headline": "우선순위를 잡는 프로덕트 매니저",
+     "primaryRole": "기획·운영",
+     "skills": "기획, PM, 사업기획, 데이터분석",
+     "traits": "큰 그림과 실행을 함께, 지표로 판단",
+     "interestDomains": ["의료", "생산성"], "participationMotivation": ["창업 기회", "학습"],
+     "weeklyCapacity": "주 20시간 이상", "contactHours": ["평일 낮", "평일 저녁"], "collabMode": "온라인+화상"},
+    {"name": "신아영", "headline": "짧고 강한 영상을 만드는 크리에이터",
+     "primaryRole": "디자인",
+     "skills": "영상편집, 콘텐츠, 그래픽, SNS",
+     "traits": "숏폼 문법에 능함, 빠른 제작",
+     "interestDomains": ["콘텐츠", "반려동물"], "participationMotivation": ["포트폴리오", "수익"],
+     "weeklyCapacity": "주 10시간", "contactHours": ["평일 저녁", "주말"], "collabMode": "온라인만"},
+    {"name": "조현우", "headline": "친환경 소재를 다루는 생산설비 엔지니어",
+     "primaryRole": "제조·생산",
+     "skills": "생산설비, 제조, 사출, 품질관리",
+     "traits": "현장 문제 해결, 시제품에서 양산까지",
+     "interestDomains": ["ESG", "생산성"], "participationMotivation": ["창업 기회", "수익"],
+     "weeklyCapacity": "주 20시간 이상", "contactHours": ["평일 저녁", "주말"], "collabMode": "전국 오프라인 가능"},
+    {"name": "문가영", "headline": "기준을 세우는 품질·운영 담당",
+     "primaryRole": "제조·생산",
+     "skills": "품질관리, 운영, 프로세스설계, 고객응대",
+     "traits": "재발 방지에 집중, 문서화에 능함",
+     "interestDomains": ["의료", "복지"], "participationMotivation": ["학습", "사회적 가치"],
+     "weeklyCapacity": "주 5시간", "contactHours": ["평일 낮"], "collabMode": "온라인+화상"},
+    {"name": "홍태경", "headline": "의료 데이터를 아는 헬스케어 기획자",
+     "primaryRole": "기획·운영",
+     "skills": "기획, 데이터분석, 사업기획, PM",
+     "traits": "규제와 사용자 니즈를 함께 봄",
+     "interestDomains": ["의료", "생산성"], "participationMotivation": ["학습", "창업 기회"],
+     "weeklyCapacity": "주 10시간", "contactHours": ["평일 낮"], "collabMode": "온라인+화상"},
 
     # ── 라이더 중 '투자자'(kind: investor) — 스킬이 아닌 '관심 분야'로 매칭한다 ──
     {"name": "정민석", "headline": "초기 스타트업에 베팅하는 엔젤 투자자", "kind": "investor",
@@ -328,6 +439,30 @@ TEAMMATE_POOL = [
      "support": ["임팩트 측정", "지역 파트너십", "정부지원 연계"],
      "links": [{"label": "임팩트 펀드 소개", "url": "https://impact.example.org"}],
      "bio": "수익과 사회적 임팩트를 함께 봅니다. 지역·복지 파트너십 연결에 강점이 있어요."},
+    {"name": "서지안", "headline": "콘텐츠·반려동물에 베팅하는 시드 엔젤", "kind": "investor",
+     "traits": "빠른 실행과 팬덤을 중시, 초기 브랜딩을 함께 고민",
+     "interestDomains": ["콘텐츠", "반려동물"], "investStage": "시드", "investTicket": "2천만~7천만",
+     "portfolio": ["펫로그(시드)", "숏프레임(엔젤)"],
+     "investStyle": "팔로우 위주", "decisionSpeed": "2~3주",
+     "support": ["초기 브랜딩", "크리에이터 네트워크", "IR 코칭"],
+     "links": [{"label": "투자 노트", "url": "https://note.example.com/seojian"}],
+     "bio": "콘텐츠·반려동물 초기 팀을 주로 봅니다. 크리에이터 네트워크 연결을 돕습니다."},
+    {"name": "김태호", "headline": "지역·생산성 SaaS를 보는 프리A 심사역", "kind": "investor",
+     "traits": "반복 매출과 리텐션을 중시, 지표로 검증",
+     "interestDomains": ["지역 커뮤니티", "생산성"], "investStage": "프리A", "investTicket": "1억~3억",
+     "portfolio": ["동네상점(프리A)", "워크노트(시드)"],
+     "investStyle": "리드·팔로우 모두", "decisionSpeed": "3~4주",
+     "support": ["후속 라운드 소개", "B2B 세일즈 코칭", "채용 연결"],
+     "links": [{"label": "회사 소개", "url": "https://vc.example.com/kimtaeho"}],
+     "bio": "지역·생산성 SaaS의 반복 매출 구조를 봅니다. B2B 세일즈를 함께 설계합니다."},
+    {"name": "이보람", "headline": "교육·의료 임팩트를 보는 시드 투자자", "kind": "investor",
+     "traits": "사회적 가치와 지속가능성을 중시, 공공 연계에 강점",
+     "interestDomains": ["교육", "의료"], "investStage": "시드", "investTicket": "3천만~6천만",
+     "portfolio": ["배움돌봄(시드)", "케어브릿지(시드)"],
+     "investStyle": "리드 투자", "decisionSpeed": "약 1개월",
+     "support": ["임팩트 측정", "정부지원 연계", "기관 파트너십"],
+     "links": [{"label": "임팩트 펀드", "url": "https://impact.example.org/boram"}],
+     "bio": "교육·의료 임팩트 초기 팀을 주로 봅니다. 공공·기관 파트너십 연결에 강합니다."},
 ]
 
 # 4-3) 매칭 AI 의 역할(시스템 프롬프트).
@@ -616,7 +751,22 @@ def _match_entry(person: dict, bd: dict, fits_role: str, reason: str) -> dict:
     return entry
 
 
-def match_teammates(vision: dict) -> dict:
+def _pick_with_variety(ranked: list, show: int = 4, keep: int = 2,
+                       variety: int = 0, window: int = 8) -> list:
+    """상위 keep명은 고정하고, 그 아래 근소차 후보(최대 window위)를 variety만큼 회전시켜
+    '다시 찾기'(variety 증가)마다 다른 사람이 노출되게 한다. 후보가 show명 이하이면 회전 없음."""
+    if len(ranked) <= show:
+        return ranked[:show]
+    core = ranked[:keep]
+    pool = ranked[keep:window] or ranked[keep:]
+    if not pool:
+        return ranked[:show]
+    off = variety % len(pool)
+    rotated = pool[off:] + pool[:off]
+    return core + rotated[:show - keep]
+
+
+def match_teammates(vision: dict, variety: int = 0) -> dict:
     """등록된 라이더 풀을 기획안과 비교해 추천 팀원(+관심 가질 만한 투자자)을 돌려줍니다.
 
     - 팀원: 결정적 점수(기술40·관심30·목적20·시간10+하드필터)로 랭킹·등급을 확정하고,
@@ -636,7 +786,8 @@ def match_teammates(vision: dict) -> dict:
     scored = [{"person": p, "bd": compute_match_score(p, match_profile)} for p in teammates]
     scored.sort(key=lambda s: (s["bd"]["hardPass"], s["bd"]["score"]), reverse=True)
     passing = [s for s in scored if s["bd"]["hardPass"]]
-    top = (passing or scored)[:4]
+    # '다시 찾기'마다 상위 2명은 유지하고 그 아래 근소차 후보를 회전시켜 다른 사람도 노출
+    top = _pick_with_variety(passing or scored, show=4, keep=2, variety=variety)
 
     # 2) 상위 후보의 fitsRole·reason 만 AI 로 생성(점수는 이미 확정값)
     cand = [{
@@ -679,9 +830,9 @@ def match_teammates(vision: dict) -> dict:
     if vision.get("matchInvestor"):
         inv_scored = [{"person": p, "bd": compute_investor_score(p, match_profile)} for p in investors]
         inv_scored.sort(key=lambda s: s["bd"]["score"], reverse=True)
-        for s in inv_scored:
-            if s["bd"]["score"] <= 0:
-                continue
+        inv_pass = [s for s in inv_scored if s["bd"]["score"] > 0]
+        # 투자자도 상위 1명 유지 + 나머지 회전(최대 3명 노출)
+        for s in _pick_with_variety(inv_pass, show=3, keep=1, variety=variety):
             doms = ", ".join(_overlap(_as_tokens(match_profile.get("domains")),
                                       _as_tokens(s["person"].get("interestDomains")))) or "관심 분야"
             matches.append(_match_entry(

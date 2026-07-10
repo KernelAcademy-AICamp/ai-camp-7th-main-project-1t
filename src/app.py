@@ -61,9 +61,14 @@ def api_questions():
 
 @app.post("/api/match")
 def api_match():
-    """[3단계] 등록된 팀원 중 매칭."""
-    vision = (request.json or {}).get("vision", {})
-    return jsonify(main.match_teammates(vision))
+    """[3단계] 등록된 팀원 중 매칭. variety(다시 찾기 횟수)로 하위 후보를 회전 노출."""
+    data = request.json or {}
+    vision = data.get("vision", {})
+    try:
+        variety = int(data.get("variety", 0) or 0)
+    except (TypeError, ValueError):
+        variety = 0
+    return jsonify(main.match_teammates(vision, variety))
 
 
 @app.post("/api/preview")
