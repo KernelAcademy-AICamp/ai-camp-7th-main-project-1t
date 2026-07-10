@@ -366,6 +366,9 @@
   .mytab.on{background:var(--navy); color:#fff; border-color:var(--navy);}
   .myh{font-size:16px; font-weight:800; color:var(--navy); margin:0 0 12px;}
   .pill{font-size:11px; font-weight:800; padding:3px 10px; border-radius:999px; flex:0 0 auto;}
+  .cntbadge[data-tip]{cursor:help; position:relative;}
+  .cntbadge[data-tip]:hover::after{content:attr(data-tip); position:absolute; bottom:135%; right:0; background:var(--navy); color:#fff; font-size:11.5px; font-weight:600; padding:7px 11px; border-radius:9px; white-space:nowrap; z-index:30; box-shadow:0 4px 14px rgba(0,0,0,.18);}
+  .cntbadge[data-tip]:hover::before{content:""; position:absolute; bottom:123%; right:13px; border:6px solid transparent; border-top-color:var(--navy); z-index:30;}
   .pill.blue{background:var(--sky); color:var(--blue);} .pill.green{background:var(--mint); color:#047857;} .pill.amber{background:#fef3c7; color:#92400e;}
   .prop{display:flex; align-items:flex-start; gap:11px; border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-bottom:9px;}
   .prop.accepted{background:#f0fdf4; border-color:#bbf7d0;}
@@ -757,7 +760,7 @@
 <section class="screen hidden" id="s-explore">
   <div class="narrow pagepad">
     <button class="btn ghost" onclick="goHome()">← 홈으로</button>
-    <h2 style="font-size:21px; color:var(--navy); margin:16px 0 4px; letter-spacing:-.02em;">🟩 아이디어 둘러보기</h2>
+    <h2 style="font-size:21px; color:var(--navy); margin:16px 0 4px; letter-spacing:-.02em;">🟩 아이디어 둘러보기 <span id="explore-count" class="cntbadge" style="font-size:13px; font-weight:700; color:var(--muted); background:#f1f5f9; padding:3px 12px; border-radius:20px; vertical-align:middle; margin-left:6px;"></span></h2>
     <p style="color:var(--muted); font-size:13px; margin:0 0 18px;">관심 가는 프로젝트를 고르면 상세를 볼 수 있어요. (상세 보기·합류는 로그인 후 진행됩니다.)</p>
     <div id="explore-list"></div>
   </div>
@@ -1274,6 +1277,11 @@ const DEMO_IDEAS = [
     });
     idea.channels = ch;
   });
+})();
+
+/* 데모: 둘러보기 아이디어 30개 중 15개만 '투자 받기'(matchInvestor) — 투자자 노출 테스트용 (짝수 인덱스 = 15개) */
+(function seedInvestorOptIn(){
+  DEMO_IDEAS.forEach((idea,idx)=>{ idea.matchInvestor = (idx % 2 === 0); });
 })();
 
 /* 로그인 유저(홍길동)의 팀원 이력서 */
@@ -2197,7 +2205,12 @@ async function attachPreview(prefix, visions){
 /* 비로그인 진입 — 팀원으로 둘러보기 (목록만 먼저) */
 function goExplore(){
   go("explore");
-  window._explore = ORBIT.loggedIn ? [...ORBIT.myIdeas.map(it=>it.vision), ...DEMO_IDEAS] : [DEMO_PROJECT, ...DEMO_IDEAS];
+  const _base = ORBIT.loggedIn ? [...ORBIT.myIdeas.map(it=>it.vision), ...DEMO_IDEAS] : [DEMO_PROJECT, ...DEMO_IDEAS];
+  // 투자자는 '투자 받기(matchInvestor)' 켠 아이디어만 볼 수 있음 (슈터가 노출 통제 · OFF는 목록에서 숨김)
+  const _isInvestor = !!(ORBIT.profile && ORBIT.profile.kind === "investor");
+  window._explore = _isInvestor ? _base.filter(v => v.matchInvestor === true) : _base;
+  const _cnt = document.getElementById("explore-count");
+  if(_cnt){ _cnt.textContent = window._explore.length + "개" + (_isInvestor?" ⓘ":""); if(_isInvestor){ _cnt.setAttribute("data-tip","투자 검토를 희망한 아이디어만 보여요"); } else { _cnt.removeAttribute("data-tip"); } }
   document.getElementById("explore-list").innerHTML = window._explore.map((v,i)=>`
     <div class="browsecard" onclick="exploreOpen(${i})">
       <span class="fitpct" id="xfit-${i}">🔥 팀원 모집 중</span>
@@ -2360,7 +2373,7 @@ function renderVision(v){
     </div>` : ``;
 
   document.getElementById("idea-vision").innerHTML = `
-    <div class="banner fade">✍️ <b>AI가 만든 기획안이에요.</b> 각 항목 옆 <b>✎ 수정</b>으로 직접 고칠 수 있어요. <b>함께 찾을 팀원</b>은 1명 이상 선택해야 합니다.</div>
+    <div class="banner fade">${ORBIT._editingIdea!=null ? `✏️ <b>등록된 아이디어를 수정 중이에요.</b> 각 항목 옆 <b>✎ 수정</b>으로 고치고 맨 아래 <b>저장</b>을 누르세요. <b>취소</b>하면 원래대로 돌아가요. (투자 받기·질문·채널도 여기서 변경돼요)` : `✍️ <b>AI가 만든 기획안이에요.</b> 각 항목 옆 <b>✎ 수정</b>으로 직접 고칠 수 있어요. <b>함께 찾을 팀원</b>은 1명 이상 선택해야 합니다.`}</div>
     <div class="hero fade">
       <div class="tags"><span class="hot">아이디어 단계</span><span>팀원 모집 중</span></div>
       <h1>${esc(v.serviceName)} — ${esc(v.tagline)}</h1>
@@ -2430,10 +2443,15 @@ function renderVision(v){
       <input class="chan-in" type="text" placeholder="Calendly·줌 스케줄러 예약 링크 (예: calendly.com/…)" value="${esc(ch.zoom||'')}" oninput="ORBIT.channels.zoom=this.value">
     </div>
 
-    <div style="display:flex; gap:9px;">
-      <button class="btn ghost" onclick="newIdea()">↺ 다른 아이디어</button>
-      <button class="btn green" style="flex:1" id="confirmBtn" onclick="tryConfirm()">${(ORBIT.picks&&ORBIT.picks.length)?`확정하고 팀원 찾기 (${ORBIT.picks.length}자리) →`:"팀원을 1명 이상 선택하세요"}</button>
-    </div>`;
+    ${ORBIT._editingIdea!=null
+      ? `<div style="display:flex; gap:9px;">
+          <button class="btn ghost" onclick="cancelEditIdea()">← 취소</button>
+          <button class="btn green" style="flex:1" onclick="saveMyIdea()">✅ 저장하고 돌아가기</button>
+        </div>`
+      : `<div style="display:flex; gap:9px;">
+          <button class="btn ghost" onclick="newIdea()">↺ 다른 아이디어</button>
+          <button class="btn green" style="flex:1" id="confirmBtn" onclick="tryConfirm()">${(ORBIT.picks&&ORBIT.picks.length)?`확정하고 팀원 찾기 (${ORBIT.picks.length}자리) →`:"팀원을 1명 이상 선택하세요"}</button>
+        </div>`}`;
 
   (ORBIT.picks||[]).forEach(i=>{ const el=document.getElementById("pick-"+i); if(el) el.classList.add("on"); });
 }
@@ -2541,7 +2559,10 @@ async function openDetail(v, isOwner){
       -->
       <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px;">
         <button class="btn ghost sm" onclick="showMy('idea')">← 이전으로</button>
-        <button class="btn ghost sm" onclick="deleteDetailIdea()">삭제하기</button>
+        <div style="display:flex; gap:8px;">
+          <button class="btn ghost sm" style="color:var(--blue); font-weight:700;" onclick="editDetailIdea()">✏️ 수정하기</button>
+          <button class="btn ghost sm" onclick="deleteDetailIdea()">삭제하기</button>
+        </div>
       </div>`
     : (isInvestor ? investorAction : riderAction);
   document.getElementById("detail-body").innerHTML = `
@@ -3155,7 +3176,8 @@ function showMy(tab){
   ORBIT.myTab = tab;
   if(document.getElementById("s-my").classList.contains("hidden")) go("my");
   document.getElementById("myName").textContent = ORBIT.user || "";
-  document.getElementById("myModeLabel").textContent = (tab==="team") ? "🛰️ Rider · 팀원으로 활동" : "🚀 Shooter · 내가 낸 아이디어";
+  const _isInv = !!(ORBIT.profile && ORBIT.profile.kind === "investor");
+  document.getElementById("myModeLabel").textContent = (tab==="team") ? (_isInv ? "💰 투자자 · 투자 검토 활동" : "🛰️ Rider · 팀원으로 활동") : "🚀 Shooter · 내가 낸 아이디어";
   document.getElementById("my-idea").classList.toggle("hidden", tab==="team");
   document.getElementById("my-team").classList.toggle("hidden", tab!=="team");
   if(tab==="team") renderMyTeam(); else renderMyIdea();
@@ -3163,10 +3185,50 @@ function showMy(tab){
   window.scrollTo({top:0, behavior:"smooth"});
 }
 function newIdea(){
+  ORBIT._editingIdea = null;
   document.getElementById("idea-input").classList.remove("hidden");
   document.getElementById("idea-boost").innerHTML=""; document.getElementById("idea-boost").classList.remove("hidden");
   document.getElementById("idea-vision").innerHTML=""; document.getElementById("idea").value="";
   go("idea");
+}
+/* 등록된 아이디어 수정 — 기존 기획안 편집 페이지(renderVision)를 '수정 모드'로 연다.
+   vision 은 myIdeas 와 같은 참조라 필드 편집(saveVisionField)이 자동 반영됨. */
+function editMyIdea(idx){
+  const it = ORBIT.myIdeas[idx]; if(!it) return;
+  // 원본을 건드리지 않도록 '작업 사본(draft)'을 편집 → 취소하면 원본 그대로 유지
+  const draft = JSON.parse(JSON.stringify(it.vision));
+  ORBIT.vision = draft;
+  ORBIT.founderQuestion = draft.founderQuestion || "";
+  ORBIT.founderInvestorQuestion = draft.founderInvestorQuestion || "";
+  ORBIT.channels = draft.channels ? {...draft.channels} : {kakao:"",slack:"",email:"",zoom:""};
+  ORBIT.picks = (draft.neededTeammates||[]).map((_,i)=>i);
+  ORBIT.editing = null;
+  ORBIT._editingIdea = idx;
+  document.getElementById("idea-input").classList.add("hidden");
+  document.getElementById("idea-boost").innerHTML=""; document.getElementById("idea-boost").classList.add("hidden");
+  go("idea");
+  renderVision(draft);
+}
+function saveMyIdea(){
+  const fq = document.getElementById("founderQ"); if(fq) ORBIT.founderQuestion = fq.value.trim();
+  const fiq = document.getElementById("founderIQ"); if(fiq) ORBIT.founderInvestorQuestion = fiq.value.trim();
+  const v = ORBIT.vision;   // 작업 사본
+  v.founderQuestion = ORBIT.founderQuestion || "";
+  v.founderInvestorQuestion = (ORBIT.founderInvestorQuestion || "").trim();
+  v.channels = {...(ORBIT.channels||{})};
+  delete v._reco;           // 내용이 바뀌었으니 추천 캐시는 비워 재매칭되게
+  const idx = ORBIT._editingIdea;
+  if(idx!=null && ORBIT.myIdeas[idx]) ORBIT.myIdeas[idx].vision = v;   // 사본을 원본 자리에 확정 반영
+  ORBIT._editingIdea = null; ORBIT.editing = null;
+  alert("✅ 아이디어를 수정했어요.");
+  showMy('idea');
+}
+function cancelEditIdea(){
+  const idx = ORBIT._editingIdea;
+  ORBIT._editingIdea = null; ORBIT.editing = null;
+  // 작업 사본을 버리고 원본 참조로 복구 → 편집 내용 반영 안 함
+  if(idx!=null && ORBIT.myIdeas[idx]) ORBIT.vision = ORBIT.myIdeas[idx].vision;
+  showMy('idea');
 }
 function makeProposals(v){
   const roles = v.neededTeammates || [];
@@ -3222,6 +3284,11 @@ function deleteDetailIdea(){
   if(idx < 0) return;
   if(deleteMyIdea(idx)) showMy("idea");
 }
+function editDetailIdea(){
+  const idx = ORBIT.myIdeas.findIndex(it => it.vision === ORBIT.detailVision);
+  if(idx < 0) return;
+  editMyIdea(idx);
+}
 function deleteMyIdea(idx){
   const it = ORBIT.myIdeas[idx]; if(!it) return false;
   const acc = it.proposals.filter(p=>p.status==="accepted").length;
@@ -3249,8 +3316,11 @@ function resumeCard(){
 function renderMyTeam(){
   const box = document.getElementById("my-team");
   const mine = ORBIT.myIdeas.map(it=>it.vision);
-  window._browse = [...mine, ...DEMO_IDEAS];
-  let html = `<h3 class="myh">🔍 아이디어 둘러보기</h3>`;
+  const _all = [...mine, ...DEMO_IDEAS];
+  // 투자자는 '투자 받기(matchInvestor)' 켠 아이디어만 (s-explore 와 동일 정책 · 목록에서 숨김)
+  const _isInvestor = !!(ORBIT.profile && ORBIT.profile.kind === "investor");
+  window._browse = _isInvestor ? _all.filter(v => v.matchInvestor === true) : _all;
+  let html = `<h3 class="myh" style="display:flex; align-items:center;">🔍 아이디어 둘러보기 <span class="cntbadge" ${_isInvestor?`data-tip="투자 검토를 희망한 아이디어만 보여요"`:''} style="margin-left:auto; font-size:12.5px; font-weight:700; color:var(--muted); background:#f1f5f9; padding:3px 12px; border-radius:20px;">${window._browse.length}개${_isInvestor?' ⓘ':''}</span></h3>`;
   html += window._browse.map((v,i)=>`
     <div class="browsecard" onclick="openDetailIdx(${i})">
       <span class="fitpct" id="mfit-${i}">🔥 합류 가능</span>
