@@ -11,6 +11,7 @@
     --line:#e5e7eb; --green:#10b981; --mint:#d1fae5;
   }
   *{box-sizing:border-box;}
+  html{overflow-y:scroll;}   /* 스크롤바 자리 항상 확보 → 탭 전환 시 좌우 밀림 방지 */
   body{margin:0; font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Noto Sans KR","Segoe UI",sans-serif;
     color:var(--text); background:var(--bg); word-break:keep-all; line-height:1.6;}
   .hidden{display:none !important;}
@@ -366,10 +367,27 @@
   .mytab.on{background:var(--navy); color:#fff; border-color:var(--navy);}
   .myh{font-size:16px; font-weight:800; color:var(--navy); margin:0 0 12px;}
   .pill{font-size:11px; font-weight:800; padding:3px 10px; border-radius:999px; flex:0 0 auto;}
-  .prop-tabs{display:flex; gap:8px; margin:2px 0 13px;}
-  .prop-tab{flex:1; border:1.5px solid var(--line); background:transparent; color:var(--muted); border-radius:10px; padding:9px 8px; font-size:13px; font-weight:800; cursor:pointer; font-family:inherit; transition:.15s;}
-  .prop-tab:hover{border-color:var(--blue); color:var(--blue);}
-  .prop-tab.on{background:var(--sky); border-color:var(--blue); color:var(--blue);}
+  .prop-tabs{display:flex; gap:22px; margin:2px 0 15px; border-bottom:1px solid var(--line);}
+  .prop-tab{border:none; background:none; color:var(--muted); padding:9px 1px; font-size:14px; font-weight:800; cursor:pointer; font-family:inherit; border-bottom:2.5px solid transparent; margin-bottom:-1px; transition:.15s;}
+  .prop-tab:hover{color:var(--navy);}
+  .prop-tab.on{color:var(--navy); border-bottom-color:var(--blue);}
+  .role-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:10px;}
+  .role-card{border:1px solid var(--line); border-radius:12px; padding:12px 13px; display:flex; flex-direction:column; gap:6px; min-width:0; background:#fff;}
+  .role-card.done{background:#f0fdf4; border-color:#bbf7d0;}
+  .rc-ic{font-size:22px; line-height:1;}
+  .rc-title{font-weight:800; color:var(--navy); font-size:13px; line-height:1.35; display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .rc-desc{font-size:11px; color:var(--muted); line-height:1.45; display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden; flex:1;}
+  .rc-badge{font-size:10.5px; font-weight:800; padding:3px 9px; border-radius:20px; align-self:flex-start; background:var(--sky); color:var(--blue);}
+  .rc-badge.done{background:#dcfce7; color:#16a34a;}
+  @media (max-width:640px){ .role-grid{grid-template-columns:repeat(2,1fr);} }
+  .stat-row{display:flex; gap:12px; margin-bottom:18px;}
+  .stat-box{flex:1; border:1px solid var(--line); border-radius:14px; padding:14px 16px; background:#fff;}
+  .stat-box .l{font-size:12px; color:var(--muted);}
+  .stat-box .n{font-size:24px; font-weight:800; color:var(--navy); margin-top:4px; font-variant-numeric:tabular-nums;}
+  .fit-bar{height:7px; background:var(--line); border-radius:10px; overflow:hidden; margin:5px 0 13px;}
+  .fit-fill{height:100%; background:var(--blue); border-radius:10px;}
+  .fit-fill.done{background:var(--green);}
+  .applied-note{background:#f8fafc; border:1px solid var(--line); border-radius:10px; padding:12px 14px; font-size:12.5px; color:#475569; line-height:1.6;}
   .prop-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
   .prop-card{border:1px solid var(--line); border-radius:13px; padding:12px 13px; cursor:pointer; transition:.15s; display:flex; flex-direction:column; gap:5px; min-width:0;}
   .prop-card:hover{border-color:var(--blue); box-shadow:0 3px 12px rgba(37,99,235,.09);}
@@ -1473,6 +1491,28 @@ function avatar(name, style){
   }
   return `<div class="pav" style="${style||''}">${esc(nm[0]||"?")}</div>`;
 }
+/* 역할명 키워드로 아이콘 매핑 (필요한 팀원 카드용) */
+function roleIcon(role){
+  const r = (role||"").toString();
+  if(/생산|제조|기계|압출|성형|설비|공장/.test(r)) return "🏭";
+  if(/공방|카페|매장|거점|공간/.test(r)) return "🏪";
+  if(/판매|스토어|커머스|물류|유통/.test(r)) return "🛒";
+  if(/SNS|마케팅|콘텐츠|인스타|브랜드|홍보|그로스/.test(r)) return "📢";
+  if(/디자인|브랜딩|패키지/.test(r)) return "🎨";
+  if(/개발|앱|웹|플랫폼|엔지니어링/.test(r)) return "💻";
+  if(/영업|제휴|B2B/.test(r)) return "🤝";
+  if(/운영|고객|CS/.test(r)) return "🛠️";
+  return "🧩";
+}
+/* 필요한 팀원 섹션 접기/펴기 (기본 접힘 → 제안 프로필이 먼저 보이게) */
+function toggleRoles(idx){
+  const g = document.getElementById("rolegrid-"+idx);
+  const ar = document.getElementById("roletgl-"+idx);
+  if(!g) return;
+  const closed = g.style.display === "none";
+  g.style.display = closed ? "grid" : "none";
+  if(ar) ar.textContent = closed ? "▲" : "▼";
+}
 function showDashboard(){ go("dashboard"); renderDashboard(); }
 function renderDashboard(){
   document.getElementById("dashName").textContent = ORBIT.user || "";
@@ -1621,64 +1661,80 @@ function deleteProfile(){
 
 /* ===== 신청 현황 — 내가 합류 신청한 아이디어들의 수락/대기 상태 ===== */
 function showAppliedList(){ go("applied"); renderAppliedList(); }
-function renderAppliedList(){
+function appliedRow(a){
+  const applied = ORBIT.applied || [];
+  const idx = applied.indexOf(a);
+  const acc = a.status==="accepted";
+  const rate = a.rate||0;
+  const isRecv = (a.dir||"applied")==="received";
+  const clickable = Array.isArray(a.qa) && a.qa.length;
+  const badge = acc ? '<span class="pill green">합류 완료</span>'
+    : isRecv ? '<span class="pill blue">새 제안</span>'
+    : '<span class="pill amber">수락 대기</span>';
+  const dateLabel = isRecv ? '제안일' : acc ? '합류일' : '신청일';
+  const sub = `${esc(a.role||"추천 자리")}${a.date?` · ${dateLabel} ${esc(a.date)}`:''}`;
+  let note, footer = "";
+  if(acc){ note = "🎉 팀 합류가 완료되었어요. 아래 채널에서 대화를 시작하세요."; }
+  else if(isRecv){
+    note = `🛰️ <b>${esc(a.fromShooter||"제공자")}</b>님이 함께 ORBIT 하자고 제안했어요. 수락하면 팀에 합류해요.`;
+    footer = `<div style="display:flex; gap:9px; margin-top:13px; justify-content:flex-end;">
+      <button class="btn ghost" onclick="rejectReceived(${idx})">거절</button>
+      <button class="btn green" onclick="showReceivedAnswer(${idx})">답변하고 수락 →</button>
+    </div>`;
+  } else { note = "⏳ 제공자가 신청서를 확인하고 있어요. 수락되면 알려드릴게요."; }
+  return `<div class="card" style="margin-bottom:12px;${acc?'background:#f0fdf4; border-color:#bbf7d0;':''}">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+      <div style="min-width:0; ${clickable?'cursor:pointer;':''}" ${clickable?`onclick="showAppliedDetail(${idx})"`:''}>
+        <b style="color:var(--navy); font-size:16px;">${esc(a.title)}</b>${clickable?`<span style="font-size:12px; color:var(--blue); font-weight:700; margin-left:6px;">상세·내 답변 →</span>`:''}
+        <div style="font-size:12px; color:var(--muted); margin-top:2px;">${sub}</div>
+      </div>
+      ${badge}
+    </div>
+    <div style="font-size:12.5px; font-weight:800; color:${acc?'var(--green)':'var(--blue)'}; margin-top:12px;">ORBIT 적합도 ${rate}%</div>
+    <div class="fit-bar"><div class="fit-fill ${acc?'done':''}" style="width:${rate}%"></div></div>
+    <div class="applied-note">${note}</div>
+    ${footer}
+    ${acc && a.channels ? teamChannelBlock(a) : ""}
+  </div>`;
+}
+/* 탭+목록만 (탭 전환 시 이 부분만 교체 → 통계·헤더 고정, 깜빡임 없음) */
+function appliedZoneHtml(){
   const applied = ORBIT.applied || [];
   const tab = ORBIT._appliedTab || "received";
-  const received = applied.filter(a=>(a.dir||"applied")==="received" && a.status!=="accepted");  // 슈터가 나에게 제안
-  const mine     = applied.filter(a=>(a.dir||"applied")==="applied"  && a.status!=="accepted");  // 내가 신청
-  const joined   = applied.filter(a=>a.status==="accepted");                                     // 합류(수락됨)
+  const received = applied.filter(a=>(a.dir||"applied")==="received" && a.status!=="accepted");
+  const mine     = applied.filter(a=>(a.dir||"applied")==="applied"  && a.status!=="accepted");
+  const joined   = applied.filter(a=>a.status==="accepted");
   const shown = tab==="applied" ? mine : tab==="joined" ? joined : received;
-
   const tabs = `<div class="prop-tabs" style="margin-bottom:14px;">
     <button class="prop-tab ${tab==='received'?'on':''}" onclick="setAppliedTab('received')">📥 받은 제안 ${received.length}</button>
     <button class="prop-tab ${tab==='applied'?'on':''}" onclick="setAppliedTab('applied')">📤 신청 현황 ${mine.length}</button>
     <button class="prop-tab ${tab==='joined'?'on':''}" onclick="setAppliedTab('joined')">✅ 합류 ${joined.length}</button>
   </div>`;
-
-  const row = (a)=>{
-    const idx = applied.indexOf(a);
-    const acc = a.status==="accepted";
-    const rate = a.rate||0;
-    const isRecv = (a.dir||"applied")==="received";
-    const clickable = Array.isArray(a.qa) && a.qa.length;
-    let note, footer = "";
-    if(acc){ note = "🎉 함께하기로 했어요. 아래 채널에서 시작하세요."; }
-    else if(isRecv){
-      note = `🛰️ <b>${esc(a.fromShooter||"제공자")}</b>님이 합류를 제안했어요. 수락하면 팀에 합류해요.`;
-      footer = `<div style="display:flex; gap:9px; margin-top:12px;">
-        <button class="btn green" style="flex:2" onclick="showReceivedAnswer(${idx})">답변하고 수락 →</button>
-        <button class="btn ghost" style="flex:1" onclick="rejectReceived(${idx})">거절</button>
-      </div>`;
-    } else { note = "⏳ 제공자가 신청서를 확인하고 있어요. 수락되면 알려드릴게요."; }
-    return `<div class="card" style="margin-bottom:11px">
-      <div style="display:flex; align-items:center; gap:12px; ${clickable?'cursor:pointer;':''}" ${clickable?`onclick="showAppliedDetail(${idx})"`:''}>
-        <div style="flex:1; min-width:0">
-          <b style="color:var(--navy); font-size:15px">${esc(a.title)}</b>${clickable?`<span style="font-size:12px; color:var(--blue); font-weight:700; margin-left:6px;">상세·내 답변 →</span>`:''}
-          <div style="font-size:12.5px; color:var(--muted); margin-top:3px">${esc(a.role||"추천 자리")} · 매칭률 ${rate}%${a.date?` · 📅 ${esc(a.date)}`:''}</div>
-        </div>
-        <span class="pill ${acc?'green':isRecv?'blue':'amber'}">${acc?'합류 ✓':isRecv?'제안 받음':'수락 대기'}</span>
-      </div>
-      <div style="font-size:12.5px; color:#475569; margin-top:11px; padding-top:11px; border-top:1px solid var(--line);">${note}</div>
-      ${footer}
-      ${acc && a.channels ? teamChannelBlock(a) : ""}
-    </div>`;
-  };
-
   const emptyMsg = tab==="applied" ? "아직 신청한 아이디어가 없어요." : tab==="joined" ? "아직 합류한 팀이 없어요." : "아직 받은 제안이 없어요.";
-  const list = shown.length ? shown.map(row).join("")
+  const list = shown.length ? shown.map(appliedRow).join("")
     : `<div class="card"><div class="dc-empty">${emptyMsg}<br>둘러보기에서 마음에 드는 팀을 찾아보세요.</div>
         <button class="btn full" onclick="goExplore()">🛰️ 아이디어 둘러보기 →</button></div>`;
-
+  return `${tabs}${list}`;
+}
+function renderAppliedList(){
+  const applied = ORBIT.applied || [];
+  const received = applied.filter(a=>(a.dir||"applied")==="received" && a.status!=="accepted");
+  const mine     = applied.filter(a=>(a.dir||"applied")==="applied"  && a.status!=="accepted");
+  const joined   = applied.filter(a=>a.status==="accepted");
   document.getElementById("applied-body").innerHTML = `
     ${backBar("showDashboard()")}
     <div class="myhead" style="margin-top:14px">
       <div class="myhi">📬 내 제안·신청</div>
       <div class="mymode">받은 제안·내 신청·합류 상태를 한눈에 봐요.</div>
     </div>
-    ${tabs}
-    ${list}`;
+    <div class="stat-row">
+      <div class="stat-box"><div class="l">받은 제안</div><div class="n">${received.length}</div></div>
+      <div class="stat-box"><div class="l">신청 현황</div><div class="n">${mine.length}</div></div>
+      <div class="stat-box"><div class="l">합류 완료</div><div class="n">${joined.length}</div></div>
+    </div>
+    <div id="applied-zone">${appliedZoneHtml()}</div>`;
 }
-function setAppliedTab(t){ ORBIT._appliedTab = t; renderAppliedList(); }
+function setAppliedTab(t){ const sy=window.scrollY; ORBIT._appliedTab = t; const z=document.getElementById("applied-zone"); if(z) z.innerHTML = appliedZoneHtml(); window.scrollTo(0, sy); }
 /* 받은 제안 수락 = 합류 질문에 답하고 수락 (슈터가 그 답변을 보게 됨 — 신청 흐름과 대칭) */
 function showReceivedAnswer(idx){
   const a = ORBIT.applied[idx]; if(!a) return;
@@ -3367,21 +3423,27 @@ function renderMyIdea(){
           <div class="mih-tag">${esc(it.vision.tagline)}</div>
           <div class="mih-cta">📄 기획안 페이지 열기 <span class="mih-arrow">→</span></div>
         </div>
-        <div style="margin-top:14px">${(function(){
-          const dir = ORBIT._propDir || "received";
-          const wi = it.proposals.map((p,pi)=>({p,pi}));
-          const recv = wi.filter(x=>(x.p.dir||"received")==="received" && x.p.status!=="accepted");
-          const sent = wi.filter(x=>x.p.dir==="sent" && x.p.status!=="accepted");
-          const joined = wi.filter(x=>x.p.status==="accepted");
-          const shown = dir==="sent" ? sent : dir==="joined" ? joined : recv;
-          const emptyMsg = dir==="sent" ? '📤 아직 보낸 제안이 없어요.' : dir==="joined" ? '✅ 아직 합류한 팀원이 없어요.' : '📥 아직 받은 제안이 없어요.';
-          return `<div class="prop-tabs">
-            <button class="prop-tab ${dir==='received'?'on':''}" onclick="setPropDir('received')">📥 받은 제안 ${recv.length}</button>
-            <button class="prop-tab ${dir==='sent'?'on':''}" onclick="setPropDir('sent')">📤 보낸 제안 ${sent.length}</button>
-            <button class="prop-tab ${dir==='joined'?'on':''}" onclick="setPropDir('joined')">✅ 합류 ${joined.length}</button>
-          </div>
-          ${shown.length ? `<div class="prop-grid">${shown.map(x=>propCard(idx,x.pi,x.p)).join("")}</div>` : `<div style="text-align:center; color:var(--muted); font-size:13px; padding:22px 0;">${emptyMsg}</div>`}`;
-        })()}</div>
+        ${(function(){
+          const nt = it.vision.neededTeammates || [];
+          if(!nt.length) return '';
+          const total = nt.length, filled = Math.min(acc, total);
+          return `<div style="height:1px; background:var(--line); margin:16px 0;"></div>
+            <div onclick="toggleRoles(${idx})" style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:12px; cursor:pointer;">
+              <div><div style="font-size:15px; font-weight:800; color:var(--navy);">필요한 팀원 <span id="roletgl-${idx}" style="font-size:11px; color:var(--muted); margin-left:2px;">▼</span></div>
+                <div style="font-size:12px; color:var(--muted); margin-top:2px;">프로젝트에 필요한 역할과 현재 합류 상태를 확인하세요.</div></div>
+              <span style="font-size:12.5px; font-weight:800; color:var(--blue); white-space:nowrap;">${filled} / ${total} 역할 완료</span>
+            </div>
+            <div class="role-grid" id="rolegrid-${idx}" style="display:none;">${nt.map((t,i)=>{
+              const done = i < filled;
+              return `<div class="role-card ${done?'done':''}">
+                <div class="rc-ic">${roleIcon(t.role)}</div>
+                <div class="rc-title">${esc(t.role)}</div>
+                <div class="rc-desc">${esc(t.detail||'')}</div>
+                <span class="rc-badge ${done?'done':''}">${done?'합류 완료':'모집 중'}</span>
+              </div>`;
+            }).join("")}</div>`;
+        })()}
+        <div style="margin-top:14px" id="propzone-${idx}">${propZoneHtml(it, idx)}</div>
         ${acc ? teamChannelBlock(it.vision) : ""}
       </div>`;
     });
@@ -3412,7 +3474,28 @@ function propCard(idx,pi,p){
     <div class="pc-foot"><span>${p.date?'📅 '+esc(p.date):''}</span><span>${acc?'✅ 합류':'⏳ 대기'}</span></div>
   </div>`;
 }
-function setPropDir(dir){ ORBIT._propDir = dir; renderMyIdea(); }
+/* 제안 탭+목록만 렌더 (탭 전환 시 이 부분만 교체 → 위쪽 배치는 고정, 깜빡임 없음) */
+function propZoneHtml(it, idx){
+  const dir = ORBIT._propDir || "received";
+  const wi = it.proposals.map((p,pi)=>({p,pi}));
+  const recv = wi.filter(x=>(x.p.dir||"received")==="received" && x.p.status!=="accepted");
+  const sent = wi.filter(x=>x.p.dir==="sent" && x.p.status!=="accepted");
+  const joined = wi.filter(x=>x.p.status==="accepted");
+  const shown = dir==="sent" ? sent : dir==="joined" ? joined : recv;
+  const emptyMsg = dir==="sent" ? '📤 아직 보낸 제안이 없어요.' : dir==="joined" ? '✅ 아직 합류한 팀원이 없어요.' : '📥 아직 받은 제안이 없어요.';
+  return `<div class="prop-tabs">
+      <button class="prop-tab ${dir==='received'?'on':''}" onclick="setPropDir('received')">📥 받은 제안 ${recv.length}</button>
+      <button class="prop-tab ${dir==='sent'?'on':''}" onclick="setPropDir('sent')">📤 보낸 제안 ${sent.length}</button>
+      <button class="prop-tab ${dir==='joined'?'on':''}" onclick="setPropDir('joined')">✅ 합류 ${joined.length}</button>
+    </div>
+    ${shown.length ? `<div class="prop-grid">${shown.map(x=>propCard(idx,x.pi,x.p)).join("")}</div>` : `<div style="text-align:center; color:var(--muted); font-size:13px; padding:22px 0;">${emptyMsg}</div>`}`;
+}
+function setPropDir(dir){
+  const sy = window.scrollY;
+  ORBIT._propDir = dir;
+  (ORBIT.myIdeas||[]).forEach((it,idx)=>{ const z=document.getElementById("propzone-"+idx); if(z) z.innerHTML = propZoneHtml(it, idx); });
+  window.scrollTo(0, sy);
+}
 function acceptProposal(idx,pi){
   ORBIT.myIdeas[idx].proposals[pi].status="accepted"; renderMyIdea();
   const p = ORBIT.myIdeas[idx].proposals[pi];
