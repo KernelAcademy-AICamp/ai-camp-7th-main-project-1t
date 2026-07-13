@@ -384,12 +384,17 @@
   .reco-sub{font-size:12.5px; font-weight:800; color:var(--navy); margin:16px 0 10px; padding-top:13px; border-top:1px dashed var(--line);}
   .reco-sub span{font-weight:600; color:var(--muted); font-size:11px; margin-left:5px;}
   .prop[onclick]:hover{border-color:var(--blue); box-shadow:0 4px 14px rgba(37,99,235,.08);}
-  .myidea-head{display:flex; align-items:center; gap:11px; cursor:pointer; padding:8px 10px; margin:-8px -10px 2px; border-radius:11px; transition:.15s; flex-wrap:wrap;}
+  .myidea-head{cursor:pointer; padding:16px 16px 18px; margin:0 0 8px; border-radius:14px; transition:.15s;}
   .myidea-head:hover{background:var(--sky);}
-  .myidea-title{font-size:19px; font-weight:800; color:var(--navy); transition:.15s;}
+  .mih-top{display:flex; align-items:flex-start; gap:12px;}
+  .myidea-title{font-size:21px; font-weight:800; color:var(--navy); line-height:1.35; transition:.15s;}
   .myidea-head:hover .myidea-title{color:var(--blue);}
-  .myidea-cta{font-size:12.5px; font-weight:800; color:var(--blue); white-space:nowrap; background:#fff; border:1px solid #bfdbfe; border-radius:999px; padding:7px 13px; flex:0 0 auto;}
-  .myidea-head:hover .myidea-cta{background:var(--blue); color:#fff; border-color:var(--blue);}
+  .mih-tag{font-size:14px; color:var(--muted); margin-top:9px; line-height:1.65;}
+  .mih-stats{display:flex; gap:6px; flex:0 0 auto; flex-wrap:wrap; justify-content:flex-end;}
+  .mih-cta{display:inline-flex; align-items:center; gap:6px; margin-top:14px; font-size:13px; font-weight:800; color:var(--blue);}
+  .mih-cta .mih-arrow{transition:transform .15s;}
+  .myidea-head:hover .mih-cta .mih-arrow{transform:translateX(3px);}
+  .myidea-head:hover .mih-cta{text-decoration:underline;}
   .modal-overlay{position:fixed; inset:0; background:rgba(11,18,38,.5); display:flex; align-items:center; justify-content:center; z-index:100; padding:20px;}
   .modal-overlay.hidden{display:none;}
   .modal-card{background:#fff; border-radius:18px; width:min(600px,94vw); max-height:90vh; overflow:auto; padding:34px 34px 32px; position:relative; box-shadow:0 24px 60px rgba(0,0,0,.32);}
@@ -3252,12 +3257,12 @@ function renderMyIdea(){
       const acc = it.proposals.filter(p=>p.status==="accepted").length;
       html += `<div class="card">
         <div class="myidea-head" onclick="viewMyIdea(${idx})" title="기획안 페이지로 이동">
-          <div style="flex:1; min-width:0;">
-            <div class="myidea-title">${esc(it.vision.serviceName)}</div>
-            <div style="font-size:13px; color:var(--muted); margin-top:3px;">${esc(it.vision.tagline)}</div>
+          <div class="mih-top">
+            <div class="myidea-title" style="flex:1; min-width:0;">${esc(it.vision.serviceName)}</div>
+            <div class="mih-stats">${pend?`<span class="pill blue">받은 제안 ${pend}건</span>`:``}${acc?`<span class="pill green">합류 ${acc}명</span>`:``}</div>
           </div>
-          ${pend?`<span class="pill blue">받은 제안 ${pend}건</span>`:``}${acc?`<span class="pill green">합류 ${acc}명</span>`:``}
-          <span class="myidea-cta">📄 기획안 페이지 →</span>
+          <div class="mih-tag">${esc(it.vision.tagline)}</div>
+          <div class="mih-cta">📄 기획안 페이지 열기 <span class="mih-arrow">→</span></div>
         </div>
         <div style="margin-top:14px">${it.proposals.map((p,pi)=>proposalRow(idx,pi,p,it.vision.serviceName)).join("")}</div>
         ${acc ? teamChannelBlock(it.vision) : ""}
