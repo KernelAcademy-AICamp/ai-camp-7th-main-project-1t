@@ -1464,6 +1464,15 @@ function goRiderTab(){
   else goRider();
 }
 /* ===== 대시보드 (기 가입 고객) ===== */
+/* 데모 프로필 아바타 — 실제 사진이 있는 인물은 사진, 없으면 원래처럼 이름 첫 글자 원 */
+const AVATAR_PHOTOS = ["구본영","김도현","박지훈","오은별","이라이더","이서연","전하람","정민석"];
+function avatar(name, style){
+  const nm = (name||"").toString().trim();
+  if(AVATAR_PHOTOS.indexOf(nm) >= 0){
+    return `<div class="pav" style="${style||''}background:url('/static/avatars/${encodeURIComponent(nm)}.jpg') center/cover; color:transparent; overflow:hidden;"></div>`;
+  }
+  return `<div class="pav" style="${style||''}">${esc(nm[0]||"?")}</div>`;
+}
 function showDashboard(){ go("dashboard"); renderDashboard(); }
 function renderDashboard(){
   document.getElementById("dashName").textContent = ORBIT.user || "";
@@ -1500,7 +1509,7 @@ function renderDashboard(){
   const propBody = recvList.length
     ? recvList.slice(0,3).map(pr=> isRider
         ? `<div class="dash-row"><div style="flex:1"><b style="color:var(--navy);font-size:13px">${esc(pr.title)}</b><div style="font-size:11.5px;color:var(--muted)">${esc(pr.role)} · ${esc(pr.fromShooter||'제공자')}님 제안</div></div><span class="pill blue">${pr.rate}%</span></div>`
-        : `<div class="dash-row"><div class="pav">${esc(pr.name[0])}</div><div style="flex:1"><b style="color:var(--navy);font-size:13px">${esc(pr.name)}</b><div style="font-size:11.5px;color:var(--muted)">${esc(pr.role)} · ${esc(pr.idea)}</div></div><span class="pill blue">${pr.rate}%</span></div>`
+        : `<div class="dash-row">${avatar(pr.name, "width:34px;height:34px;")}<div style="flex:1"><b style="color:var(--navy);font-size:13px">${esc(pr.name)}</b><div style="font-size:11.5px;color:var(--muted)">${esc(pr.role)} · ${esc(pr.idea)}</div></div><span class="pill blue">${pr.rate}%</span></div>`
       ).join("")
     : `<div class="dc-empty">아직 받은 제안이 없어요.</div>`;
   const c3 = `<div class="dashcard">
@@ -1536,7 +1545,7 @@ function renderProfileDetail(){
       ${backBar("showDashboard()")}
       <div class="card" style="margin-top:16px">
         <div style="display:flex; align-items:center; gap:13px;">
-          <div class="pav" style="width:46px;height:46px;font-size:18px;background:linear-gradient(135deg,#92400e,#d97706)">${esc((p.name||"투")[0])}</div>
+          ${avatar(p.name||"투", "width:46px;height:46px;")}
           <div><div style="display:flex; align-items:center; gap:8px;"><span style="font-size:18px;font-weight:800;color:var(--navy)">${esc(p.name||"")}</span> <span class="pill amber">💰 투자자</span></div>
             <div style="font-size:13px;color:var(--muted);margin-top:2px">${esc(p.headline||"")}</div></div>
         </div>
@@ -1574,7 +1583,7 @@ function renderProfileDetail(){
     ${backBar("showDashboard()")}
     <div class="card" style="margin-top:16px">
       <div style="display:flex; align-items:center; gap:13px;">
-        <div class="pav" style="width:46px;height:46px;font-size:18px">${esc((p.name||ORBIT.user||"나")[0])}</div>
+        ${avatar(p.name||ORBIT.user||"나", "width:46px;height:46px;")}
         <div><div style="font-size:18px;font-weight:800;color:var(--navy)">${esc(p.name||ORBIT.user||"")}</div>
           <div style="font-size:13px;color:var(--muted);margin-top:2px">${esc(p.headline||"")}</div></div>
       </div>
@@ -2705,7 +2714,7 @@ function recoRow(p,i){
   const isInv = p.kind === "investor";
   const kindPill = isInv ? `<span class="pill amber">💰 투자자</span> ` : ``;
   return `<div class="prop" style="cursor:pointer" onclick="showRiderDetail('reco',${i})">
-    <div class="pav"${isInv?' style="background:linear-gradient(135deg,#92400e,#d97706)"':''}>${esc(p.name[0])}</div>
+    ${avatar(p.name)}
     <div style="flex:1"><div class="pn">${esc(p.name)} ${kindPill}${scorePill}<span class="pill blue">${star} ${esc(p.fitLevel||"")}</span></div>
       <div class="pr">${esc(p.fitsRole)}</div></div>
     <span style="align-self:center; color:#cbd5e1; font-size:20px; flex:0 0 auto;">›</span>
@@ -2813,7 +2822,7 @@ function riderProfilePage(p, src, a, b){
   return `${backBar("go(ORBIT._riderReturn)")}
     <div class="card" style="margin-top:16px">
       <div style="display:flex; align-items:center; gap:14px;">
-        <div class="pav" style="width:54px;height:54px;font-size:22px;${isInv?'background:linear-gradient(135deg,#92400e,#d97706)':''}">${esc(p.name[0])}</div>
+        ${avatar(p.name, "width:54px;height:54px;")}
         <div style="flex:1; min-width:0;">
           <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;"><span style="font-size:20px;font-weight:800;color:var(--navy)">${esc(p.name)}</span> ${kindPill}${accepted?`<span class="pill green">합류 완료 ✓</span>`:''}</div>
           ${headline?`<div style="font-size:13.5px;color:var(--muted);margin-top:4px;line-height:1.5;">${esc(headline)}</div>`:''}
@@ -2890,7 +2899,7 @@ function riderDetailCard(p, src){
   ) : ``;
   const statusNote = (isProp && p.status==="accepted") ? `<div class="pill green" style="margin-top:11px; display:inline-block">합류 완료 ✓</div>` : ``;
   return `<div style="display:flex; align-items:flex-start; gap:14px; padding-right:24px;">
-      <div class="pav" style="width:52px;height:52px;font-size:20px;flex:0 0 auto;${isInv?'background:linear-gradient(135deg,#92400e,#d97706)':''}">${esc(p.name[0])}</div>
+      ${avatar(p.name, "width:52px;height:52px;flex:0 0 auto;")}
       <div style="flex:1; min-width:0">
         <div class="pn" style="font-size:18px">${esc(p.name)} ${kindPill}</div>
         ${headline?`<div class="pr" style="margin-top:5px; line-height:1.6;">${esc(headline)}</div>`:``}
@@ -3014,7 +3023,7 @@ function riderCard(r,i){
   const kindPill = isInv ? `<span class="pill amber">💰 투자자</span>` : `<span class="pill blue">🧑‍💻 팀원</span>`;
   const roleVal = isInv ? "투자·자문" : (r.primaryRole||"");
   return `<div class="prop" style="cursor:pointer" onclick="showRiderDetail('browse',${i})">
-    <div class="pav"${isInv?' style="background:linear-gradient(135deg,#92400e,#d97706)"':''}>${esc(r.name[0])}</div>
+    ${avatar(r.name)}
     <div style="flex:1"><div class="pn">${esc(r.name)} ${kindPill}</div>
       <div class="pr">${roleVal?esc(roleVal)+' · ':''}${esc(r.headline||"")}</div></div>
   </div>`;
@@ -3381,11 +3390,11 @@ function renderMyIdea(){
 }
 function proposalRow(idx,pi,p,svc){
   if(p.status==="accepted"){
-    return `<div class="prop accepted" style="cursor:pointer" onclick="showRiderDetail('prop',${idx},${pi})"><div class="pav">${esc(p.name[0])}</div>
+    return `<div class="prop accepted" style="cursor:pointer" onclick="showRiderDetail('prop',${idx},${pi})">${avatar(p.name)}
       <div style="flex:1"><div class="pn">${esc(p.name)} <span class="pill green">수락됨 ✓</span></div><div class="pr">${esc(p.role)} · 매칭률 ${p.rate}%</div></div>
       <span class="pill green">합류 완료</span></div>`;
   }
-  return `<div class="prop" style="cursor:pointer" onclick="showRiderDetail('prop',${idx},${pi})"><div class="pav">${esc(p.name[0])}</div>
+  return `<div class="prop" style="cursor:pointer" onclick="showRiderDetail('prop',${idx},${pi})">${avatar(p.name)}
     <div style="flex:1"><div class="pn">${esc(p.name)} <span class="pill blue">매칭률 ${p.rate}%</span></div><div class="pr">${esc(p.role)}</div><div class="pl">"${esc(p.line)}"</div></div>
     <span style="align-self:center; color:#cbd5e1; font-size:20px; flex:0 0 auto;">›</span></div>`;
 }
@@ -3394,7 +3403,7 @@ function propCard(idx,pi,p){
   const acc = p.status==="accepted";
   return `<div class="prop-card ${acc?'acc':''}" onclick="showRiderDetail('prop',${idx},${pi})">
     <div class="pc-top">
-      <div class="pav" style="width:30px;height:30px;font-size:13px;">${esc(p.name[0])}</div>
+      ${avatar(p.name, "width:30px;height:30px;")}
       <div class="pc-name">${esc(p.name)}</div>
       <span class="pill ${acc?'green':'blue'}" style="font-size:10px;">${acc?'수락 ✓':p.rate+'%'}</span>
     </div>
@@ -3436,7 +3445,7 @@ function resumeCard(){
   return `<div class="card" id="sec-resume">
     <div class="sec-head"><p class="eyebrow">📄 내 이력서 (팀원 프로필)</p><div class="sec-ctrl"><button onclick="comingSoon()">✎ 수정</button></div></div>
     <div style="display:flex; gap:13px; align-items:center; margin-bottom:16px;">
-      <div class="pav" style="width:48px;height:48px;font-size:18px;">${esc(RESUME.name[0])}</div>
+      ${avatar(RESUME.name, "width:48px;height:48px;")}
       <div><div style="font-size:17px; font-weight:800; color:var(--navy)">${esc(RESUME.name)}</div><div style="font-size:12.5px; color:var(--muted); margin-top:2px;">${esc(RESUME.headline)}</div></div>
     </div>
     <div class="exh">할 수 있는 일</div>${RESUME.skills.map(s=>`<div class="exli"><span class="d">◎</span>${esc(s)}</div>`).join("")}
