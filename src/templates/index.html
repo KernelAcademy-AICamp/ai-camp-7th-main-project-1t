@@ -973,6 +973,17 @@ const DEMO_RIDER_APPLIED = [
      {q:"친환경·리필 문화에 관심이 있나요?", a:"제로웨이스트엔 관심 많지만, 리필 스테이션 운영은 좀 더 공부가 필요해요.", founder:false},
      {q:"리필 습관을 사람들이 계속하게 하려면 무엇이 필요할까요?", a:"보람이 보여야 이어져요. 리필 횟수를 눈에 보이게 만드는 콘텐츠를 생각합니다.", founder:true},
    ]},
+  // 받은 제안 — 슈터가 이라이더(마케팅·콘텐츠)에게 먼저 제안한 것 (dir:received, 아직 라이더 응답 전이라 qa 없음)
+  {title:"손맛 배송", role:"SNS·콘텐츠 마케팅", rate:74, status:"pending", dir:"received", date:"2026.07.08",
+   lead:"바쁜 1인 가구도 집밥의 온기를 — 지역 어르신의 반찬을 정기배송해요.",
+   fromShooter:"박손맛",
+   aiQuestions:["SNS·콘텐츠 마케팅 경험이 있나요?","지역·로컬 서비스에 관심이 있나요?"], founderQuestion:"어르신 반찬을 어떻게 '사고 싶게' 알릴 수 있을까요?",
+   channels:{kakao:"https://open.kakao.com/o/sonmat", slack:"https://sonmat.slack.com", email:"team@sonmat.kr", zoom:"https://calendly.com/sonmat/meet"}},
+  {title:"왈크메이트", role:"브랜드 콘텐츠", rate:68, status:"pending", dir:"received", date:"2026.07.06",
+   lead:"바빠서 산책 못 시키는 견주와 이웃을 동네 단위로 안전하게 연결해요.",
+   fromShooter:"이왈크",
+   aiQuestions:["브랜드 콘텐츠·SNS 운영 경험이 있나요?","반려동물·지역 커뮤니티에 관심이 있나요?"], founderQuestion:"산책 대행의 신뢰를 콘텐츠로 어떻게 쌓을 수 있을까요?",
+   channels:{kakao:"https://open.kakao.com/o/walkmate", slack:"https://walkmate.slack.com", email:"team@walkmate.kr", zoom:"https://calendly.com/walkmate/meet"}},
 ];
 
 /* 둘러보기용 데모 아이디어 3개 (코드에 직접 입력) */
@@ -1317,6 +1328,15 @@ const DEMO_IDEAS = [
   DEMO_PROJECT_PROPOSALS.forEach((p,i)=>{ if(meta[i]){ p.dir=meta[i].dir; p.date=meta[i].date; } });
 })();
 
+/* 데모: 이라이더 신청 목록 — 기존 4개는 '내가 신청(applied)'으로 태그 + 일자 (받은 제안은 데이터에 dir:received) */
+(function seedAppliedMeta(){
+  const meta = ["2026.07.02", "2026.07.05", "2026.07.06", "2026.07.07"];  // 제로데이·귀책방·레터라운지·리필맵
+  DEMO_RIDER_APPLIED.forEach((a,i)=>{
+    if(!a.dir) a.dir = "applied";              // 받은 제안(received) 외엔 내가 신청
+    if(!a.date && meta[i]) a.date = meta[i];
+  });
+})();
+
 /* 로그인 유저(홍길동)의 팀원 이력서 */
 const RESUME = {
   name:"홍길동",
@@ -1474,24 +1494,30 @@ function renderDashboard(){
     <button class="btn ${profile?'ghost':'green'} full" onclick="${profile?'showProfileDetail()':'riderStartProfile()'}">${profile?'프로필 상세 보기 →':'프로필 작성하기 →'}</button>
   </div>`;
 
-  // 3) 합류 제안 보기 (내 아이디어에 들어온 제안)
-  const propBody = pending.length
-    ? pending.slice(0,3).map(pr=>`<div class="dash-row"><div class="pav">${esc(pr.name[0])}</div><div style="flex:1"><b style="color:var(--navy);font-size:13px">${esc(pr.name)}</b><div style="font-size:11.5px;color:var(--muted)">${esc(pr.role)} · ${esc(pr.idea)}</div></div><span class="pill blue">${pr.rate}%</span></div>`).join("")
-    : `<div class="dc-empty">아직 받은 합류 제안이 없어요.</div>`;
+  // 3) 받은 제안 — 슈터: 내 아이디어에 들어온 제안 / 라이더: 슈터가 나에게 보낸 제안
+  const isRider = ORBIT.role === "rider";
+  const recvList = isRider ? applied.filter(a=>(a.dir||"applied")==="received" && a.status!=="accepted") : pending;
+  const propBody = recvList.length
+    ? recvList.slice(0,3).map(pr=> isRider
+        ? `<div class="dash-row"><div style="flex:1"><b style="color:var(--navy);font-size:13px">${esc(pr.title)}</b><div style="font-size:11.5px;color:var(--muted)">${esc(pr.role)} · ${esc(pr.fromShooter||'제공자')}님 제안</div></div><span class="pill blue">${pr.rate}%</span></div>`
+        : `<div class="dash-row"><div class="pav">${esc(pr.name[0])}</div><div style="flex:1"><b style="color:var(--navy);font-size:13px">${esc(pr.name)}</b><div style="font-size:11.5px;color:var(--muted)">${esc(pr.role)} · ${esc(pr.idea)}</div></div><span class="pill blue">${pr.rate}%</span></div>`
+      ).join("")
+    : `<div class="dc-empty">아직 받은 제안이 없어요.</div>`;
   const c3 = `<div class="dashcard">
-    <div class="dc-top"><div class="dc-ic">📨</div><div class="dc-t">합류 제안 보기</div>${pending.length?`<span class="dc-n">${pending.length}건</span>`:``}</div>
+    <div class="dc-top"><div class="dc-ic">📨</div><div class="dc-t">${isRider?'받은 제안':'합류 제안 보기'}</div>${recvList.length?`<span class="dc-n">${recvList.length}건</span>`:``}</div>
     <div class="dc-body">${propBody}</div>
-    <button class="btn ghost full" onclick="ORBIT._propDir='received'; showMy('idea')">${pending.length?'제안 확인하고 수락 →':'내 아이디어로 이동 →'}</button>
+    <button class="btn ghost full" onclick="${isRider?"ORBIT._appliedTab='received'; showAppliedList()":"ORBIT._propDir='received'; showMy('idea')"}">${recvList.length?(isRider?'받은 제안 확인 →':'제안 확인하고 수락 →'):(isRider?'받은 제안 보기 →':'내 아이디어로 이동 →')}</button>
   </div>`;
 
-  // 4) 요청 수락 현황 (내가 합류 신청한 아이디어)
-  const appBody = applied.length
-    ? applied.slice(0,3).map(a=>`<div class="dash-row"><div style="flex:1"><b style="color:var(--navy);font-size:13px">${esc(a.title)}</b><div style="font-size:11.5px;color:var(--muted)">${esc(a.role)}${a.kind==='investor'?'':' · 매칭률 '+a.rate+'%'}</div></div><span class="pill ${a.status==='accepted'?'green':'amber'}">${a.status==='accepted'?'수락됨 ✓':'수락 대기'}</span></div>`).join("")
-    : `<div class="dc-empty">아직 합류 신청한 아이디어가 없어요.</div>`;
+  // 4) 신청 현황 (내가 슈터에게 신청한 아이디어 — 받은 제안 제외)
+  const appList = applied.filter(a=>(a.dir||"applied")==="applied");
+  const appBody = appList.length
+    ? appList.slice(0,3).map(a=>`<div class="dash-row"><div style="flex:1"><b style="color:var(--navy);font-size:13px">${esc(a.title)}</b><div style="font-size:11.5px;color:var(--muted)">${esc(a.role)}${a.kind==='investor'?'':' · 매칭률 '+a.rate+'%'}</div></div><span class="pill ${a.status==='accepted'?'green':'amber'}">${a.status==='accepted'?'수락됨 ✓':'수락 대기'}</span></div>`).join("")
+    : `<div class="dc-empty">아직 신청한 아이디어가 없어요.</div>`;
   const c4 = `<div class="dashcard">
-    <div class="dc-top"><div class="dc-ic">✅</div><div class="dc-t">요청 수락 현황</div>${applied.length?`<span class="dc-n">${applied.length}</span>`:``}</div>
+    <div class="dc-top"><div class="dc-ic">✅</div><div class="dc-t">신청 현황</div>${appList.length?`<span class="dc-n">${appList.length}</span>`:``}</div>
     <div class="dc-body">${appBody}</div>
-    <button class="btn ghost full" onclick="${applied.length?"showAppliedList()":"goExplore()"}">${applied.length?'신청 현황 보기 →':'아이디어 둘러보기 →'}</button>
+    <button class="btn ghost full" onclick="${appList.length?"ORBIT._appliedTab='applied'; showAppliedList()":"goExplore()"}">${appList.length?'신청 현황 보기 →':'아이디어 둘러보기 →'}</button>
   </div>`;
 
   document.getElementById("dash-grid").innerHTML = c1 + c2 + c3 + c4;
@@ -1588,56 +1614,87 @@ function deleteProfile(){
 function showAppliedList(){ go("applied"); renderAppliedList(); }
 function renderAppliedList(){
   const applied = ORBIT.applied || [];
-  const accepted = applied.filter(a=>a.status==="accepted");
-  const pending  = applied.filter(a=>a.status!=="accepted");
+  const tab = ORBIT._appliedTab || "received";
+  const received = applied.filter(a=>(a.dir||"applied")==="received" && a.status!=="accepted");  // 슈터가 나에게 제안
+  const mine     = applied.filter(a=>(a.dir||"applied")==="applied"  && a.status!=="accepted");  // 내가 신청
+  const joined   = applied.filter(a=>a.status==="accepted");                                     // 합류(수락됨)
+  const shown = tab==="applied" ? mine : tab==="joined" ? joined : received;
 
-  const stat = (n, label, color)=>`<div style="text-align:center; flex:1">
-      <div style="font-size:22px; font-weight:800; color:${color}">${n}</div>
-      <div style="font-size:11.5px; color:var(--muted); margin-top:2px">${label}</div></div>`;
-  const summary = applied.length
-    ? `<div class="card"><div style="display:flex; gap:10px;">
-        ${stat(applied.length, "신청", "var(--navy)")}
-        ${stat(accepted.length, "수락됨", "var(--green)")}
-        ${stat(pending.length, "수락 대기", "#d97706")}
-      </div></div>`
-    : "";
+  const tabs = `<div class="prop-tabs" style="margin-bottom:14px;">
+    <button class="prop-tab ${tab==='received'?'on':''}" onclick="setAppliedTab('received')">📥 받은 제안 ${received.length}</button>
+    <button class="prop-tab ${tab==='applied'?'on':''}" onclick="setAppliedTab('applied')">📤 신청 현황 ${mine.length}</button>
+    <button class="prop-tab ${tab==='joined'?'on':''}" onclick="setAppliedTab('joined')">✅ 합류 ${joined.length}</button>
+  </div>`;
 
-  const row = (a,idx)=>{
+  const row = (a)=>{
+    const idx = applied.indexOf(a);
     const acc = a.status==="accepted";
     const rate = a.rate||0;
-    const isInv = a.kind==="investor";
+    const isRecv = (a.dir||"applied")==="received";
     const clickable = Array.isArray(a.qa) && a.qa.length;
+    let note, footer = "";
+    if(acc){ note = "🎉 함께하기로 했어요. 아래 채널에서 시작하세요."; }
+    else if(isRecv){
+      note = `🛰️ <b>${esc(a.fromShooter||"제공자")}</b>님이 합류를 제안했어요. 수락하면 팀에 합류해요.`;
+      footer = `<div style="display:flex; gap:9px; margin-top:12px;">
+        <button class="btn green" style="flex:2" onclick="showReceivedAnswer(${idx})">답변하고 수락 →</button>
+        <button class="btn ghost" style="flex:1" onclick="rejectReceived(${idx})">거절</button>
+      </div>`;
+    } else { note = "⏳ 제공자가 신청서를 확인하고 있어요. 수락되면 알려드릴게요."; }
     return `<div class="card" style="margin-bottom:11px">
       <div style="display:flex; align-items:center; gap:12px; ${clickable?'cursor:pointer;':''}" ${clickable?`onclick="showAppliedDetail(${idx})"`:''}>
         <div style="flex:1; min-width:0">
           <b style="color:var(--navy); font-size:15px">${esc(a.title)}</b>${clickable?`<span style="font-size:12px; color:var(--blue); font-weight:700; margin-left:6px;">상세·내 답변 →</span>`:''}
-          <div style="font-size:12.5px; color:var(--muted); margin-top:3px">${isInv?'💰 ':''}${esc(a.role||"추천 자리")}${isInv?'':' · 매칭률 '+rate+'%'}</div>
+          <div style="font-size:12.5px; color:var(--muted); margin-top:3px">${esc(a.role||"추천 자리")} · 매칭률 ${rate}%${a.date?` · 📅 ${esc(a.date)}`:''}</div>
         </div>
-        <span class="pill ${acc?'green':'amber'}">${acc?'수락됨 ✓':'수락 대기'}</span>
+        <span class="pill ${acc?'green':isRecv?'blue':'amber'}">${acc?'합류 ✓':isRecv?'제안 받음':'수락 대기'}</span>
       </div>
-      <div style="font-size:12.5px; color:#475569; margin-top:11px; padding-top:11px; border-top:1px solid var(--line);">
-        ${acc
-          ? (isInv ? "🎉 제공자가 투자 검토를 수락했어요. 아래 채널에서 미팅을 잡아보세요." : "🎉 제공자가 합류를 수락했어요. 아래 채널에서 함께 시작하세요.")
-          : (isInv ? "⏳ 제공자가 투자 제안을 검토하고 있어요. 수락되면 알려드릴게요." : "⏳ 제공자가 신청서를 확인하고 있어요. 수락되면 알려드릴게요.")}
-      </div>
+      <div style="font-size:12.5px; color:#475569; margin-top:11px; padding-top:11px; border-top:1px solid var(--line);">${note}</div>
+      ${footer}
       ${acc && a.channels ? teamChannelBlock(a) : ""}
     </div>`;
   };
 
-  const list = applied.length
-    ? applied.map((a,i)=>row(a,i)).join("")
-    : `<div class="card"><div class="dc-empty">아직 합류 신청한 아이디어가 없어요.<br>둘러보기에서 마음에 드는 팀에 합류를 신청해 보세요.</div>
+  const emptyMsg = tab==="applied" ? "아직 신청한 아이디어가 없어요." : tab==="joined" ? "아직 합류한 팀이 없어요." : "아직 받은 제안이 없어요.";
+  const list = shown.length ? shown.map(row).join("")
+    : `<div class="card"><div class="dc-empty">${emptyMsg}<br>둘러보기에서 마음에 드는 팀을 찾아보세요.</div>
         <button class="btn full" onclick="goExplore()">🛰️ 아이디어 둘러보기 →</button></div>`;
 
   document.getElementById("applied-body").innerHTML = `
     ${backBar("showDashboard()")}
     <div class="myhead" style="margin-top:14px">
-      <div class="myhi">✅ 신청 현황</div>
-      <div class="mymode">내가 합류 신청한 아이디어의 수락·대기 상태예요.</div>
+      <div class="myhi">📬 내 제안·신청</div>
+      <div class="mymode">받은 제안·내 신청·합류 상태를 한눈에 봐요.</div>
     </div>
-    ${summary}
+    ${tabs}
     ${list}`;
 }
+function setAppliedTab(t){ ORBIT._appliedTab = t; renderAppliedList(); }
+/* 받은 제안 수락 = 합류 질문에 답하고 수락 (슈터가 그 답변을 보게 됨 — 신청 흐름과 대칭) */
+function showReceivedAnswer(idx){
+  const a = ORBIT.applied[idx]; if(!a) return;
+  const qs = [(a.aiQuestions||[])[0], (a.aiQuestions||[])[1], a.founderQuestion].filter(Boolean);
+  const qhtml = qs.map((q,i)=>`<div class="qcard"><p class="qtext">${esc(q)}<span class="qsrc ${i===qs.length-1?'prv':'ai'}">${i===qs.length-1?'제공자':'AI'}</span></p><textarea id="rans-${i}" style="margin-top:9px" placeholder="여기에 답변을 입력해 주세요..."></textarea></div>`).join("");
+  document.getElementById("applied-body").innerHTML = `
+    ${backBar("showAppliedList()")}
+    <div class="myhead" style="margin-top:14px"><div class="myhi">✍️ ${esc(a.title)} 합류 질문</div>
+      <div class="mymode"><b>${esc(a.fromShooter||'제공자')}</b>님이 제안했어요. 질문에 답하고 수락하면 팀에 합류해요.</div></div>
+    <div class="card fade">${qhtml || '<p style="color:var(--muted); font-size:13px;">등록된 질문이 없어요.</p>'}
+      <button class="btn green full" style="margin-top:6px" onclick="submitReceivedAnswer(${idx})">답변하고 합류하기 →</button>
+    </div>`;
+}
+function submitReceivedAnswer(idx){
+  const a = ORBIT.applied[idx]; if(!a) return;
+  const qs = [(a.aiQuestions||[])[0], (a.aiQuestions||[])[1], a.founderQuestion].filter(Boolean);
+  const ans = qs.map((_,i)=>{ const el=document.getElementById("rans-"+i); return el?el.value.trim():""; });
+  if(ans.some(x=>!x)){ alert("모든 질문에 답해 주세요."); return; }
+  a.qa = qs.map((q,i)=>({q, a:ans[i], founder:(i===qs.length-1)}));   // 답변 저장 → 합류 후 '상세·내 답변'에서 열람
+  a.status = "accepted";
+  ORBIT._appliedTab = "joined";
+  alert("🎉 합류했어요! 아래 채널에서 함께 시작해요.");
+  showAppliedList();
+}
+function rejectReceived(idx){ const a=ORBIT.applied[idx]; if(!a) return; if(confirm(`'${a.title}' 제안을 거절할까요? 되돌릴 수 없어요.`)){ ORBIT.applied.splice(idx,1); renderAppliedList(); } }
 /* 신청한 아이디어 상세 + 내가 답한 3질문 (신청 시 작성한 답변) */
 function showAppliedDetail(idx){
   const a = (ORBIT.applied||[])[idx]; if(!a) return;
