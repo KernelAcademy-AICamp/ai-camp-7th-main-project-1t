@@ -1892,6 +1892,19 @@ function ipfChip(btn, single){
   if(single){ btn.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('on')); btn.classList.add('on'); }
   else { btn.classList.toggle('on'); }
 }
+/* 투자자 폼 '복수 선택 · 직접 입력' — 목록에 없는 값은 삭제 가능한 칩으로 추가(클릭 시 삭제) */
+function ipfCustomChip(v){ return `<button type="button" class="chip on" data-v="${esc(v)}" title="클릭하면 삭제" onclick="this.remove()">${esc(v)} <span style="opacity:.55">✕</span></button>`; }
+function ipfAddCustom(groupId, value){
+  const v=(value||"").trim(); if(!v) return;
+  const grp=document.getElementById(groupId); if(!grp) return;
+  const dup=[...grp.querySelectorAll('.chip')].find(c=>c.dataset.v===v);
+  if(dup){ dup.classList.add('on'); return; }   // 이미 있으면 선택 상태로
+  grp.insertAdjacentHTML('beforeend', ipfCustomChip(v));
+}
+function ipfCustomKey(e, groupId){
+  if(e.key==='Enter' || e.key===','){ e.preventDefault(); ipfAddCustom(groupId, e.target.value); e.target.value=''; }
+}
+function ipfCustomFlush(input, groupId){ if(input && input.value.trim()){ ipfAddCustom(groupId, input.value); input.value=''; } }
 /* 투자자 프로필 입력 폼(단일 폼) */
 function renderInvestorProfile(){
   document.getElementById("rider-intro").classList.add("hidden");
@@ -1901,13 +1914,21 @@ function renderInvestorProfile(){
   const uname = esc(ORBIT.user||"투자자");
   const lab = t=>`<label style="display:block; font-size:13.5px; font-weight:800; color:var(--navy); margin:16px 0 8px;">${t}</label>`;
   const group=(id,opts,sel,single)=>`<div id="${id}" style="display:flex; flex-wrap:wrap; gap:8px;">`+opts.map(o=>`<button type="button" class="chip${(single? sel===o : (sel||[]).includes(o))?' on':''}" data-v="${esc(o)}" onclick="ipfChip(this,${single})">${esc(o)}</button>`).join("")+`</div>`;
+  // 복수 선택 + 직접 입력: 저장된 목록 외 값은 삭제 가능한 칩으로 미리 표시, 아래 입력칸으로 추가
+  const multiGroup=(id,opts,sel)=>{
+    sel = sel||[];
+    const fixed = opts.map(o=>`<button type="button" class="chip${sel.includes(o)?' on':''}" data-v="${esc(o)}" onclick="ipfChip(this,false)">${esc(o)}</button>`).join("");
+    const extras = sel.filter(v=>!opts.includes(v)).map(v=>ipfCustomChip(v)).join("");
+    return `<div id="${id}" style="display:flex; flex-wrap:wrap; gap:8px;">${fixed}${extras}</div>
+      <input class="pf-in" id="${id}-custom" style="margin-top:10px" placeholder="목록에 없으면 직접 입력 후 쉼표(,) 또는 Enter — 여러 개 가능" onkeydown="ipfCustomKey(event,'${id}')" onblur="ipfCustomFlush(this,'${id}')">`;
+  };
   pf.innerHTML = `
     <div class="card fade" style="margin-top:14px">
       <p class="eyebrow">💰 투자자 프로필</p>
       ${lab(`🙋 ${uname} 님을 한 줄로 소개한다면요?`)}
       <input id="ip-headline" class="pf-in" placeholder="예) 초기 스타트업에 베팅하는 엔젤 투자자" value="${esc(p.headline||"")}">
-      ${lab("💡 관심 분야 <span style='font-weight:600;color:var(--muted)'>(복수 선택)</span>")}
-      ${group('ip-domains', PF_OPTS.interest_domains.opts, p.interest_domains, false)}
+      ${lab("💡 관심 분야 <span style='font-weight:600;color:var(--muted)'>(복수 선택 · 직접 입력 가능)</span>")}
+      ${multiGroup('ip-domains', PF_OPTS.interest_domains.opts, p.interest_domains)}
       ${lab("📈 투자 단계")}
       ${group('ip-stage', ["엔젤","시드","프리A","시리즈A 이상"], p.invest_stage, true)}
       ${lab("💵 투자 규모")}
@@ -1916,8 +1937,8 @@ function renderInvestorProfile(){
       ${group('ip-style', ["리드 투자","팔로우 위주","리드·팔로우 모두"], p.invest_style, true)}
       ${lab("💼 대표 투자 이력 <span style='font-weight:600;color:var(--muted)'>(쉼표/줄바꿈 구분)</span>")}
       <textarea id="ip-portfolio" class="pf-in" style="min-height:64px" placeholder="예) 리필리(시드), 제로마켓(시드)">${esc((p.portfolio||[]).join(", "))}</textarea>
-      ${lab("🤝 자금 외 지원 <span style='font-weight:600;color:var(--muted)'>(복수 선택)</span>")}
-      ${group('ip-support', ["초기 브랜딩","네트워크 연결","채용 연결","후속 라운드 소개","IR 코칭","멘토링"], p.support, false)}
+      ${lab("🤝 자금 외 지원 <span style='font-weight:600;color:var(--muted)'>(복수 선택 · 직접 입력 가능)</span>")}
+      ${multiGroup('ip-support', ["초기 브랜딩","네트워크 연결","채용 연결","후속 라운드 소개","IR 코칭","멘토링"], p.support)}
       ${lab("💬 덧붙이고 싶은 말")}
       <textarea id="ip-bio" class="pf-in" style="min-height:64px" placeholder="투자 관점·강점 등">${esc(p.bio||"")}</textarea>
       ${lab("📎 링크 <span style='font-weight:600;color:var(--muted)'>(선택)</span>")}
@@ -1928,6 +1949,8 @@ function renderInvestorProfile(){
 function saveInvestorProfile(){
   const val=id=>{ const e=document.getElementById(id); return e?e.value.trim():""; };
   const chosen=(id,single)=>{ const box=document.getElementById(id); if(!box) return single?"":[]; const v=[...box.querySelectorAll('.chip.on')].map(c=>c.dataset.v); return single?(v[0]||""):v; };
+  ipfCustomFlush(document.getElementById('ip-domains-custom'),'ip-domains');   // 입력칸에 남은 직접 입력분 반영
+  ipfCustomFlush(document.getElementById('ip-support-custom'),'ip-support');
   const headline=val('ip-headline'); const interest=chosen('ip-domains',false);
   if(!headline){ alert("한 줄 소개를 입력해 주세요."); return; }
   if(!interest.length){ alert("관심 분야를 하나 이상 선택해 주세요."); return; }
