@@ -388,6 +388,21 @@
   .fit-fill{height:100%; background:var(--blue); border-radius:10px;}
   .fit-fill.done{background:var(--green);}
   .applied-note{background:#f8fafc; border:1px solid var(--line); border-radius:10px; padding:12px 14px; font-size:12.5px; color:#475569; line-height:1.6;}
+  .offer-card{background:#fff; border:1px solid #E5EAF2; border-radius:18px; padding:22px 24px; margin-top:12px;}
+  .offer-header{display:flex; justify-content:space-between; align-items:center; gap:10px;}
+  .offer-label{display:flex; align-items:center; gap:5px; font-size:12px; font-weight:600; color:var(--blue);}
+  .match-badge{background:#dcfce7; color:#16a34a; font-size:12px; font-weight:600; padding:3px 10px; border-radius:20px; white-space:nowrap;}
+  .offer-title{font-size:16px; font-weight:700; color:var(--navy); margin-top:8px; line-height:1.35;}
+  .offer-reason{font-size:13px; color:#4B5563; margin-top:6px; line-height:1.5;}
+  .offer-guide{font-size:12.5px; color:#6B7280; margin-top:4px;}
+  .offer-actions{display:grid; grid-template-columns:minmax(110px,0.35fr) minmax(0,1fr); gap:10px; margin-top:16px;}
+  .reject-button, .accept-button{border-radius:9px; padding:11px 14px; font-size:14px; font-weight:800; cursor:pointer; font-family:inherit; transition:.15s;}
+  .reject-button{background:#fff; border:1px solid #D7DCE5; color:#374151;}
+  .reject-button:hover{background:#f8fafc;}
+  .accept-button{background:var(--green); border:none; color:#fff;}
+  .accept-button:hover{filter:brightness(.94);}
+  .reject-button:focus-visible, .accept-button:focus-visible{outline:2px solid var(--blue); outline-offset:2px;}
+  @media(max-width:520px){ .offer-actions{grid-template-columns:1fr;} .accept-button{order:-1;} }
   .prop-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
   .prop-card{border:1px solid var(--line); border-radius:13px; padding:12px 13px; cursor:pointer; transition:.15s; display:flex; flex-direction:column; gap:5px; min-width:0;}
   .prop-card:hover{border-color:var(--blue); box-shadow:0 3px 12px rgba(37,99,235,.09);}
@@ -992,14 +1007,16 @@ const DEMO_RIDER_APPLIED = [
      {q:"리필 습관을 사람들이 계속하게 하려면 무엇이 필요할까요?", a:"보람이 보여야 이어져요. 리필 횟수를 눈에 보이게 만드는 콘텐츠를 생각합니다.", founder:true},
    ]},
   // 받은 제안 — 슈터가 이라이더(마케팅·콘텐츠)에게 먼저 제안한 것 (dir:received, 아직 라이더 응답 전이라 qa 없음)
-  {title:"손맛 배송", role:"SNS·콘텐츠 마케팅", rate:74, status:"pending", dir:"received", date:"2026.07.08",
-   lead:"바쁜 1인 가구도 집밥의 온기를 — 지역 어르신의 반찬을 정기배송해요.",
-   fromShooter:"박손맛",
-   aiQuestions:["SNS·콘텐츠 마케팅 경험이 있나요?","지역·로컬 서비스에 관심이 있나요?"], founderQuestion:"어르신 반찬을 어떻게 '사고 싶게' 알릴 수 있을까요?",
-   channels:{kakao:"https://open.kakao.com/o/sonmat", slack:"https://sonmat.slack.com", email:"team@sonmat.kr", zoom:"https://calendly.com/sonmat/meet"}},
-  {title:"왈크메이트", role:"브랜드 콘텐츠", rate:68, status:"pending", dir:"received", date:"2026.07.06",
+  {title:"클립팀", role:"크리에이터 커뮤니티를 운영할 사람", rate:82, status:"pending", dir:"received", date:"2026.07.08",
+   lead:"기획·촬영·편집이 필요한 크리에이터끼리 협업을 잇습니다.",
+   fromShooter:"정클립",
+   reason:"SNS·콘텐츠 제작 경험이 크리에이터 커뮤니티를 키우는 데 딱 맞아요. Gen Z 트렌드 감각도 강점이에요.",
+   aiQuestions:["SNS·콘텐츠 제작·운영 경험이 있나요?","크리에이터 커뮤니티 운영에 관심이 있나요?"], founderQuestion:"크리에이터들이 계속 모이게 하려면 무엇이 필요할까요?",
+   channels:{kakao:"https://open.kakao.com/o/clipteam", slack:"https://clipteam.slack.com", email:"team@clipteam.kr", zoom:"https://calendly.com/clipteam/meet"}},
+  {title:"왈크메이트", role:"동네 단위 마케팅을 할 수 있는 사람", rate:76, status:"pending", dir:"received", date:"2026.07.06",
    lead:"바빠서 산책 못 시키는 견주와 이웃을 동네 단위로 안전하게 연결해요.",
    fromShooter:"이왈크",
+   reason:"Gen Z 타깃 마케팅 이해도가 높아 동네 단위 확산에 강해요.",
    aiQuestions:["브랜드 콘텐츠·SNS 운영 경험이 있나요?","반려동물·지역 커뮤니티에 관심이 있나요?"], founderQuestion:"산책 대행의 신뢰를 콘텐츠로 어떻게 쌓을 수 있을까요?",
    channels:{kakao:"https://open.kakao.com/o/walkmate", slack:"https://walkmate.slack.com", email:"team@walkmate.kr", zoom:"https://calendly.com/walkmate/meet"}},
 ];
@@ -1513,6 +1530,15 @@ function toggleRoles(idx){
   g.style.display = closed ? "grid" : "none";
   if(ar) ar.textContent = closed ? "▲" : "▼";
 }
+/* 받은 제안 상세 — '이 아이디어가 찾는 팀원' 접기/펴기 */
+function toggleRecvSeats(){
+  const g = document.getElementById("recvseats");
+  const ar = document.getElementById("rst-arrow");
+  if(!g) return;
+  const closed = g.style.display === "none";
+  g.style.display = closed ? "block" : "none";
+  if(ar) ar.textContent = closed ? "▲" : "▼";
+}
 function showDashboard(){ go("dashboard"); renderDashboard(); }
 function renderDashboard(){
   document.getElementById("dashName").textContent = ORBIT.user || "";
@@ -1667,7 +1693,7 @@ function appliedRow(a){
   const acc = a.status==="accepted";
   const rate = a.rate||0;
   const isRecv = (a.dir||"applied")==="received";
-  const clickable = Array.isArray(a.qa) && a.qa.length;
+  const clickable = true;  const hasAnswer = Array.isArray(a.qa) && a.qa.length;
   const badge = acc ? '<span class="pill green">합류 완료</span>'
     : isRecv ? '<span class="pill blue">새 제안</span>'
     : '<span class="pill amber">수락 대기</span>';
@@ -1679,13 +1705,13 @@ function appliedRow(a){
     note = `🛰️ <b>${esc(a.fromShooter||"제공자")}</b>님이 함께 ORBIT 하자고 제안했어요. 수락하면 팀에 합류해요.`;
     footer = `<div style="display:flex; gap:9px; margin-top:13px; justify-content:flex-end;">
       <button class="btn ghost" onclick="rejectReceived(${idx})">거절</button>
-      <button class="btn green" onclick="showReceivedAnswer(${idx})">답변하고 수락 →</button>
+      <button class="btn green" onclick="openReceivedDetail(${idx})">답변하고 수락 →</button>
     </div>`;
   } else { note = "⏳ 제공자가 신청서를 확인하고 있어요. 수락되면 알려드릴게요."; }
   return `<div class="card" style="margin-bottom:12px;${acc?'background:#f0fdf4; border-color:#bbf7d0;':''}">
     <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
-      <div style="min-width:0; ${clickable?'cursor:pointer;':''}" ${clickable?`onclick="showAppliedDetail(${idx})"`:''}>
-        <b style="color:var(--navy); font-size:16px;">${esc(a.title)}</b>${clickable?`<span style="font-size:12px; color:var(--blue); font-weight:700; margin-left:6px;">상세·내 답변 →</span>`:''}
+      <div style="min-width:0; cursor:pointer;" onclick="${isRecv?`openReceivedDetail(${idx})`:`showAppliedDetail(${idx})`}">
+        <b style="color:var(--navy); font-size:16px;">${esc(a.title)}</b><span style="font-size:12px; color:var(--blue); font-weight:700; margin-left:6px;">${hasAnswer?'상세·내 답변 →':'상세 보기 →'}</span>
         <div style="font-size:12px; color:var(--muted); margin-top:2px;">${sub}</div>
       </div>
       ${badge}
@@ -1736,8 +1762,23 @@ function renderAppliedList(){
 }
 function setAppliedTab(t){ const sy=window.scrollY; ORBIT._appliedTab = t; const z=document.getElementById("applied-zone"); if(z) z.innerHTML = appliedZoneHtml(); window.scrollTo(0, sy); }
 /* 받은 제안 수락 = 합류 질문에 답하고 수락 (슈터가 그 답변을 보게 됨 — 신청 흐름과 대칭) */
+/* 받은 제안 제목으로 full 기획안(vision) 찾기 — 둘러보기·데모 프로젝트·내 아이디어 풀에서 */
+function findVisionByTitle(title){
+  const t = (title||"").toString().trim();
+  const pool = [DEMO_PROJECT].concat(DEMO_IDEAS, (ORBIT.myIdeas||[]).map(it=>it.vision));
+  return pool.find(v => v && (v.serviceName||"").toString().trim() === t) || null;
+}
+/* 받은 제안 → 아이디어 기획안 상세로(있으면), 없으면 바로 답변 폼 */
+function openReceivedDetail(idx){
+  const a = ORBIT.applied[idx]; if(!a) return;
+  ORBIT._receivedIdx = idx;
+  const v = findVisionByTitle(a.title);
+  if(v) openDetail(v, false, idx);
+  else showReceivedAnswer(idx);
+}
 function showReceivedAnswer(idx){
   const a = ORBIT.applied[idx]; if(!a) return;
+  go("applied");
   const qs = [(a.aiQuestions||[])[0], (a.aiQuestions||[])[1], a.founderQuestion].filter(Boolean);
   const qhtml = qs.map((q,i)=>`<div class="qcard"><p class="qtext">${esc(q)}<span class="qsrc ${i===qs.length-1?'prv':'ai'}">${i===qs.length-1?'제공자':'AI'}</span></p><textarea id="rans-${i}" style="margin-top:9px" placeholder="여기에 답변을 입력해 주세요..."></textarea></div>`).join("");
   document.getElementById("applied-body").innerHTML = `
@@ -1759,20 +1800,22 @@ function submitReceivedAnswer(idx){
   alert("🎉 합류했어요! 아래 채널에서 함께 시작해요.");
   showAppliedList();
 }
-function rejectReceived(idx){ const a=ORBIT.applied[idx]; if(!a) return; if(confirm(`'${a.title}' 제안을 거절할까요? 되돌릴 수 없어요.`)){ ORBIT.applied.splice(idx,1); renderAppliedList(); } }
+function rejectReceived(idx){ const a=ORBIT.applied[idx]; if(!a) return; if(confirm(`'${a.title}' 제안을 거절할까요? 되돌릴 수 없어요.`)){ ORBIT.applied.splice(idx,1); go("applied"); renderAppliedList(); } }
 /* 신청한 아이디어 상세 + 내가 답한 3질문 (신청 시 작성한 답변) */
 function showAppliedDetail(idx){
   const a = (ORBIT.applied||[])[idx]; if(!a) return;
   const acc = a.status==="accepted";
+  const isRecv = (a.dir||"applied")==="received";
   const qa = a.qa||[];
   document.getElementById("applied-body").innerHTML = `
     ${backBar("showAppliedList()")}
     <div class="card" style="margin-top:14px">
       <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
         <span style="font-size:20px; font-weight:800; color:var(--navy)">${esc(a.title)}</span>
-        <span class="pill ${acc?'green':'amber'}">${acc?'수락됨 ✓':'수락 대기'}</span>
+        <span class="pill ${acc?'green':isRecv?'blue':'amber'}">${acc?'수락됨 ✓':isRecv?'새 제안':'수락 대기'}</span>
       </div>
       ${a.lead?`<div style="font-size:13.5px; color:var(--muted); margin-top:8px; line-height:1.6;">${esc(a.lead)}</div>`:''}
+      ${isRecv&&a.fromShooter?`<div style="margin-top:9px; font-size:12.5px; color:var(--blue); font-weight:700;">🛰️ ${esc(a.fromShooter)}님이 함께 ORBIT 하자고 제안했어요.</div>`:''}
       <div style="margin-top:11px; font-size:13px; color:var(--muted);"><b style="color:var(--navy)">희망 자리</b> · ${esc(a.role||'-')} · 매칭률 ${a.rate||0}%</div>
     </div>
     ${qa.length?`<div class="card"><p class="eyebrow">📝 내가 답한 합류 질문 <span style="font-weight:600;color:var(--muted);font-size:10.5px">· 신청 시 작성</span></p>
@@ -2674,10 +2717,11 @@ function renderBrowse(){
 }
 
 function viewMyIdea(idx){ const it=ORBIT.myIdeas[idx]; if(it) openDetail(it.vision, true); }
-async function openDetail(v, isOwner){
+async function openDetail(v, isOwner, receivedIdx){
   if(!v) return;
-  // 둘러보기 아이디어 상세는 구독 게이트(내 아이디어 isOwner 는 무료)
-  if(!isOwner && !ORBIT.subscribed){ return showSubGate(()=>openDetail(v, isOwner)); }
+  const isReceived = (receivedIdx != null);   // 받은 제안 모드(슈터가 라이더에게 제안 → 상세 보고 수락)
+  // 둘러보기 아이디어 상세는 구독 게이트(내 아이디어 isOwner·받은 제안 isReceived 는 무료)
+  if(!isOwner && !isReceived && !ORBIT.subscribed){ return showSubGate(()=>openDetail(v, isOwner, receivedIdx)); }
   ORBIT.detailVision = v;
   go("detail");
   const story = (v.story||[]).map(t=>`<p>${esc(t)}</p>`).join("");
@@ -2696,6 +2740,31 @@ async function openDetail(v, isOwner){
         <p class="eyebrow">💰 투자 검토 · 제공자와 질문을 주고받아요</p>
         <p style="font-size:12.5px; color:#475569; margin:2px 0 12px;">몇 가지 질문에 답하고 제공자에게 궁금한 점을 물으면, <b>제공자의 답변</b>과 함께 투자 관심을 남길 수 있어요.</p>
         <button class="btn full" id="investBtn" onclick="investApply()">투자 검토 질문에 답하기 →</button>
+      </div>
+      <div id="joinResult"></div>`;
+  const _recvProp = (receivedIdx!=null && ORBIT.applied) ? (ORBIT.applied[receivedIdx]||{}) : {};
+  const _recvPos = (_recvProp.role || '').trim();
+  const _recvReason = _recvProp.reason || '';
+  const _recvSeats = (v.neededTeammates||[]).map(m=>{
+    const mine = _recvPos && (m.role||'').trim()===_recvPos;
+    return `<div class="role" style="${mine?'background:#eff6ff; border-color:#bfdbfe;':''}"><span class="mk">${mine?'✅':'◎'}</span><div><b style="color:var(--navy)">${esc(m.role)}</b>${mine?`<span style="margin-left:7px; font-size:11px; color:var(--blue); font-weight:800;">← 내가 제안받은 자리</span>`:''}<div class="rdet">${esc(m.detail)}</div></div></div>`;
+  }).join("");
+  const receivedAction = `<div class="card">
+        <p class="eyebrow">🧩 이 아이디어가 찾는 팀원</p>
+        <div>${_recvSeats}</div>
+      </div>
+      <div class="offer-card">
+        <div class="offer-header">
+          <span class="offer-label"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>합류 제안</span>
+          <span class="match-badge">${_recvProp.rate||0}% 일치</span>
+        </div>
+        <div class="offer-title">${esc(_recvPos||'추천 자리')}</div>
+        ${_recvReason?`<div class="offer-reason">${esc(_recvReason)}</div>`:''}
+        <div class="offer-guide">3개의 질문에 답하고 팀 합류를 결정해보세요.</div>
+        <div class="offer-actions">
+          <button class="reject-button" onclick="rejectReceived(${receivedIdx})">거절하기</button>
+          <button class="accept-button" onclick="showReceivedAnswer(${receivedIdx})">답변하고 수락하기 →</button>
+        </div>
       </div>
       <div id="joinResult"></div>`;
   const action = isOwner
@@ -2721,6 +2790,7 @@ async function openDetail(v, isOwner){
           <button class="btn ghost sm" onclick="deleteDetailIdea()">삭제하기</button>
         </div>
       </div>`
+    : isReceived ? receivedAction
     : (isInvestor ? investorAction : riderAction);
   document.getElementById("detail-body").innerHTML = `
     ${back}
