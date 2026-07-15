@@ -59,12 +59,23 @@
   .br.s{background:rgba(37,99,235,.22); color:#bfdbfe; box-shadow:inset 0 0 0 1px rgba(96,165,250,.4);}
   .br.t{background:rgba(22,163,74,.2); color:#bbf7d0; box-shadow:inset 0 0 0 1px rgba(74,222,128,.4);}
   .br.i{background:rgba(217,119,6,.22); color:#fde68a; box-shadow:inset 0 0 0 1px rgba(251,191,36,.45);}
+  .br.r{background:rgba(148,163,184,.2); color:#e2e8f0; box-shadow:inset 0 0 0 1px rgba(148,163,184,.45);}
+  .br-sub{font-weight:700; opacity:.72; font-size:11.5px;}
 
   .funnel{display:flex; justify-content:center; gap:34px; color:#cbd5e1; margin:2px 0 4px;}
   .funnel span{font-size:20px; line-height:1;}
 
   /* ── lanes ── */
-  .lanes{display:grid; grid-template-columns:repeat(auto-fit,minmax(288px,1fr)); gap:18px; margin-top:6px;}
+  .top-split{display:grid; grid-template-columns:minmax(280px,1fr) minmax(0,1.9fr); gap:18px; margin-top:6px; align-items:start;}
+  .rider-group{border:1.5px dashed var(--blue-line); border-radius:20px; padding:14px 14px 16px; background:linear-gradient(180deg,#fbfdff,#f4f8ff);}
+  .rider-cap{display:flex; align-items:center; gap:11px; padding:6px 6px 13px;}
+  .rider-cap .rc-ic{width:34px; height:34px; border-radius:10px; display:grid; place-items:center; font-size:17px; background:#fff; box-shadow:inset 0 0 0 1px var(--line);}
+  .rider-cap .rc-t{font-size:15px; font-weight:850; color:var(--navy); letter-spacing:.02em;}
+  .rider-cap .rc-d{font-size:12px; color:var(--muted); margin-top:1px;}
+  .rider-cap .rc-d b{color:var(--body); font-weight:750;}
+  .rider-lanes{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  @media (max-width:860px){ .top-split{grid-template-columns:1fr;} }
+  @media (max-width:560px){ .rider-lanes{grid-template-columns:1fr;} }
   .lane{background:var(--card); border:1px solid var(--line); border-radius:18px; overflow:hidden;
     box-shadow:0 14px 34px -26px rgba(15,23,42,.4); display:flex; flex-direction:column;}
   .lane-head{display:flex; align-items:center; gap:12px; padding:16px 18px; border-bottom:1px solid var(--line);}
@@ -185,14 +196,13 @@
       </div>
       <div class="branches">
         <span class="br s">🚀 Shooter</span>
-        <span class="br t">🧑‍💻 Rider · 팀원</span>
-        <span class="br i">💰 Rider · 투자자</span>
+        <span class="br r">🧭 Rider <span class="br-sub">→ 팀원 · 투자자</span></span>
       </div>
     </div>
-    <div class="funnel"><span>↓</span><span>↓</span><span>↓</span></div>
+    <div class="funnel"><span>↓</span><span>↓</span></div>
 
-    <!-- three lanes -->
-    <div class="lanes">
+    <!-- Shooter | Rider(팀원·투자자) -->
+    <div class="top-split">
 
       <!-- Shooter -->
       <section class="lane lane-s">
@@ -213,15 +223,24 @@
         </ol>
       </section>
 
-      <!-- Rider · 팀원 -->
+      <div class="rider-group">
+        <div class="rider-cap">
+          <span class="rc-ic">🧭</span>
+          <div>
+            <div class="rc-t">Rider</div>
+            <div class="rc-d">아이디어에 <b>합류(팀원)</b>할지, <b>투자·자문(투자자)</b>할지 선택합니다</div>
+          </div>
+        </div>
+        <div class="rider-lanes">
+
+      <!-- Rider → 팀원 -->
       <section class="lane lane-t">
         <div class="lane-head">
           <div class="lane-ic">🧑‍💻</div>
-          <div><div class="lane-role">Rider · 팀원</div><div class="lane-sub">합류할 사람</div></div>
+          <div><div class="lane-role">팀원</div><div class="lane-sub">합류할 사람</div></div>
           <div class="lane-tag">둘러보기 → 합류</div>
         </div>
         <ol class="steps">
-          <li><span class="st">유형 선택: 팀원</span><span class="sd">로그인 후 “팀원으로” 갈래를 고릅니다.</span></li>
           <li><span class="st">팀원 프로필 작성</span><span class="sd">역량·관심 분야·투입 시간·협업 방식을 등록.</span></li>
           <li><span class="st">아이디어 둘러보기</span><span class="sd">관심 가는 프로젝트를 카드로 훑어봅니다.</span></li>
           <li><span class="st">아이디어 상세 열기<span class="flag pay">Pro</span></span><span class="sd">상세·연락은 구독(Pro). 합류 완료·내 아이디어는 무료.</span></li>
@@ -236,11 +255,10 @@
       <section class="lane lane-i">
         <div class="lane-head">
           <div class="lane-ic">💰</div>
-          <div><div class="lane-role">Rider · 투자자</div><div class="lane-sub">투자·자문할 사람</div></div>
+          <div><div class="lane-role">투자자</div><div class="lane-sub">투자·자문할 사람</div></div>
           <div class="lane-tag">둘러보기 → 투자</div>
         </div>
         <ol class="steps">
-          <li><span class="st">유형 선택: 투자자</span><span class="sd">로그인 후 “투자자로” 갈래를 고릅니다.</span></li>
           <li><span class="st">투자자 프로필 작성</span><span class="sd">관심 분야·투자 단계·규모·성향·자금 외 지원 등록.</span></li>
           <li><span class="st">둘러보기 (선별 노출)<span class="flag gate">노출 통제</span></span><span class="sd"><b>‘투자 받기’를 켠 아이디어만</b> 목록에 보입니다.</span></li>
           <li><span class="st">아이디어 상세 열기<span class="flag pay">Pro</span></span><span class="sd">상세·연락은 구독(Pro).</span></li>
@@ -250,6 +268,8 @@
           <li><span class="st">수락되면 투자 논의</span><span class="sd">미팅으로 이어져 실사·조건을 이어갑니다.</span></li>
         </ol>
       </section>
+        </div>
+      </div>
     </div>
 
     <!-- convergence -->
