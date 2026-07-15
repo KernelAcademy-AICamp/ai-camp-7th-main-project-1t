@@ -596,6 +596,11 @@ BOOST_SCHEMA = _obj({
         ["q", "options"])},
 }, ["questions"])
 
+QUESTION_SCHEMA = _obj({
+    "aiQuestionCandidates": {"type": "array", "items": {"type": "string"}},
+    "founderQuestionSuggestions": {"type": "array", "items": {"type": "string"}},
+}, ["aiQuestionCandidates", "founderQuestionSuggestions"])
+
 MATCH_SCHEMA = _obj({
     "matches": {"type": "array", "items": _obj(
         {"name": {"type": "string"}, "fitsRole": {"type": "string"},
@@ -645,7 +650,7 @@ def generate_vision(idea: str, target_answer: str = "", strength_answer: str = "
 
     response = client.messages.create(
         model="claude-sonnet-4-6",  # 속도·비용·품질 균형이 좋은 모델 (Opus보다 약 1.6배 저렴)
-        max_tokens=3000,
+        max_tokens=4096,
         output_config={"effort": "low", "format": {"type": "json_schema", "schema": VISION_SCHEMA}},
         system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": user_prompt}],
@@ -901,7 +906,7 @@ def recommend_questions(vision: dict) -> dict:
     )
     response = client.messages.create(
         model="claude-sonnet-4-6", max_tokens=1000,
-        output_config={"effort": "low"},
+        output_config={"effort": "low", "format": {"type": "json_schema", "schema": QUESTION_SCHEMA}},
         system=QUESTION_SYSTEM_PROMPT,
         messages=[{"role": "user", "content": user_prompt}],
     )
