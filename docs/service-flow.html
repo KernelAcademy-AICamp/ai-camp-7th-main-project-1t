@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ORBIT 서비스 흐름도 — 제공자·팀원·투자자</title>
+<style>html,body{margin:0;padding:0;height:100%;}</style>
+</head>
+<body>
+<style>
+  :root{
+    --navy:#0b1226; --ink:#1e293b; --body:#334155; --muted:#64748b;
+    --blue:#2563eb; --sky:#eff6ff; --blue-line:#bfdbfe;
+    --green:#16a34a; --green-tint:#f0fdf4; --green-line:#bbf7d0;
+    --amber:#d97706; --amber-deep:#92400e; --amber-tint:#fffbeb; --amber-line:#fde68a;
+    --ground:#f7f9fc; --card:#ffffff; --line:#e6ebf2;
+  }
+  *{box-sizing:border-box;}
+  .flow{
+    font-family:'Pretendard',-apple-system,'Apple SD Gothic Neo','Malgun Gothic','Segoe UI',system-ui,sans-serif;
+    background:
+      radial-gradient(1200px 480px at 15% -8%, #ffffff 0%, rgba(255,255,255,0) 60%),
+      var(--ground);
+    color:var(--body); line-height:1.6; padding:44px 22px 64px; min-height:100%;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1120px; margin:0 auto;}
+
+  /* ── masthead ── */
+  .mast{margin-bottom:30px;}
+  .brand{display:inline-flex; align-items:center; gap:8px; font-weight:800; letter-spacing:.14em;
+    font-size:12.5px; color:var(--blue); text-transform:uppercase;}
+  .brand .dot{width:16px; height:16px; border-radius:50%;
+    background:conic-gradient(from 210deg,var(--navy),var(--blue) 55%,#7dd3fc);}
+  h1{font-size:clamp(26px,4.5vw,38px); line-height:1.12; letter-spacing:-.02em; color:var(--navy);
+    font-weight:850; margin:12px 0 8px; text-wrap:balance;}
+  .sub{font-size:15px; color:var(--muted); max-width:62ch; margin:0;}
+  .stamp{margin-top:12px; font-size:11.5px; letter-spacing:.03em; color:var(--muted);
+    font-variant-numeric:tabular-nums;}
+
+  /* ── legend ── */
+  .legend{display:flex; flex-wrap:wrap; gap:8px 10px; margin-top:20px;}
+  .lg{display:inline-flex; align-items:center; gap:7px; font-size:12px; font-weight:700; color:var(--ink);
+    background:var(--card); border:1px solid var(--line); border-radius:999px; padding:6px 12px 6px 10px;}
+  .lg .sw{width:11px; height:11px; border-radius:3px;}
+
+  /* ── shared entry ── */
+  .entry{background:var(--navy); border-radius:18px; padding:20px 22px; margin:26px 0 8px;
+    display:flex; flex-wrap:wrap; align-items:center; gap:16px 22px; color:#e5edff;
+    box-shadow:0 18px 40px -22px rgba(11,18,38,.55);}
+  .entry .ekey{display:flex; align-items:center; gap:12px;}
+  .entry .enum{flex:0 0 auto; width:38px; height:38px; border-radius:11px; display:grid; place-items:center;
+    background:rgba(255,255,255,.1); font-size:18px;}
+  .entry .etitle{font-weight:800; color:#fff; font-size:16px; letter-spacing:-.01em;}
+  .entry .edesc{font-size:12.5px; color:#a9b8de;}
+  .branches{display:flex; flex-wrap:wrap; gap:8px; margin-left:auto;}
+  .br{font-size:12.5px; font-weight:800; padding:8px 13px; border-radius:10px; white-space:nowrap;
+    display:inline-flex; align-items:center; gap:6px;}
+  .br.s{background:rgba(37,99,235,.22); color:#bfdbfe; box-shadow:inset 0 0 0 1px rgba(96,165,250,.4);}
+  .br.t{background:rgba(22,163,74,.2); color:#bbf7d0; box-shadow:inset 0 0 0 1px rgba(74,222,128,.4);}
+  .br.i{background:rgba(217,119,6,.22); color:#fde68a; box-shadow:inset 0 0 0 1px rgba(251,191,36,.45);}
+
+  .funnel{display:flex; justify-content:center; gap:34px; color:#cbd5e1; margin:2px 0 4px;}
+  .funnel span{font-size:20px; line-height:1;}
+
+  /* ── lanes ── */
+  .lanes{display:grid; grid-template-columns:repeat(auto-fit,minmax(288px,1fr)); gap:18px; margin-top:6px;}
+  .lane{background:var(--card); border:1px solid var(--line); border-radius:18px; overflow:hidden;
+    box-shadow:0 14px 34px -26px rgba(15,23,42,.4); display:flex; flex-direction:column;}
+  .lane-head{display:flex; align-items:center; gap:12px; padding:16px 18px; border-bottom:1px solid var(--line);}
+  .lane-ic{width:40px; height:40px; border-radius:12px; display:grid; place-items:center; font-size:20px; flex:0 0 auto;}
+  .lane-role{font-size:17px; font-weight:850; color:var(--navy); letter-spacing:-.01em; line-height:1.15;}
+  .lane-sub{font-size:12px; color:var(--muted); font-weight:600; margin-top:1px;}
+  .lane-tag{margin-left:auto; font-size:10.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase;
+    padding:5px 9px; border-radius:7px;}
+
+  .steps{list-style:none; margin:0; padding:16px 18px 18px; counter-reset:s; position:relative;}
+  .steps li{position:relative; padding:0 0 16px 40px; min-height:34px;}
+  .steps li:last-child{padding-bottom:2px;}
+  .steps li::before{counter-increment:s; content:counter(s); position:absolute; left:0; top:0;
+    width:26px; height:26px; border-radius:8px; display:grid; place-items:center;
+    font-size:12.5px; font-weight:800; font-variant-numeric:tabular-nums; z-index:1;}
+  .steps li::after{content:""; position:absolute; left:12.5px; top:26px; bottom:2px; width:2px; border-radius:2px;}
+  .steps li:last-child::after{display:none;}
+  .st{font-size:13.5px; font-weight:750; color:var(--ink); letter-spacing:-.01em; display:block; margin-bottom:2px;}
+  .sd{font-size:12.3px; color:var(--muted); line-height:1.55; display:block;}
+  .flag{display:inline-block; font-size:10.5px; font-weight:800; padding:1px 7px; border-radius:6px; margin-left:5px;
+    vertical-align:middle; letter-spacing:.02em;}
+  .flag.ai{background:var(--sky); color:var(--blue);}
+  .flag.pay{background:#faf5ff; color:#7c3aed;}
+  .flag.gate{background:#fff1f2; color:#e11d48;}
+  .flag.opt{background:#f1f5f9; color:#475569;}
+
+  /* lane accents */
+  .lane-s .lane-ic{background:var(--sky);} .lane-s .lane-tag{background:var(--sky); color:var(--blue);}
+  .lane-s .steps li::before{background:var(--sky); color:var(--blue); box-shadow:inset 0 0 0 1px var(--blue-line);}
+  .lane-s .steps li::after{background:linear-gradient(var(--blue-line),#e0ecff);}
+  .lane-s{border-top:3px solid var(--blue);}
+
+  .lane-t .lane-ic{background:var(--green-tint);} .lane-t .lane-tag{background:var(--green-tint); color:var(--green);}
+  .lane-t .steps li::before{background:var(--green-tint); color:var(--green); box-shadow:inset 0 0 0 1px var(--green-line);}
+  .lane-t .steps li::after{background:linear-gradient(var(--green-line),#dcfce7);}
+  .lane-t{border-top:3px solid var(--green);}
+
+  .lane-i .lane-ic{background:var(--amber-tint);} .lane-i .lane-tag{background:var(--amber-tint); color:var(--amber-deep);}
+  .lane-i .steps li::before{background:var(--amber-tint); color:var(--amber-deep); box-shadow:inset 0 0 0 1px var(--amber-line);}
+  .lane-i .steps li::after{background:linear-gradient(var(--amber-line),#fef3c7);}
+  .lane-i{border-top:3px solid var(--amber);}
+
+  /* ── convergence ── */
+  .conv{margin-top:26px; background:linear-gradient(140deg,#0b1226,#182a52 70%,#1e3a8a);
+    border-radius:20px; padding:26px 24px; color:#e9eefc;
+    box-shadow:0 24px 54px -28px rgba(11,18,38,.6);}
+  .conv-eyebrow{font-size:11px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:#93c5fd;}
+  .conv-title{font-size:19px; font-weight:800; color:#fff; letter-spacing:-.01em; margin:7px 0 4px; text-wrap:balance;}
+  .conv-lead{font-size:13px; color:#b9c6ea; max-width:60ch; margin:0 0 18px;}
+  .conv-grid{display:grid; grid-template-columns:1fr auto 1fr; gap:16px; align-items:stretch;}
+  .inbound{display:flex; flex-direction:column; gap:10px;}
+  .in-card{background:rgba(255,255,255,.055); border:1px solid rgba(255,255,255,.12); border-radius:13px; padding:13px 15px;}
+  .in-card .who{font-size:11px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; margin-bottom:4px;}
+  .in-card.t .who{color:#86efac;} .in-card.i .who{color:#fcd34d;}
+  .in-card .what{font-size:13.5px; font-weight:750; color:#fff;}
+  .in-card .sub{font-size:12px; color:#aab8dd; margin-top:2px;}
+  .meet{align-self:center; display:flex; flex-direction:column; align-items:center; gap:8px; padding:0 4px;}
+  .meet .core{width:66px; height:66px; border-radius:50%; display:grid; place-items:center; font-size:26px;
+    background:radial-gradient(circle at 35% 30%,#3b82f6,#1e3a8a); box-shadow:0 0 0 6px rgba(59,130,246,.16), 0 10px 26px -8px rgba(59,130,246,.6);}
+  .meet .lbl{font-size:11px; font-weight:800; color:#bfdbfe; letter-spacing:.05em; text-align:center; white-space:nowrap;}
+  .conv-out{margin-top:18px; display:flex; flex-wrap:wrap; gap:10px;}
+  .out{flex:1 1 220px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.13); border-radius:13px; padding:13px 15px;}
+  .out .h{font-size:13px; font-weight:800; color:#fff; display:flex; align-items:center; gap:7px;}
+  .out .d{font-size:12px; color:#aab8dd; margin-top:3px;}
+
+  /* ── mechanics notes ── */
+  .notes{margin-top:26px;}
+  .notes-h{font-size:12px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:12px;}
+  .note-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px;}
+  .note{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:15px 16px;
+    border-left:3px solid var(--blue);}
+  .note.mech{border-left-color:var(--navy);}
+  .note.pay{border-left-color:#7c3aed;}
+  .note.inv{border-left-color:var(--amber);}
+  .note h3{font-size:13.5px; font-weight:800; color:var(--navy); margin:0 0 5px; letter-spacing:-.01em;}
+  .note p{font-size:12.3px; color:var(--muted); margin:0; line-height:1.55;}
+  .note b{color:var(--body); font-weight:750;}
+
+  .foot{margin-top:30px; font-size:11.5px; color:var(--muted); text-align:center; letter-spacing:.02em;}
+
+  @media (max-width:640px){
+    .conv-grid{grid-template-columns:1fr;}
+    .meet{flex-direction:row; justify-content:center;}
+    .branches{margin-left:0; width:100%;}
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .lane,.conv,.note{animation:rise .5s cubic-bezier(.2,.7,.2,1) both;}
+    .lane:nth-child(2){animation-delay:.06s;} .lane:nth-child(3){animation-delay:.12s;}
+    @keyframes rise{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;}}
+  }
+</style>
+
+<div class="flow">
+  <div class="wrap">
+
+    <header class="mast">
+      <div class="brand"><span class="dot"></span>ORBIT</div>
+      <h1>서비스 흐름도 — 제공자 · 팀원 · 투자자</h1>
+      <p class="sub">한 줄 아이디어가 기획안이 되고, 팀원과 투자자를 만나 실제로 굴러가기까지의 전체 여정입니다.</p>
+      <div class="stamp">2026년 7월 기준 · 현재 서비스 반영</div>
+
+      <div class="legend">
+        <span class="lg"><span class="sw" style="background:var(--blue)"></span>Shooter · 아이디어 제공자</span>
+        <span class="lg"><span class="sw" style="background:var(--green)"></span>Rider · 팀원</span>
+        <span class="lg"><span class="sw" style="background:var(--amber)"></span>Rider · 투자자</span>
+        <span class="lg"><span class="sw" style="background:var(--blue);border-radius:50%"></span>AI 개입 지점</span>
+      </div>
+    </header>
+
+    <!-- shared entry -->
+    <div class="entry">
+      <div class="ekey">
+        <div class="enum">🚪</div>
+        <div>
+          <div class="etitle">로그인 · 역할 선택</div>
+          <div class="edesc">가입 후 참여 방식을 고릅니다 — 무료로 시작</div>
+        </div>
+      </div>
+      <div class="branches">
+        <span class="br s">🚀 Shooter</span>
+        <span class="br t">🧑‍💻 Rider · 팀원</span>
+        <span class="br i">💰 Rider · 투자자</span>
+      </div>
+    </div>
+    <div class="funnel"><span>↓</span><span>↓</span><span>↓</span></div>
+
+    <!-- three lanes -->
+    <div class="lanes">
+
+      <!-- Shooter -->
+      <section class="lane lane-s">
+        <div class="lane-head">
+          <div class="lane-ic">🚀</div>
+          <div><div class="lane-role">Shooter</div><div class="lane-sub">아이디어 제공자</div></div>
+          <div class="lane-tag">아이디어 → 팀</div>
+        </div>
+        <ol class="steps">
+          <li><span class="st">한 줄 아이디어 입력</span><span class="sd">머릿속 아이디어를 한 문장으로 던집니다.</span></li>
+          <li><span class="st">보충 질문 2개 답하기<span class="flag ai">AI</span></span><span class="sd">타깃·강점을 골라 아이디어를 또렷하게.</span></li>
+          <li><span class="st">AI 기획안 자동 생성<span class="flag ai">AI</span></span><span class="sd">사업 스토리·문제/해결·필요 팀원·궁합까지 초안 작성.</span></li>
+          <li><span class="st">기획안 다듬기</span><span class="sd">팀원 자리 선택, 궁합·팀원 질문 편집. <b>투자자 매칭 켜기</b><span class="flag opt">선택</span>→ 투자자 궁합·질문 입력.</span></li>
+          <li><span class="st">확정 → 아이디어 등록</span><span class="sd">소통 채널(선택)까지 담아 쏘아 올립니다.</span></li>
+          <li><span class="st">ORBIT 추천 확인<span class="flag ai">AI</span></span><span class="sd">맞는 팀원 + (켰다면) 투자자 추천. <b>다시 찾기</b>로 다른 후보도.</span></li>
+          <li><span class="st">받은 제안 검토 · 수락</span><span class="sd">합류 신청·투자 제안을 상세로 확인하고 수락.</span></li>
+          <li><span class="st">팀 채널 공개 → 함께 시작</span><span class="sd">서로 수락되면 소통 링크가 열립니다.</span></li>
+        </ol>
+      </section>
+
+      <!-- Rider · 팀원 -->
+      <section class="lane lane-t">
+        <div class="lane-head">
+          <div class="lane-ic">🧑‍💻</div>
+          <div><div class="lane-role">Rider · 팀원</div><div class="lane-sub">합류할 사람</div></div>
+          <div class="lane-tag">둘러보기 → 합류</div>
+        </div>
+        <ol class="steps">
+          <li><span class="st">유형 선택: 팀원</span><span class="sd">로그인 후 “팀원으로” 갈래를 고릅니다.</span></li>
+          <li><span class="st">팀원 프로필 작성</span><span class="sd">역량·관심 분야·투입 시간·협업 방식을 등록.</span></li>
+          <li><span class="st">아이디어 둘러보기</span><span class="sd">관심 가는 프로젝트를 카드로 훑어봅니다.</span></li>
+          <li><span class="st">아이디어 상세 열기<span class="flag pay">Pro</span></span><span class="sd">상세·연락은 구독(Pro). 합류 완료·내 아이디어는 무료.</span></li>
+          <li><span class="st">3가지 질문에 직접 답변</span><span class="sd">AI 질문 2 + 제공자 질문 1에 내 답을 씁니다.</span></li>
+          <li><span class="st">매칭률 · 딱 맞는 자리 확인<span class="flag ai">AI</span></span><span class="sd">내 프로필 기준 적합도와 추천 자리를 봅니다.</span></li>
+          <li><span class="st">합류 신청 보내기</span><span class="sd">제공자에게 신청 → 수락 대기.</span></li>
+          <li><span class="st">수락되면 팀 합류</span><span class="sd">팀 소통 채널로 이어져 함께 시작.</span></li>
+        </ol>
+      </section>
+
+      <!-- Rider · 투자자 -->
+      <section class="lane lane-i">
+        <div class="lane-head">
+          <div class="lane-ic">💰</div>
+          <div><div class="lane-role">Rider · 투자자</div><div class="lane-sub">투자·자문할 사람</div></div>
+          <div class="lane-tag">둘러보기 → 투자</div>
+        </div>
+        <ol class="steps">
+          <li><span class="st">유형 선택: 투자자</span><span class="sd">로그인 후 “투자자로” 갈래를 고릅니다.</span></li>
+          <li><span class="st">투자자 프로필 작성</span><span class="sd">관심 분야·투자 단계·규모·성향·자금 외 지원 등록.</span></li>
+          <li><span class="st">둘러보기 (선별 노출)<span class="flag gate">노출 통제</span></span><span class="sd"><b>‘투자 받기’를 켠 아이디어만</b> 목록에 보입니다.</span></li>
+          <li><span class="st">아이디어 상세 열기<span class="flag pay">Pro</span></span><span class="sd">상세·연락은 구독(Pro).</span></li>
+          <li><span class="st">투자 검토 Q&amp;A</span><span class="sd">제공자 질문에 답하고, 궁금한 점을 되묻습니다.</span></li>
+          <li><span class="st">제공자 답변 · 관심도 확인<span class="flag ai">AI</span></span><span class="sd">제공자 입장 답변과 투자 관심도 요약을 받습니다.</span></li>
+          <li><span class="st">투자 제안 보내기</span><span class="sd">제공자에게 투자 검토 제안 → 수락 대기.</span></li>
+          <li><span class="st">수락되면 투자 논의</span><span class="sd">미팅으로 이어져 실사·조건을 이어갑니다.</span></li>
+        </ol>
+      </section>
+    </div>
+
+    <!-- convergence -->
+    <section class="conv">
+      <div class="conv-eyebrow">모두가 만나는 지점</div>
+      <div class="conv-title">아이디어 하나에서 팀원과 투자자가 함께 모입니다</div>
+      <p class="conv-lead">제공자의 <b>아이디어 상세</b>가 허브입니다. 팀원의 합류 신청과 투자자의 투자 제안이 이곳으로 도착하고, 제공자가 수락하면 각각의 다음 단계로 이어집니다.</p>
+
+      <div class="conv-grid">
+        <div class="inbound">
+          <div class="in-card t"><div class="who">▶ 팀원</div><div class="what">합류 신청</div><div class="sub">매칭률·자리와 함께 도착</div></div>
+        </div>
+        <div class="meet">
+          <div class="core">💡</div>
+          <div class="lbl">제공자가 수락</div>
+        </div>
+        <div class="inbound">
+          <div class="in-card i"><div class="who">투자자 ◀</div><div class="what">투자 제안</div><div class="sub">관심도·Q&amp;A와 함께 도착</div></div>
+        </div>
+      </div>
+
+      <div class="conv-out">
+        <div class="out"><div class="h">🤝 팀 채널 공개</div><div class="d">수락된 팀원에게 소통 링크가 열리고 프로젝트가 시작됩니다.</div></div>
+        <div class="out"><div class="h">📈 투자 논의</div><div class="d">수락된 투자자와 미팅·실사로 이어집니다.</div></div>
+      </div>
+    </section>
+
+    <!-- mechanics -->
+    <section class="notes">
+      <div class="notes-h">흐름을 움직이는 원리</div>
+      <div class="note-grid">
+        <div class="note mech">
+          <h3>매칭 점수는 ‘규칙’이 정한다</h3>
+          <p>기술 40 · 관심 30 · 목적 20 · 시간 10 <b>+ 하드필터</b>의 결정적 계산. AI가 아니라 규칙이라 재현 가능합니다.</p>
+        </div>
+        <div class="note">
+          <h3>AI가 맡는 부분</h3>
+          <p>기획안 생성, 팀원 <b>추천 이유·자리</b>, 지원자 답변 코멘트, 투자 <b>관심도·제공자 답변</b>. 점수 자체는 바꾸지 않습니다.</p>
+        </div>
+        <div class="note">
+          <h3>‘다시 찾기’ 다양성</h3>
+          <p>상위 후보는 유지하고 <b>근소차 후보를 회전</b> 노출. 풀(팀원·투자자)이 넓어 매번 다른 인재를 만납니다.</p>
+        </div>
+        <div class="note pay">
+          <h3>구독(Pro) 게이트</h3>
+          <p>둘러보기의 <b>아이디어·라이더 상세</b>는 Pro. 내 아이디어와 합류 완료 팀원 프로필은 무료입니다.</p>
+        </div>
+        <div class="note inv">
+          <h3>투자자 노출 통제</h3>
+          <p>제공자가 <b>‘투자 받기’를 켠 아이디어만</b> 투자자에게 노출·추천됩니다. 투자자 전용 궁합·질문도 따로 설정.</p>
+        </div>
+        <div class="note mech">
+          <h3>팀원 ≠ 투자자</h3>
+          <p>가입 시 한쪽을 택일합니다(겸직 없음). 각자의 매칭 요소·질문으로 <b>서로 겹치지 않게</b> 동작합니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="foot">🛰️ ORBIT — 한 줄 아이디어에서 팀 결성과 투자 검토까지</div>
+
+  </div>
+</div>
+
+</body>
+</html>
