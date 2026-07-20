@@ -1204,6 +1204,67 @@ def evaluate_investor(vision: dict, investor: dict, question_texts: list,
     return result
 
 
+# ── 투자자용 AI 사업성 검토(정성적 1차 렌즈 — 수치 지어내기 금지) ──
+BIZREVIEW_SYSTEM_PROMPT = """당신은 ORBIT의 '투자 사업성 검토 도우미'입니다.
+투자자가 초기 아이디어에 투자할지 판단하도록, 기획안을 '투자 관점'에서 정성 분석합니다.
+
+규칙:
+- 반드시 아래 JSON 형식으로만 답하세요. JSON 외 다른 말이나 코드펜스를 절대 붙이지 마세요.
+- 이 사업은 '아이디어 단계(진척 0%)'입니다. 매출·트래션·사용자 수·밸류에이션 등 확인되지 않은 수치·성과를 절대 지어내지 마세요.
+- 정성적 1차 렌즈입니다. 실제 실사·재무검토를 대체하지 않으며, '논의 출발점'으로만 씁니다.
+- risks(리스크)와 toValidate(검증 포인트)를 특히 구체적이고 솔직하게 쓰세요 — 투자자에게 가장 도움이 됩니다.
+- fitWithInvestor: 투자자 프로필(관심분야·투자단계·티켓·성향)과 이 사업의 결이 맞는지 냉정하게 판단하세요.
+- 모두 한국어로.
+
+[응답 JSON 형식]
+{
+  "summary": "투자 관점 한 줄 총평",
+  "marketOpportunity": "시장·타이밍 관점 한두 문장(과장 없이)",
+  "strengths": ["투자 매력 1", "투자 매력 2"],
+  "risks": ["리스크·불확실성 1", "리스크·불확실성 2"],
+  "toValidate": ["실사 때 확인할 질문·지표 1", "2"],
+  "fitWithInvestor": "이 투자자 성향과의 적합성 한두 문장",
+  "stageNote": "아이디어 단계라 유의할 점 한 줄"
+}"""
+
+BIZREVIEW_SCHEMA = _obj({
+    "summary": {"type": "string"},
+    "marketOpportunity": {"type": "string"},
+    "strengths": {"type": "array", "items": {"type": "string"}},
+    "risks": {"type": "array", "items": {"type": "string"}},
+    "toValidate": {"type": "array", "items": {"type": "string"}},
+    "fitWithInvestor": {"type": "string"},
+    "stageNote": {"type": "string"},
+}, ["summary", "marketOpportunity", "strengths", "risks", "toValidate", "fitWithInvestor", "stageNote"])
+
+
+def review_business(vision: dict, investor: dict) -> dict:
+    """투자자용 AI 사업성 검토 — 아이디어 단계 정성 분석(수치 지어내기 금지)."""
+    brief = {
+        "serviceName": vision.get("serviceName"),
+        "tagline": vision.get("tagline"),
+        "productNote": vision.get("productNote"),
+        "plan": vision.get("plan", {}),
+        "neededTeammates": [t.get("role") for t in vision.get("neededTeammates", [])],
+        "domains": (vision.get("matchProfile") or {}).get("domains", []),
+    }
+    user_prompt = (
+        "[사업 기획안]\n"
+        f"{json.dumps(brief, ensure_ascii=False, indent=2)}\n\n"
+        "[투자자 프로필]\n"
+        f"{json.dumps(investor or {}, ensure_ascii=False, indent=2)}\n\n"
+        "이 아이디어의 사업성을 투자 관점에서 위 규칙대로 검토해 JSON 으로 작성하세요."
+    )
+    response = client.messages.create(
+        model="claude-sonnet-4-6", max_tokens=1800,
+        output_config={"effort": "low", "format": {"type": "json_schema", "schema": BIZREVIEW_SCHEMA}},
+        system=BIZREVIEW_SYSTEM_PROMPT,
+        messages=[{"role": "user", "content": user_prompt}],
+    )
+    raw = "".join(b.text for b in response.content if b.type == "text")
+    return _extract_json(raw)
+
+
 def print_join_questions(questions: list) -> None:
     """확정된 합류 필수 질문 3개를 출력합니다."""
     print("\n📋 합류 지원자가 답해야 할 필수 질문 3개 (제공자가 기획서에서 설정)")

@@ -2760,6 +2760,12 @@ async function openDetail(v, isOwner, receivedIdx){
       </div>
       <div id="joinResult"></div>`;
   const investorAction = `<div class="card">
+        <p class="eyebrow">🔍 AI 사업성 검토 <span class="qsrc ai">AI</span></p>
+        <p style="font-size:12.5px; color:#475569; margin:2px 0 12px;">투자 관점에서 강점·리스크·실사 포인트를 정리해 드려요. <b>아이디어 단계</b> 정성 분석이라 수치는 지어내지 않습니다.</p>
+        <button class="btn ghost full" id="bizBtn" onclick="loadBizReview(this)">🔍 AI 사업성 검토 받기</button>
+        <div id="bizReview" style="margin-top:12px"></div>
+      </div>
+      <div class="card">
         <p class="eyebrow">💰 투자 검토 · 제공자와 질문을 주고받아요</p>
         <p style="font-size:12.5px; color:#475569; margin:2px 0 12px;">몇 가지 질문에 답하고 제공자에게 궁금한 점을 물으면, <b>제공자의 답변</b>과 함께 투자 관심을 남길 수 있어요.</p>
         <button class="btn full" id="investBtn" onclick="investApply()">투자 검토 질문에 답하기 →</button>
@@ -3300,6 +3306,42 @@ function demoAcceptApply(){
 }
 
 /* ===== 투자자 흐름 — 제공자와 질문을 주고받고 투자 제안 ===== */
+/* 투자자 프로필 → API 전달용 객체 (사업성 검토·투자 평가 공용) */
+function _investorObj(){
+  const p = ORBIT.profile || {};
+  return { name:p.name||ORBIT.user, headline:p.headline||"", kind:"investor",
+    interestDomains:p.interest_domains||[], investStage:p.invest_stage||"", investTicket:p.invest_ticket||"",
+    investStyle:p.invest_style||"", support:p.support||[] };
+}
+/* AI 사업성 검토 (온디맨드 · 아이디어 단계 정성 분석) */
+async function loadBizReview(btn){
+  const v = ORBIT.detailVision; if(!v) return;
+  const box = document.getElementById("bizReview");
+  if(btn){ btn.disabled=true; btn._t=btn.textContent; btn.textContent="검토 중..."; }
+  if(box) box.innerHTML = spinner("투자 관점으로 사업성을 검토하는 중...");
+  try{
+    const { _reco, _recoRound, ...clean } = v;
+    const r = await api("/api/bizreview", { vision: clean, investor: _investorObj() });
+    renderBizReview(r);
+    if(btn){ btn.textContent="🔄 다시 검토"; }
+  }catch(e){ if(box) box.innerHTML = `<div class="err">⚠️ ${esc(e.message)}</div>`; if(btn){ btn.textContent=btn._t||"🔍 AI 사업성 검토 받기"; } }
+  finally{ if(btn){ btn.disabled=false; } }
+}
+function renderBizReview(r){
+  const list=(arr,color)=>(arr||[]).map(x=>`<div style="font-size:12.7px; color:#334155; margin:5px 0; display:flex; gap:7px;"><span style="color:${color}; font-weight:800;">·</span><span>${esc(x)}</span></div>`).join("");
+  const box=document.getElementById("bizReview"); if(!box) return;
+  box.innerHTML = `
+    <div class="card" style="margin:0; background:#fffdf5; border-color:#fde68a;">
+      <div class="verdict" style="color:#92400e; font-weight:800; margin:0 0 4px;">${esc(r.summary||"")}</div>
+      <p style="font-size:12.5px; color:#475569; margin:0 0 12px;">📈 ${esc(r.marketOpportunity||"")}</p>
+      <p class="eyebrow" style="color:var(--green)">✅ 투자 매력</p>${list(r.strengths,'var(--green)')}
+      <p class="eyebrow" style="color:#dc2626; margin-top:11px">⚠️ 리스크·불확실성</p>${list(r.risks,'#dc2626')}
+      <p class="eyebrow" style="color:var(--blue); margin-top:11px">🔎 실사 때 확인할 것</p>${list(r.toValidate,'var(--blue)')}
+      <div style="height:1px; background:var(--line); margin:12px 0;"></div>
+      <p style="font-size:12.5px; color:#334155; margin:0 0 6px;"><b>🧭 내 투자 성향과의 결</b> — ${esc(r.fitWithInvestor||"")}</p>
+      <p style="font-size:11.5px; color:var(--muted); margin:0; font-style:italic;">ⓘ ${esc(r.stageNote||"")} · AI 정성 분석으로, 실제 실사·투자 판단을 대체하지 않습니다.</p>
+    </div>`;
+}
 function investApply(){
   if(!ORBIT.profile || ORBIT.profile.kind !== "investor"){ alert("투자자 계정으로 로그인해 주세요."); return; }
   const btn = document.getElementById("investBtn"); if(btn){ btn.disabled = true; }
@@ -3338,10 +3380,7 @@ async function submitInvestAnswers(){
   const iaskEl = document.getElementById("iask");
   const investorQuestion = iaskEl ? iaskEl.value.trim() : "";
   if(answers.some(a=>!a)){ alert("제공자의 질문 2가지에 모두 답해 주세요."); return; }
-  const p = ORBIT.profile || {};
-  const investor = { name:p.name||ORBIT.user, headline:p.headline||"", kind:"investor",
-    interestDomains:p.interest_domains||[], investStage:p.invest_stage||"", investTicket:p.invest_ticket||"",
-    investStyle:p.invest_style||"", support:p.support||[] };
+  const investor = _investorObj();
   const sb = document.getElementById("iansSubmit");
   if(sb){ sb.disabled=true; sb.textContent="제공자 답변 받는 중..."; }
   try{

@@ -115,6 +115,13 @@ def api_investeval():
     ))
 
 
+@app.post("/api/bizreview")
+def api_bizreview():
+    """[투자] AI 사업성 검토 — 아이디어 단계 정성 분석(투자 관점)."""
+    data = request.json or {}
+    return jsonify(main.review_business(data.get("vision", {}), data.get("investor", {})))
+
+
 if __name__ == "__main__":
     # 5001 포트로 실행 (5000은 macOS 가 쓰는 경우가 있어 피했습니다)
     app.run(host="127.0.0.1", port=5001, debug=True)
