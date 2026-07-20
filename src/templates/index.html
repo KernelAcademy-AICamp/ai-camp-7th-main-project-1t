@@ -207,6 +207,7 @@
   .attach:hover{color:var(--blue);}
   .chips{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;}
   .chip{cursor:pointer; font-size:12.5px; color:var(--muted); border:1px solid var(--line); border-radius:999px; padding:6px 12px; background:#fff;}
+  .idea-chips{gap:7px; justify-content:center;} .idea-chips .chip{font-size:11.5px; padding:5px 12px; white-space:nowrap;}
   .chip:hover{color:var(--blue); border-color:var(--blue);}
   .chip.on{background:#ecfdf5; color:#047857; border-color:#6ee7b7; font-weight:700;}
   .pf-lbl{font-size:13px; font-weight:800; color:var(--navy); margin:13px 0 7px; display:flex; align-items:center; gap:6px;}
@@ -815,12 +816,15 @@
         <textarea id="idea" placeholder="예) 버려지는 페트병 뚜껑을 모아 핸드폰 그립톡으로 업사이클링하는 사업"></textarea>
         <div class="attach" onclick="comingSoon()">📎 파일 첨부 <span class="soon">준비중</span></div>
         <button class="btn full" style="margin-top:13px" id="ideaGo" onclick="ideaStart()">ORBIT 구체화 시작 →</button>
-        <div onclick="previewLoading()" style="margin-top:9px; text-align:center; font-size:12px; color:var(--muted); cursor:pointer">🚀 로딩 화면 미리보기 <span style="color:#bbb">(개발용·API 안 씀)</span></div>
-        <div onclick="previewVision()" style="margin-top:6px; text-align:center; font-size:12px; color:var(--muted); cursor:pointer">📄 기획안 페이지 미리보기(에코그립) <span style="color:#bbb">(개발용·API 안 씀)</span></div>
-        <div class="chips">
-          <span class="chip" onclick="setIdea(this)">페트병 뚜껑을 그립톡으로 재활용하는 사업</span>
-          <span class="chip" onclick="setIdea(this)">할머니 손맛 반찬을 정기배송하는 서비스</span>
-          <span class="chip" onclick="setIdea(this)">강아지 산책 메이트를 동네에서 매칭해주는 앱</span>
+        <div class="chips idea-chips">
+          <span class="chip" data-idea="페트병 뚜껑을 그립톡으로 재활용하는 사업" onclick="setIdea(this)">페트병 그립톡</span>
+          <span class="chip" data-idea="할머니 손맛 반찬을 정기배송하는 서비스" onclick="setIdea(this)">손맛 반찬 배송</span>
+          <span class="chip" data-idea="강아지 산책 메이트를 동네에서 매칭해주는 앱" onclick="setIdea(this)">강아지 산책 매칭</span>
+        </div>
+        <div style="margin-top:18px; text-align:center; font-size:11px; color:var(--muted); opacity:.45;">
+          <span onclick="previewLoading()" style="cursor:pointer">로딩 미리보기</span>
+          <span style="opacity:.5"> · </span>
+          <span onclick="previewVision()" style="cursor:pointer">기획안 미리보기</span>
         </div>
       </div>
     </div>
@@ -1487,7 +1491,7 @@ const RESUME = {
 
 function esc(s){ return (s ?? "").replace(/[&<>]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;" }[c])); }
 function slug(s){ return ([...(s||"")].filter(c=>/[a-zA-Z0-9]/.test(c)).join("").toLowerCase())||"project"; }
-function setIdea(el){ document.getElementById("idea").value = el.textContent; }
+function setIdea(el){ document.getElementById("idea").value = el.dataset.idea || el.textContent; }
 function comingSoon(){ alert("🔸 준비 중입니다.\n(MVP에서는 핵심 흐름만 작동합니다 — 전체 그림을 보여드리기 위한 화면이에요.)"); }
 function spinner(t){ return `<div class="loading"><div class="spinner"></div><div>${esc(t)}</div></div>`; }
 function rocketLoader(text, sub){
