@@ -362,6 +362,33 @@
   .sorttoggle{display:inline-flex; align-items:center; justify-content:center; text-align:center; box-sizing:border-box; width:82px; height:26px; line-height:1; font-size:12.5px; font-weight:700; color:var(--navy); background:var(--card); border:1px solid var(--line); padding:0 12px; border-radius:20px; cursor:pointer; transition:border-color .15s, background .15s; white-space:nowrap; vertical-align:middle;}
   .sorttoggle:hover{border-color:var(--green); background:#f8fafc;}
   .sorttoggle:focus-visible{outline:2px solid var(--blue,#2563EB); outline-offset:2px;}
+  /* 요금제 화면 */
+  .pr-head{text-align:center; margin:14px 0 30px;}
+  .pr-title{font-size:30px; font-weight:800; color:var(--navy); letter-spacing:-.02em; margin:0 0 8px;}
+  .pr-sub{font-size:15px; color:var(--muted); margin:0;}
+  .pricing-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px; max-width:720px; margin:0 auto;}
+  .price-card{position:relative; background:var(--card); border:1px solid var(--line); border-radius:18px; padding:28px 24px; display:flex; flex-direction:column;}
+  .price-card.pro{border:2px solid var(--blue); box-shadow:0 14px 40px rgba(37,99,235,.14);}
+  .pc-badge{position:absolute; top:-11px; left:50%; transform:translateX(-50%); background:var(--blue); color:#fff; font-size:11.5px; font-weight:800; padding:4px 14px; border-radius:999px; letter-spacing:.02em;}
+  .pc-name{font-size:16px; font-weight:800; color:var(--navy); letter-spacing:.02em;}
+  .pc-amt{margin:12px 0 2px; color:var(--navy);}
+  .pc-amt b{font-size:34px; font-weight:800; letter-spacing:-.02em;}
+  .pc-amt span{font-size:14px; color:var(--muted); margin-left:3px; font-weight:600;}
+  .pc-desc{font-size:12.5px; color:var(--muted); min-height:17px; margin-bottom:18px;}
+  .pc-feat{list-style:none; margin:0 0 22px; padding:0; display:flex; flex-direction:column; gap:12px; flex:1;}
+  .pc-feat li{font-size:13.5px; color:#374151; padding-left:24px; position:relative; line-height:1.4;}
+  .pc-feat li::before{content:"✓"; position:absolute; left:0; top:0; color:var(--green); font-weight:800;}
+  .pc-feat li b{color:var(--navy);}
+  .pc-cta{width:100%; padding:12px; border-radius:12px; font-size:14px; font-weight:800; cursor:pointer; border:1px solid var(--line); background:var(--card); color:var(--navy); transition:border-color .15s, filter .15s, background .15s;}
+  .pc-cta.ghost:hover{border-color:var(--navy);}
+  .pc-cta.primary{background:var(--blue); color:#fff; border-color:var(--blue);}
+  .pc-cta.primary:hover{filter:brightness(1.06);}
+  .pr-b2b{max-width:720px; margin:22px auto 0; background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:12px 20px; font-size:13px; color:var(--muted); display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap;}
+  .pr-b2b b{color:var(--navy);}
+  .b2b-cta{display:inline-flex; align-items:center; gap:6px; padding:7px 16px; background:var(--navy); color:#fff; font-size:12.5px; font-weight:800; border-radius:8px; text-decoration:none; transition:filter .15s; white-space:nowrap; flex:0 0 auto;}
+  .b2b-cta:hover{filter:brightness(1.15);}
+  .b2b-cta:focus-visible{outline:2px solid var(--blue); outline-offset:2px;}
+  @media(max-width:640px){ .pricing-grid{grid-template-columns:1fr;} }
   .err{color:#dc2626; background:#fef2f2; border:1px solid #fecaca; border-radius:12px; padding:13px 16px;}
   /* AI 사업성 검토 결과 — ORBIT 톤 통일 */
   .biz{display:flex; flex-direction:column; gap:15px;}
@@ -859,6 +886,47 @@
 <!-- ===== 팀원: 상세 ===== -->
 <section class="screen hidden" id="s-detail">
   <div class="narrow pagepad" id="detail-body"></div>
+</section>
+
+<!-- ===== 요금제 ===== -->
+<section class="screen hidden" id="s-pricing">
+  <div class="narrow pagepad">
+    <button class="btn ghost" onclick="goHome()">← 홈으로</button>
+    <div class="pr-head">
+      <h1 class="pr-title">요금제</h1>
+      <p class="pr-sub">가입은 무료예요. 아이디어·프로필 <b style="color:var(--navy)">상세 열람</b>과 <b style="color:var(--navy)">매칭 근거</b>는 Pro에 공개됩니다.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="pc-name">Free <span style="font-size:11.5px; font-weight:700; color:var(--muted);">가입 시</span></div>
+        <div class="pc-amt"><b>0</b><span>원</span></div>
+        <div class="pc-desc">가입은 무료예요</div>
+        <ul class="pc-feat">
+          <li>아이디어 둘러보기</li>
+          <li>추천 팀원·투자자 목록 + 매칭률 요약</li>
+          <li><b>받은 제안</b> 확인·답변·수락</li>
+        </ul>
+        <button class="pc-cta ghost" onclick="go('login')">무료로 시작하기</button>
+      </div>
+      <div class="price-card pro">
+        <div class="pc-badge">추천</div>
+        <div class="pc-name">Pro</div>
+        <div class="pc-amt"><b>9,900</b><span>원 / 월</span></div>
+        <div class="pc-desc">상세 열람은 Pro에 공개돼요</div>
+        <ul class="pc-feat">
+          <li>아이디어·기획안 <b>상세 전체</b></li>
+          <li>라이더 프로필 <b>상세</b>(연락·포트폴리오)</li>
+          <li>매칭 <b>근거</b>(점수 분석) 열람</li>
+          <li>아이디어에 <b>합류·투자 신청</b></li>
+        </ul>
+        <button class="pc-cta primary" onclick="ORBIT.subscribed=true; alert('구독 의향이 등록됐어요! · MVP라 실제 결제는 없어요. 이제 상세 정보가 열립니다 🙂')">무료로 구독 의향 남기기 · 결제 없음</button>
+      </div>
+    </div>
+    <div class="pr-b2b">
+      <span class="b2b-txt">🏢 <b>기업·기관용</b>(공모전 주최·대학·사내벤처 팀 매칭) 별도 문의</span>
+      <a class="b2b-cta" href="mailto:contact@orbit.kr?subject=%5BORBIT%5D%20%EA%B8%B0%EC%97%85%C2%B7%EA%B8%B0%EA%B4%80%EC%9A%A9%20%ED%8C%80%20%EB%A7%A4%EC%B9%AD%20%EB%AC%B8%EC%9D%98&body=%EC%95%88%EB%85%95%ED%95%98%EC%84%B8%EC%9A%94%2C%20ORBIT%20%EA%B8%B0%EC%97%85%C2%B7%EA%B8%B0%EA%B4%80%EC%9A%A9%20%ED%8C%80%20%EB%A7%A4%EC%B9%AD%EC%97%90%20%EA%B4%80%EC%8B%AC%EC%9D%B4%20%EC%9E%88%EC%8A%B5%EB%8B%88%EB%8B%A4.%0A%0A-%20%EA%B8%B0%EA%B4%80/%ED%9A%8C%EC%82%AC%EB%AA%85%3A%0A-%20%EB%8B%B4%EB%8B%B9%EC%9E%90%20%EC%97%B0%EB%9D%BD%EC%B2%98%3A%0A-%20%EC%98%88%EC%83%81%20%EA%B7%9C%EB%AA%A8%C2%B7%EC%9D%BC%EC%A0%95%3A%0A-%20%EB%AC%B8%EC%9D%98%20%EB%82%B4%EC%9A%A9%3A%0A">문의하기</a>
+    </div>
+  </div>
 </section>
 
 <!-- ===== 라이더 상세 팝업(모달) ===== -->
@@ -2497,16 +2565,16 @@ function renderNav(){
   const menu = document.getElementById("navMenu");
   const r = document.getElementById("navRight");
   if(!ORBIT.loggedIn){
-    if(menu) menu.innerHTML = `<a onclick="scrollSec('about')">서비스 소개</a><a onclick="scrollSec('how')">이용 방법</a><a onclick="scrollSec('example')">프로젝트 예시</a>`;
+    if(menu) menu.innerHTML = `<a onclick="scrollSec('about')">서비스 소개</a><a onclick="scrollSec('how')">이용 방법</a><a onclick="scrollSec('example')">프로젝트 예시</a><a onclick="go('pricing')">요금제</a>`;
     r.innerHTML = `<button class="linkbtn" onclick="go('login')">로그인</button><button class="navcta" onclick="go('login')">시작하기</button>`;
     return;
   }
   // 로그인: 소개 메뉴 숨기고, 역할 정해졌으면 왼쪽에 Shooter/Rider 토글
   const team = ORBIT.myTab === 'team';
   if(menu){
-    menu.innerHTML = ORBIT.role ? `
+    menu.innerHTML = (ORBIT.role ? `
       <a onclick="goShooterTab()" style="${!team?'color:var(--blue); font-weight:900':''}">🚀 Shooter</a>
-      <a onclick="goRiderTab()" style="${team?'color:#047857; font-weight:900':''}">🛰️ Rider</a>` : ``;
+      <a onclick="goRiderTab()" style="${team?'color:#047857; font-weight:900':''}">🛰️ Rider</a>` : ``) + `<a onclick="go('pricing')">요금제</a>`;
   }
   r.innerHTML = `
     <button class="linkbtn" onclick="showDashboard()">⭐ ${esc(ORBIT.user||"")}님</button>
@@ -3169,11 +3237,11 @@ function subGateHTML(){
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:18px;">
       <div style="border:1px solid var(--line); border-radius:14px; padding:15px 16px;">
         <div style="font-size:14px; font-weight:800; color:var(--navy);">Free <span style="font-size:11.5px; font-weight:700; color:var(--muted);">가입 시</span></div>
-        <div style="font-size:12px; color:#475569; margin-top:9px; line-height:1.7;">· 둘러보기 · 추천 팀원·투자자 목록<br>· 받은 제안 목록 · 매칭률 요약</div>
+        <div style="font-size:12px; color:#475569; margin-top:9px; line-height:1.7;">· 둘러보기 · 추천 목록 · 매칭률 요약<br>· 받은 제안 확인·답변·수락</div>
       </div>
       <div style="border:1px solid #bfdbfe; background:var(--sky); border-radius:14px; padding:15px 16px;">
         <div style="font-size:14px; font-weight:800; color:var(--blue);">Pro <span style="font-size:11.5px; font-weight:700; color:var(--muted);">₩9,900/월</span></div>
-        <div style="font-size:12px; color:#334155; margin-top:9px; line-height:1.7;">· 아이디어·기획안 상세 전체<br>· 라이더 프로필 상세(연락·포트폴리오)<br>· 매칭 근거 · 제안/수락</div>
+        <div style="font-size:12px; color:#334155; margin-top:9px; line-height:1.7;">· 아이디어·기획안 상세 전체<br>· 라이더 프로필 상세(연락·포트폴리오)<br>· 매칭 근거 · 아이디어에 합류·투자 신청</div>
       </div>
     </div>
     <button class="btn full" style="margin-top:20px;" onclick="confirmSub()">무료로 구독 의향 남기기 <span style="font-weight:600; opacity:.85;">· 결제 없음</span></button>
