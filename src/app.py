@@ -123,5 +123,8 @@ def api_bizreview():
 
 
 if __name__ == "__main__":
-    # 5001 포트로 실행 (5000은 macOS 가 쓰는 경우가 있어 피했습니다)
-    app.run(host="127.0.0.1", port=5001, debug=True)
+    # ⚠️ 이 블록은 '로컬 개발' 전용입니다. 배포는 Procfile 의 gunicorn 이 담당하며
+    #    이 블록을 실행하지 않으므로 debug 가 켜지지 않습니다. (절대 `python app.py` 로 배포하지 마세요)
+    # (5000은 macOS 가 쓰는 경우가 있어 5001 을 기본값으로 둡니다)
+    port = int(os.environ.get("PORT", 5001))
+    app.run(host="127.0.0.1", port=port, debug=True)
