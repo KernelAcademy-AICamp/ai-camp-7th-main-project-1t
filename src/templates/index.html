@@ -2574,7 +2574,7 @@ function renderNav(){
   if(menu){
     menu.innerHTML = (ORBIT.role ? `
       <a onclick="goShooterTab()" style="${!team?'color:var(--blue); font-weight:900':''}">🚀 Shooter</a>
-      <a onclick="goRiderTab()" style="${team?'color:#047857; font-weight:900':''}">🛰️ Rider</a>` : ``) + `<a onclick="go('pricing')">요금제</a>`;
+      <a onclick="goRiderTab()" style="${team?'color:#047857; font-weight:900':''}">🛰️ Rider</a>` : ``);
   }
   r.innerHTML = `
     <button class="linkbtn" onclick="showDashboard()">⭐ ${esc(ORBIT.user||"")}님</button>
