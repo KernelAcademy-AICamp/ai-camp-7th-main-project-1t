@@ -399,6 +399,14 @@
   .b2b-cta:focus-visible{outline:2px solid var(--blue); outline-offset:2px;}
   @media(max-width:640px){ .pricing-grid{grid-template-columns:1fr;} }
   .err{color:#dc2626; background:#fef2f2; border:1px solid #fecaca; border-radius:12px; padding:13px 16px;}
+  /* 합류 결과 — '구체적으로 다시 답변하기' 안내 박스 */
+  .reanswer{margin-top:14px; padding:12px 14px; background:var(--bg); border:1px solid var(--line); border-radius:12px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
+  .reanswer span{flex:1; min-width:170px; font-size:12px; color:var(--muted); line-height:1.5;}
+  .reanswer span b{color:var(--text); font-weight:700;}
+  .re-btn{flex:0 0 auto; display:inline-flex; align-items:center; gap:6px; cursor:pointer; white-space:nowrap;
+    font-size:12.5px; font-weight:700; color:var(--navy); background:#fff;
+    border:1px solid var(--line); border-radius:9px; padding:9px 14px; transition:.15s;}
+  .re-btn:hover{border-color:var(--blue); color:var(--blue); background:var(--sky);}
   /* AI 사업성 검토 결과 — ORBIT 톤 통일 */
   .biz{display:flex; flex-direction:column; gap:15px;}
   .biz-lead{display:flex; gap:12px; align-items:flex-start; background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:14px 16px;}
@@ -3316,27 +3324,38 @@ function joinApply(){
 }
 
 /* 3가지 질문에 사용자가 '직접' 답하는 입력 폼을 띄웁니다(자동 채움 제거). */
-function renderJoinForm(){
+function renderJoinForm(prefill){
   const v = ORBIT.detailVision;
   const questions = [
     { by:"AI", text:(v.aiQuestions||[])[0] },
     { by:"AI", text:(v.aiQuestions||[])[1] },
     { by:"제공자", text:v.founderQuestion },
   ].filter(q=>q.text);
+  // 재답변(prefill)일 때는 이전 답변을 채워 이어서 보강할 수 있게 한다.
+  const prev = (prefill && Array.isArray(ORBIT._joinQA)) ? ORBIT._joinQA : null;
   const qhtml = questions.map((q,i)=>{
-    // 세 질문을 모두 동일하게 표시(제공자 질문 강조·배지색 차이 제거). 출처 라벨만 같은 스타일로 유지.
+    const val = (prev && prev[i]) ? esc(prev[i].a || "") : "";
     return `<div class="qcard">
       <p class="qtext">${esc(q.text)}<span class="qsrc ai">${esc(q.by)}</span></p>
-      <textarea id="jans-${i}" style="margin-top:9px" placeholder="여기에 직접 답변을 입력해 주세요..."></textarea>
+      <textarea id="jans-${i}" style="margin-top:9px" placeholder="여기에 직접 답변을 입력해 주세요...">${val}</textarea>
     </div>`;
   }).join("");
+  const title = prefill ? "✍️ 더 구체적으로 다시 답해 주세요" : `✍️ ${esc(ORBIT.user)} 님(나)이 3가지 질문에 직접 답해 주세요`;
+  const guide = prefill ? "경험·수치·예시를 더하면 적합도 판단이 더 정확해져요." : "답변을 바탕으로 매칭률과 가장 잘 맞는 자리를 알려드려요.";
+  const btnLabel = prefill ? "다시 제출하고 매칭 확인 →" : "답변 제출하고 매칭 확인 →";
   document.getElementById("joinResult").innerHTML = `
     <div class="card fade">
-      <p class="eyebrow">✍️ ${esc(ORBIT.user)} 님(나)이 3가지 질문에 직접 답해 주세요</p>
-      <p style="font-size:12.5px; color:#475569; margin:0 0 13px;">답변을 바탕으로 매칭률과 가장 잘 맞는 자리를 알려드려요.</p>
+      <p class="eyebrow">${title}</p>
+      <p style="font-size:12.5px; color:#475569; margin:0 0 13px;">${guide}</p>
       ${qhtml}
-      <button class="btn full" id="jansSubmit" onclick="submitJoinAnswers()">답변 제출하고 매칭 확인 →</button>
+      <button class="btn full" id="jansSubmit" onclick="submitJoinAnswers()">${btnLabel}</button>
     </div>`;
+}
+/* 결과에서 '구체적으로 다시 답변' — 이전 답변을 채운 폼으로 되돌아가 재평가 */
+function reanswerJoin(){
+  renderJoinForm(true);
+  const el = document.getElementById("joinResult");
+  if(el) el.scrollIntoView({ behavior:"smooth", block:"start" });
 }
 
 /* 사용자가 입력한 3개 답변을 모아 적합도 평가를 요청합니다. */
@@ -3387,7 +3406,11 @@ function renderJoin(r){
         <div style="font-size:11px; color:var(--muted); margin:0 0 6px 86px;">${esc(c.detail)}</div>`).join("")}
   ` : ``;
   let html = `
-    <div class="card fade"><p class="eyebrow">✅ ${esc(ORBIT.user)} 님(나)이 3질문에 답했어요</p>${answers}</div>
+    <div class="card fade"><p class="eyebrow">✅ ${esc(ORBIT.user)} 님(나)이 3질문에 답했어요</p>${answers}
+      <div class="reanswer">
+        <span>💡 답변이 짧으면 적합도 판단이 어려워요. 경험·수치·예시를 더해 <b>다시 답변</b>할 수 있어요.</span>
+        <button class="re-btn" onclick="reanswerJoin()">✏️ 다시 답변하기</button>
+      </div></div>
     <div class="card fade"><p class="eyebrow">🤝 나와 이 팀의 매칭률</p>
       ${r.bestRole?`<p style="text-align:center; font-size:13px; color:var(--blue); font-weight:700; margin:0 0 12px;">🎯 ${esc(ORBIT.user)}님에게 가장 맞는 자리 — ${esc(r.bestRole)}</p>`:``}
       <div class="score"><div class="n">${rate}<span style="font-size:20px">%</span></div><div class="l">${esc(r.verdict||"")}</div><div class="bar"><div class="fill" id="barfill"></div></div></div>
