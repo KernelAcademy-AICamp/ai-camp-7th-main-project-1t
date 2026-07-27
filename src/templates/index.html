@@ -3802,6 +3802,15 @@ function certRiderApprove(idx){
   alert("🎉 오르빗 승인이 완료됐어요.\n이제 참여 확인서를 발급받을 수 있어요.");
 }
 function certIssue(idx){ ORBIT._certIdx=idx; go("cert"); renderCert(idx); }
+/* 인쇄/PDF 저장 — 저장 파일명이 'orbit_참여_확인서_{이름}'으로 제안되도록 문서 제목을 잠깐 바꿉니다. */
+function printCert(){
+  const name = String(ORBIT.user||"확인서").replace(/[\\/:*?"<>|]/g,"").replace(/\s+/g,"");
+  const prev = document.title;
+  document.title = `orbit_참여_확인서_${name}`;
+  const restore = ()=>{ document.title = prev; window.removeEventListener("afterprint", restore); };
+  window.addEventListener("afterprint", restore);
+  window.print();
+}
 
 /* ===== 슈터(제공자) 측: 아이디어(프로젝트) 단위 완료 처리 =====
    내 아이디어 카드의 '프로젝트 완료 하기' → 산출물(공통)·기간·합류 라이더 확인 → 오르빗 승인 */
@@ -3988,7 +3997,7 @@ function renderCert(idx){
     ${backBar("showAppliedList()")}
     <div class="certtoolbar noprint">
       <div class="ctt">발급이 완료됐어요. 인쇄하거나 PDF로 저장하세요.</div>
-      <button class="btn" onclick="window.print()">🖨️ 인쇄 · PDF 저장</button>
+      <button class="btn" onclick="printCert()">🖨️ 인쇄 · PDF 저장</button>
     </div>
 
     <div id="cert-doc" class="certdoc">
