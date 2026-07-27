@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>ORBIT — 비즈니스 모델 & 역할별 보상</title>
+<style>
+  :root{
+    --navy:#0b1226; --blue:#2563eb; --blue2:#3b82f6; --sky:#eff6ff;
+    --bg:#f6f8fc; --card:#ffffff; --text:#101828; --muted:#667085; --line:#e5e7eb;
+    --green:#10b981; --green-ink:#047857; --mint:#ecfdf5;
+    --amber:#b45309; --amber-bg:#fffbeb; --amber-line:#fde68a;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--bg); color:var(--text); padding:40px 20px 60px;
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Malgun Gothic","Segoe UI",sans-serif;
+    -webkit-font-smoothing:antialiased; line-height:1.6;}
+  .wrap{max-width:980px; margin:0 auto;}
+
+  /* header */
+  .head{display:flex; align-items:center; gap:15px; margin-bottom:8px;}
+  .logo{width:40px; height:40px; border:9px solid var(--navy); border-radius:50%; position:relative; flex:0 0 auto;}
+  .logo::after{content:""; position:absolute; width:56px; height:5px; background:var(--blue); border-radius:999px; transform:rotate(-16deg); top:14px; left:-14px;}
+  .head h1{font-size:26px; font-weight:900; letter-spacing:-.01em; color:var(--navy);}
+  .head .sub{font-size:13.5px; color:var(--muted); font-weight:600; margin-top:2px;}
+  .tagline{font-size:13px; color:var(--muted); margin:14px 0 30px;}
+
+  .sec{background:var(--card); border:1px solid var(--line); border-radius:18px; padding:26px 28px; margin-bottom:20px; box-shadow:0 10px 30px rgba(15,23,42,.04);}
+  .sec > h2{font-size:18px; font-weight:900; color:var(--navy); display:flex; align-items:center; gap:9px; margin-bottom:6px;}
+  .sec > .desc{font-size:13px; color:var(--muted); margin-bottom:20px;}
+
+  /* flow diagram */
+  .flow{display:flex; align-items:stretch; gap:12px; flex-wrap:wrap; justify-content:center;}
+  .node{flex:1 1 175px; min-width:160px; border-radius:14px; padding:16px 16px 15px; text-align:center; position:relative;}
+  .node .role{font-size:11px; font-weight:800; letter-spacing:.03em; padding:3px 10px; border-radius:999px; display:inline-block; margin-bottom:9px;}
+  .node .t{font-size:15px; font-weight:800; color:var(--navy); margin-bottom:4px;}
+  .node .d{font-size:12px; color:var(--muted); line-height:1.5;}
+  .n-shooter{background:var(--sky); border:1px solid #dbeafe;}
+  .n-shooter .role{background:var(--blue); color:#fff;}
+  .n-orbit{background:var(--navy); }
+  .n-orbit .role{background:#1e293b; color:#93c5fd;}
+  .n-orbit .t{color:#fff;} .n-orbit .d{color:#cbd5e1;}
+  .n-rider{background:var(--mint); border:1px solid #a7f3d0;}
+  .n-rider .role{background:var(--green); color:#fff;}
+  .arrow{display:flex; align-items:center; justify-content:center; color:var(--blue); font-size:22px; font-weight:900; flex:0 0 auto;}
+  .flow-note{margin-top:18px; background:var(--sky); border:1px solid #dbeafe; border-radius:12px; padding:13px 16px; font-size:13px; color:#1e40af;}
+  .flow-note b{font-weight:800;}
+  @media (max-width:720px){ .arrow{transform:rotate(90deg);} .node{flex-basis:100%;} }
+
+  /* revenue table */
+  table{width:100%; border-collapse:collapse; font-size:13px;}
+  th,td{text-align:left; padding:11px 13px; border-bottom:1px solid var(--line); vertical-align:top;}
+  th{background:#f8fafc; font-weight:800; color:var(--navy); font-size:12px;}
+  td:first-child{font-weight:800; color:var(--navy); white-space:nowrap;}
+  .tag{font-size:11px; font-weight:800; padding:3px 9px; border-radius:999px; white-space:nowrap; display:inline-block;}
+  .tag.ok{background:var(--mint); color:var(--green-ink);}
+  .tag.plan{background:var(--amber-bg); color:var(--amber); border:1px solid var(--amber-line);}
+  .tag.part{background:var(--sky); color:#1e40af;}
+
+  /* reward cards */
+  .cards{display:grid; grid-template-columns:repeat(2,1fr); gap:14px;}
+  @media (max-width:640px){ .cards{grid-template-columns:1fr;} }
+  .rcard{border:1px solid var(--line); border-radius:14px; padding:18px 18px 16px; position:relative;}
+  .rcard.shooter{border-top:4px solid var(--blue);}
+  .rcard.team{border-top:4px solid var(--green);}
+  .rcard.investor{border-top:4px solid var(--amber);}
+  .rcard.orbit{border-top:4px solid var(--navy);}
+  .rcard h3{font-size:15.5px; font-weight:900; color:var(--navy); margin-bottom:3px; display:flex; align-items:center; gap:7px;}
+  .rcard .who{font-size:12px; color:var(--muted); margin-bottom:12px;}
+  .rcard .row{display:flex; gap:8px; font-size:12.5px; margin-bottom:7px; line-height:1.5;}
+  .rcard .row .k{flex:0 0 62px; font-weight:800; color:var(--muted);}
+  .rcard .row .v{flex:1; color:#334155;}
+  .rcard .v b{color:var(--navy);}
+  .hi{background:#fef9c3; padding:0 3px; border-radius:3px; font-weight:700;}
+  .warn{color:var(--amber); font-size:11.5px; margin-top:4px; display:block;}
+
+  /* logic points */
+  .logic{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
+  @media (max-width:640px){ .logic{grid-template-columns:1fr;} }
+  .lp{background:#f8fafc; border:1px solid var(--line); border-radius:13px; padding:16px;}
+  .lp .n{width:26px; height:26px; border-radius:8px; background:var(--navy); color:#fff; font-weight:900; font-size:13px; display:grid; place-items:center; margin-bottom:10px;}
+  .lp .lt{font-size:13.5px; font-weight:800; color:var(--navy); margin-bottom:5px;}
+  .lp .ld{font-size:12.5px; color:var(--muted); line-height:1.6;}
+  .lp .ld b{color:#334155;}
+
+  .foot{text-align:center; font-size:11.5px; color:#94a3b8; margin-top:26px;}
+  .legend{display:flex; gap:14px; flex-wrap:wrap; font-size:11.5px; color:var(--muted); margin-top:14px;}
+  .legend span{display:inline-flex; align-items:center; gap:5px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <div>
+      <h1>ORBIT 비즈니스 모델 &amp; 역할별 보상</h1>
+      <div class="sub">아이디어를 함께할 사람과 연결하는 AI 팀빌딩 플랫폼</div>
+    </div>
+  </div>
+  <p class="tagline">한 줄 아이디어 → AI 기획안 → 딱 맞는 팀원·투자자 매칭 → 실행</p>
+
+  <!-- 1. 수익 흐름 -->
+  <section class="sec">
+    <h2>🔄 수익 흐름 한눈에</h2>
+    <p class="desc">아이디어 등록은 무료로 열어 풀을 키우고, <b>연결(열람·신청) 지점에서 구독료</b>로 수익을 만듭니다.</p>
+    <div class="flow">
+      <div class="node n-shooter">
+        <span class="role">🚀 SHOOTER</span>
+        <div class="t">아이디어 제공자</div>
+        <div class="d">한 줄 아이디어 등록<br>(무료) → 아이디어 풀 공급</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="node n-orbit">
+        <span class="role">🛰 ORBIT</span>
+        <div class="t">AI 매칭 플랫폼</div>
+        <div class="d">AI 기획안 · 적합도 매칭<br>연결 · 참여 확인서 발급</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="node n-rider">
+        <span class="role">🛰 RIDER</span>
+        <div class="t">팀원 · 투자자</div>
+        <div class="d">아이디어 상세 열람 ·<br>합류/투자 신청</div>
+      </div>
+    </div>
+    <div class="flow-note">💰 <b>돈의 흐름:</b> <b>슈터·라이더 모두</b> 상대의 <b>상세 프로필·아이디어 전체 열람과 연락</b>은 Pro 구독(9,900원/월). 등록·요약·수락은 무료 → <b>연결 지점에서 과금</b>하는 게 핵심 매출.</div>
+  </section>
+
+  <!-- 2. 수익 모델 -->
+  <section class="sec">
+    <h2>💵 수익 모델</h2>
+    <p class="desc">진입 장벽을 낮춰 아이디어·인재 풀을 키우고, 실제 연결 지점에서 과금하는 구조.</p>
+    <table>
+      <thead><tr><th style="width:130px">구분</th><th>내용</th><th style="width:90px">상태</th></tr></thead>
+      <tbody>
+        <tr><td>핵심 수익</td><td><b>Pro 구독 9,900원 / 월</b> — 상대의 <b>상세 프로필·아이디어 전체 열람 + 연락</b> (슈터·라이더 공통)</td><td><span class="tag ok">구현</span></td></tr>
+        <tr><td>무료 영역</td><td>가입 · 아이디어/프로필 등록 · AI 기획안 · 추천·둘러보기 <b>요약</b> · 받은 제안 카드 확인·수락 · 합류 완료된 팀 · 내 아이디어</td><td><span class="tag ok">구현</span></td></tr>
+        <tr><td>확장 ①</td><td>투자 연결 수수료 — 투자자 ↔ 아이디어 매칭 성사 시</td><td><span class="tag plan">계획</span></td></tr>
+        <tr><td>확장 ②</td><td>B2B · 기관 팀 매칭 — 기업/기관 대상 매칭 문의</td><td><span class="tag part">진입점</span></td></tr>
+        <tr><td>확장 ③</td><td>공모전 연계 — 팀 매칭 후 공모전 참가로 확장</td><td><span class="tag plan">계획</span></td></tr>
+      </tbody>
+    </table>
+    <div class="legend">
+      <span><span class="tag ok">구현</span> 지금 동작</span>
+      <span><span class="tag part">진입점</span> 문의 채널만 있음</span>
+      <span><span class="tag plan">계획</span> 논의 단계</span>
+    </div>
+  </section>
+
+  <!-- 3. 역할별 보상 -->
+  <section class="sec">
+    <h2>🎁 역할별 보상 형태</h2>
+    <p class="desc">각 참여자가 <b>무엇을 내고 무엇을 얻는지</b>. 팀원은 돈이 아닌 경력·증빙으로, 투자자는 지분·수익으로.</p>
+    <div class="cards">
+
+      <div class="rcard shooter">
+        <h3>🚀 Shooter</h3>
+        <div class="who">아이디어 제공자</div>
+        <div class="row"><span class="k">얻는 것</span><span class="v"><b>실행 팀 확보</b>, AI 기획안, 맞는 팀원·투자자 추천</span></div>
+        <div class="row"><span class="k">내는 것</span><span class="v"><b>Pro 구독</b> — 추천 팀원·지원자 <b>상세 프로필 열람·연락</b> 시 (등록·기획안·수락은 무료)</span></div>
+        <div class="row"><span class="k">핵심 보상</span><span class="v"><span class="hi">아이디어의 실현</span> — 혼자 못 하던 걸 팀으로</span></div>
+      </div>
+
+      <div class="rcard team">
+        <h3>🛰 Rider — 팀원</h3>
+        <div class="who">합류해서 함께 만드는 사람</div>
+        <div class="row"><span class="k">핵심 보상</span><span class="v"><span class="hi">프로젝트 참여 확인서</span> · 포트폴리오/경력 · 평판 · 창업 기회 · 네트워킹</span></div>
+        <div class="row"><span class="k">내는 것</span><span class="v">Pro 구독 (상세 열람·합류 신청 시)</span></div>
+        <div class="row"><span class="k">지분</span><span class="v">약속형 지분은 <b>지양</b><span class="warn">⚠ 법인·분쟁·규제 리스크 → 경력·평판 중심, 지분은 팀 자율</span></span></div>
+      </div>
+
+      <div class="rcard investor">
+        <h3>🛰 Rider — 투자자</h3>
+        <div class="who">투자·자문하는 사람</div>
+        <div class="row"><span class="k">핵심 보상</span><span class="v"><span class="hi">투자 지분 · 수익</span> (펀딩 개념)</span></div>
+        <div class="row"><span class="k">ORBIT 역할</span><span class="v"><b>연결까지만</b> — 실제 계약·자금은 당사자 간, 플랫폼 미개입</span></div>
+        <div class="row"><span class="k">내는 것</span><span class="v">Pro 구독 (투자 검토 열람)</span></div>
+      </div>
+
+      <div class="rcard orbit">
+        <h3>🛰 ORBIT</h3>
+        <div class="who">AI 매칭 플랫폼</div>
+        <div class="row"><span class="k">보상</span><span class="v"><b>구독료</b>(현재) + 향후 연결 수수료</span></div>
+        <div class="row"><span class="k">비용</span><span class="v">AI 호출비(콜당 5~60원) · 서버 · 운영</span></div>
+        <div class="row"><span class="k">역할</span><span class="v">아이디어↔사람을 <b>정확히 연결</b>하고 신뢰를 보증</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 4. 핵심 논리 -->
+  <section class="sec">
+    <h2>💡 보상 구조의 핵심 논리</h2>
+    <div class="logic">
+      <div class="lp">
+        <div class="n">1</div>
+        <div class="lt">팀원은 경력·증빙으로</div>
+        <div class="ld">돈 대신 <b>참여 확인서·포트폴리오</b>로 보상 → 그래서 <b>확인서가 팀원 유인의 핵심 장치</b>.</div>
+      </div>
+      <div class="lp">
+        <div class="n">2</div>
+        <div class="lt">투자자는 지분·수익으로</div>
+        <div class="ld">보상은 지분·수익이되 <b>ORBIT은 연결까지만</b> → 금융 규제·자금 리스크 회피.</div>
+      </div>
+      <div class="lp">
+        <div class="n">3</div>
+        <div class="lt">슈터는 실행력을 얻고</div>
+        <div class="ld">등록·요약은 무료, <b>상세 열람·연락 시 Pro</b> → 대신 <b>아이디어 풀을 공급</b>하는 원료가 됨.</div>
+      </div>
+    </div>
+  </section>
+
+  <p class="foot">ORBIT &nbsp;|&nbsp; 아이디어를 함께할 사람과 연결하는 AI 팀빌딩 플랫폼 &nbsp;·&nbsp; 내부 검토용 요약</p>
+
+</div>
+</body>
+</html>
