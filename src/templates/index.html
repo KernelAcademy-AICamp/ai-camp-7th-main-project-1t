@@ -72,10 +72,17 @@
 
   /* 랜딩 */
   .lwrap{width:min(1080px,92%); margin:0 auto;}
-  .lhero{display:grid; grid-template-columns:1.05fr .95fr; gap:44px; align-items:center; align-content:center; padding:56px 0 44px;}
+  /* 첫 방문자용 포지셔닝 인트로 (랜딩 최상단) */
+  .lintro{text-align:center; max-width:800px; margin:0 auto; padding:64px 0 12px;}
+  .lintro .eb{display:inline-block; font-size:12.5px; font-weight:800; color:var(--cyan-ink); border:1px solid #cfe1fb; background:var(--sky); padding:7px 15px; border-radius:999px; margin-bottom:20px;}
+  .lintro h1{font-size:clamp(30px,5.4vw,52px); line-height:1.14; letter-spacing:-.04em; color:var(--navy); font-weight:900; margin:0 0 18px; text-wrap:balance;}
+  .lintro h1 b{color:var(--cyan-ink);}
+  .lintro .sub{font-size:clamp(15px,2.5vw,18px); color:var(--muted); line-height:1.7; margin:0 auto; max-width:640px; text-wrap:balance;}
+  .hslabel{text-align:center; font-size:12.5px; font-weight:800; color:var(--muted); letter-spacing:.02em; margin:8px 0 6px;}
+  .lhero{display:grid; grid-template-columns:1.05fr .95fr; gap:44px; align-items:center; align-content:center; padding:14px 0 44px;}
   @media(max-width:860px){ .lhero{grid-template-columns:1fr; gap:30px;} }
-  .badge{display:inline-block; font-size:12.5px; font-weight:800; color:var(--cyan-ink); border:1px solid #cfe1fb; background:var(--sky); padding:7px 14px; border-radius:999px; margin-bottom:22px;}
-  .lhero h1{font-size:54px; line-height:1.1; letter-spacing:-.045em; color:var(--navy); margin:0 0 22px; font-weight:900;}
+  .badge{display:inline-block; font-size:12.5px; font-weight:800; color:var(--cyan-ink); border:1px solid #cfe1fb; background:var(--sky); padding:7px 14px; border-radius:999px; margin-bottom:18px;}
+  .lhero h1{font-size:clamp(26px,4vw,38px); line-height:1.16; letter-spacing:-.04em; color:var(--navy); margin:0 0 18px; font-weight:900;}
   .lhero h1 .bl{color:var(--cyan-ink);}
   .lhero h1 .gr{color:var(--cyan-ink);}
   .badge.rider{color:var(--cyan-ink); border-color:#cfe1fb; background:var(--sky);}
@@ -89,8 +96,18 @@
   .lhero .desc{color:var(--muted); font-size:15.5px; line-height:1.75; margin:0 0 28px; max-width:440px;}
   .lhero .cta{display:flex; gap:10px; flex-wrap:wrap;}
   /* 역할 선택 카드 (Shooter / Rider) */
-  .role-pick{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:8px 0 6px;}
+  .role-pick{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:10px 0 6px;}
   .rolecard{display:block; text-align:center; border:1.5px solid var(--line); border-radius:20px; padding:30px 20px; background:#fff; cursor:pointer; transition:.16s; font-family:inherit;}
+  .statband{background:#1c2b5a; border-radius:22px; padding:32px 26px; color:#e9eefc; text-align:center; box-shadow:0 20px 48px -24px rgba(11,18,38,.5);}
+  .statlead{font-size:15px; color:#c7d2fe; margin:0 0 24px;}
+  .statlead b{color:#fff; font-weight:900;}
+  .statgrid3{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
+  .stat3{padding:4px 6px;}
+  .stat3 + .stat3{border-left:1px solid rgba(255,255,255,.1);}
+  .sv3{font-size:clamp(34px,6.2vw,54px); font-weight:900; color:#fff; font-variant-numeric:tabular-nums; line-height:1; letter-spacing:-.02em;}
+  .sl3{font-size:13px; color:#a9b8de; margin-top:12px; font-weight:700;}
+  .statasof{margin-top:20px; font-size:11.5px; color:#8595bd; letter-spacing:.02em; font-variant-numeric:tabular-nums;}
+  @media(max-width:560px){ .statgrid3{grid-template-columns:1fr; gap:22px;} .stat3 + .stat3{border-left:none; border-top:1px solid rgba(255,255,255,.1); padding-top:22px;} }
   .rolecard:hover{transform:translateY(-3px); box-shadow:0 18px 40px rgba(15,23,42,.12);}
   .rolecard.shooter:hover{border-color:var(--blue);}
   .rolecard.rider:hover{border-color:var(--green);}
@@ -699,14 +716,37 @@
 
 <!-- ===== 랜딩 ===== -->
 <section class="screen" id="s-landing">
-  <!-- HERO -->
+  <!-- 서비스 소개 (첫 방문자용 포지셔닝) -->
+  <div class="lwrap">
+    <div class="lintro">
+      <span class="eb">✦ AI 팀빌딩 플랫폼</span>
+      <h1>아이디어에 딱 맞는<br><b>팀원</b>과 <b>투자자</b>를 만나는 곳</h1>
+      <p class="sub">한 줄 아이디어를 AI가 팀원이 이해할 기획안으로 바꾸고, 함께할 사람을 찾아 연결합니다.<br>혼자였던 아이디어가, 함께하는 팀이 됩니다.</p>
+    </div>
+  </div>
+
+  <!-- 서비스 현황 -->
+  <div class="lwrap" style="padding:36px 0 10px;">
+    <div class="statband">
+      <div class="statlead">지금 이 순간에도 ORBIT에서 <b>팀</b>과 <b>자금</b>이 연결되고 있어요</div>
+      <div class="statgrid3">
+        <div class="stat3"><div class="sv3" id="stat-proj">–</div><div class="sl3">🚀 진행 중인 프로젝트</div></div>
+        <div class="stat3"><div class="sv3" id="stat-rider">–</div><div class="sl3">🧑‍🚀 대기 중인 팀원</div></div>
+        <div class="stat3"><div class="sv3" id="stat-fund">–</div><div class="sl3">💰 누적 투자금</div></div>
+      </div>
+      <div class="statasof" id="stat-asof"></div>
+    </div>
+  </div>
+
+  <!-- HERO — 두 가지 시작 방식 미리보기 -->
   <div class="lwrap" id="sec-about">
+    <div class="hslabel">🖥️ 이렇게 작동해요 — 두 가지 시작 방식</div>
     <div class="hero-slider">
       <div class="hero-track" id="heroTrack">
       <!-- 슬라이드 1: Shooter -->
       <div class="lhero hslide">
         <div>
-          <span class="badge">✦ AI Team Building Platform</span>
+          <span class="badge">🚀 Shooter · 아이디어를 던지다</span>
           <h1>아이디어를,<br><span class="bl">ORBIT</span> 하다.</h1>
           <p class="desc">한 줄의 아이디어를 팀원이 이해할 수 있는 언어로 바꾸고,<br>함께할 사람에게 ORBIT 제안을 보내 팀 구성까지 이어지게 합니다.</p>
           <p style="font-size:13.5px; color:var(--cyan-ink); font-weight:800; margin:0;">👇 아래에서 시작 방식을 골라보세요</p>
@@ -750,7 +790,7 @@
   </div>
 
   <!-- 역할 선택 (Shooter / Rider) — 로그인 시 숨김 -->
-  <div class="lwrap" id="landingRolePick" style="padding-bottom:10px;">
+  <div class="lwrap" id="landingRolePick" style="padding:22px 0 34px;">
     <div class="role-pick">
       <button class="rolecard shooter" onclick="goIdeaIntro()">
         <div class="rc-emoji">🚀</div>
@@ -4321,6 +4361,25 @@ function showResume(){ go("resume"); document.getElementById("resume-body").inne
 
 /* 히어로 슬라이더 (Shooter ↔ Rider 자동 전환) */
 let heroI = 0;
+/* 랜딩 서비스 현황 — 시연 임팩트용 가상 수치. DB 붙으면 실측으로 교체. */
+function _countUp(id, to, opts){
+  opts = opts||{};
+  const el = document.getElementById(id); if(!el) return;
+  const fmt = n => (opts.prefix||"") + Math.round(n).toLocaleString("en-US") + (opts.suffix||"");
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(reduce || !(to>0)){ el.textContent = fmt(to||0); return; }
+  const dur=1100, t0=performance.now();
+  const step=(t)=>{ const p=Math.min(1,(t-t0)/dur); el.textContent=fmt(to*(1-Math.pow(1-p,3))); if(p<1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+function renderLandingStats(){
+  const S = { projects:1284, riders:9120, fund:214 };   // ← 시연 수치는 여기만 수정 (fund 단위: 억)
+  _countUp("stat-proj",  S.projects);
+  _countUp("stat-rider", S.riders, {suffix:"+"});
+  _countUp("stat-fund",  S.fund,   {prefix:"₩", suffix:"억"});
+  const el = document.getElementById("stat-asof");
+  if(el){ const d = new Date(); el.textContent = `📊 ${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 기준`; }
+}
 function heroGo(i){
   heroI = i;
   const track = document.getElementById("heroTrack");
@@ -4346,6 +4405,7 @@ window.addEventListener("resize", equalizeHeroMocks);
 setTimeout(equalizeHeroMocks, 400);
 
 renderNav();
+renderLandingStats();
 </script>
 </body>
 </html>
