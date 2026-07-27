@@ -509,6 +509,13 @@
   .myidea-head:hover .myidea-title{color:var(--blue);}
   .mih-tag{font-size:14px; color:var(--muted); margin-top:9px; line-height:1.65;}
   .mih-stats{display:flex; gap:6px; flex:0 0 auto; flex-wrap:wrap; justify-content:flex-end;}
+  .mih-ctarow{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:14px; flex-wrap:wrap;}
+  .mih-ctarow .mih-cta{margin-top:0;}
+  .mihcbtn{border:none; border-radius:9px; padding:8px 15px; font-size:13px; font-weight:800; cursor:pointer; white-space:nowrap; transition:.15s;}
+  .mihcbtn.go{background:var(--navy); color:#fff;}
+  .mihcbtn.go:hover{filter:brightness(1.18);}
+  .mihcbtn.wait{background:#fffbeb; color:#b45309; border:1px solid #fde68a;}
+  .mihcbtn.done{background:#ecfdf5; color:#0f766e; border:1px solid #a7f3d0;}
   .mih-cta{display:inline-flex; align-items:center; gap:6px; margin-top:14px; font-size:13px; font-weight:800; color:var(--blue);}
   .mih-cta .mih-arrow{transition:transform .15s;}
   .myidea-head:hover .mih-cta .mih-arrow{transform:translateX(3px);}
@@ -558,6 +565,119 @@
   .pd-k{font-size:12.5px; font-weight:800; color:var(--navy);}
   .pd-v{font-size:13px; color:#334155; line-height:1.7;}
   .pd-v .chip{margin:0 6px 6px 0; cursor:default;}
+
+  /* ===== 프로젝트 참여 확인서 ===== */
+  .certwrap{margin-top:13px; padding-top:13px; border-top:1px solid var(--line);}
+  .cstepper{display:flex; align-items:center; gap:6px; margin-bottom:14px;}
+  .cstep{display:flex; align-items:center; gap:6px; flex:0 0 auto;}
+  .cstep .cdot{width:20px; height:20px; border-radius:50%; display:grid; place-items:center; font-size:11px; font-weight:800;
+    background:#eef2f7; color:var(--muted); border:1px solid var(--line);}
+  .cstep .cl{font-size:11px; font-weight:700; color:var(--muted); white-space:nowrap;}
+  .cstep.done .cdot{background:var(--green); color:#fff; border-color:var(--green);}
+  .cstep.done .cl{color:#0f766e;}
+  .cstep.cur .cdot{background:var(--blue); color:#fff; border-color:var(--blue);}
+  .cstep.cur .cl{color:var(--blue);}
+  .cbar{flex:1 1 auto; height:2px; background:var(--line); min-width:8px;}
+  .certmsg{font-size:12.5px; color:#475569; line-height:1.6; margin:0 0 12px;}
+  .certmsg b{color:var(--navy);}
+  .certcta{width:100%; display:inline-flex; align-items:center; justify-content:center; gap:8px; cursor:pointer;
+    font-size:13.5px; font-weight:800; color:var(--navy); background:#fff; border:1.5px dashed var(--line); border-radius:12px; padding:12px 16px; transition:.15s;}
+  .certcta:hover{border-color:var(--blue); color:var(--blue); background:var(--sky);}
+  .certcta.issue{background:var(--green); color:#fff; border:none;}
+  .certcta.issue:hover{filter:brightness(1.05); color:#fff;}
+  .certcta .dm{font-size:10.5px; font-weight:800; color:var(--muted); background:#f1f5f9; border-radius:6px; padding:2px 7px;}
+  .certcta.issue .dm{color:#065f46; background:#d1fae5;}
+  .certstat{border-radius:12px; padding:12px 14px; margin-bottom:12px;}
+  .certstat.wait{background:#fffbeb; border:1px solid #fde68a;}
+  .certstat.ok{background:#ecfdf5; border:1px solid #a7f3d0;}
+  .certstat .csh{font-size:13.5px; font-weight:800; color:var(--navy);}
+  .certstat .csd{font-size:12px; color:#475569; margin-top:3px;}
+  .certstat.wait .csd b{color:#b45309;}
+  .certev{background:#f8fafc; border:1px solid var(--line); border-radius:11px; padding:11px 13px; margin-bottom:12px;}
+  .certev .cei{font-size:12px; color:#334155; line-height:1.6; padding:3px 0; display:flex; gap:8px;}
+  .certev .cei span{flex:0 0 66px; font-weight:800; color:var(--muted);}
+  .certev .cei a{color:var(--blue); word-break:break-all;}
+  .certform .cfh{font-size:13.5px; font-weight:800; color:var(--navy); margin:2px 0 12px;}
+  .certform .cfl{display:block; font-size:12px; font-weight:800; color:var(--navy); margin-bottom:6px;}
+  .certform .cfl span{font-weight:600; color:var(--muted);}
+  .certform .cfi,.certform .cft{width:100%; border:1px solid var(--line); border-radius:10px; padding:10px 12px; font-size:13px; font-family:inherit; color:var(--text);}
+  .certform .cft{min-height:74px; resize:vertical; line-height:1.55;}
+  .cfl{display:block; font-size:12px; font-weight:800; color:var(--navy); margin-bottom:6px;}
+  .cfl span{font-weight:600; color:var(--muted);}
+  .cfi,.cft{width:100%; border:1px solid var(--line); border-radius:10px; padding:10px 12px; font-size:13px; font-family:inherit; color:var(--text); background:#fff;}
+  .cft{min-height:70px; resize:vertical; line-height:1.55;}
+  /* 완료 처리 화면 */
+  .pcperiod{display:flex; align-items:flex-end; gap:10px;}
+  .pcperiod>div{flex:1;}
+  .pcp-tilde{flex:0 0 auto; padding-bottom:11px; color:var(--muted); font-weight:800;}
+  .pcriders{display:flex; flex-direction:column; gap:9px;}
+  .pcrider{display:flex; align-items:center; gap:11px; padding:12px 14px; border:1px solid var(--line); border-radius:12px; cursor:pointer; transition:.15s;}
+  .pcrider:has(input:checked){border-color:#a7f3d0; background:#f0fdf4;}
+  .pcrider input{width:19px; height:19px; flex:0 0 auto; accent-color:var(--green); cursor:pointer;}
+  .pcrider .pcr-body{flex:1; min-width:0; display:flex; flex-direction:column; gap:2px;}
+  .pcrider .pcr-name{font-size:14px; font-weight:800; color:var(--navy);}
+  .pcrider .pcr-role{font-size:12px; color:var(--muted);}
+  .pcrider .pcr-hint{flex:0 0 auto; font-size:11px; font-weight:700; color:#059669; white-space:nowrap;}
+  @media (max-width:440px){ .pcrider .pcr-hint{display:none;} }
+  .pc-output{display:flex; gap:8px; align-items:stretch;}
+  .pc-output .cfi{flex:1; min-width:0;}
+  .cfile-btn{flex:0 0 auto; display:inline-flex; align-items:center; gap:6px; padding:9px 14px; border:1px solid var(--line); border-radius:10px; background:#fff; color:var(--navy); font-size:13px; font-weight:700; cursor:pointer; white-space:nowrap; transition:.15s;}
+  .cfile-btn:hover{border-color:var(--blue); color:var(--blue); background:var(--sky);}
+  .cfile-btn .cfi-ic{font-size:15px;}
+  .pc-fname{font-size:12px; font-weight:700; color:#059669; margin-top:8px; min-height:1px;}
+  /* 승인 절차 — 정보 아이콘 + 마우스오버 툴팁 */
+  .capinfo{position:relative; display:inline-flex; align-items:center; cursor:help; color:var(--muted); font-size:14px; font-weight:700;}
+  .capinfo .captip{position:absolute; left:-6px; top:150%; z-index:40; width:min(300px,80vw); background:var(--navy); color:#fff; padding:13px 15px; border-radius:11px; font-size:11.5px; font-weight:500; line-height:1.75; letter-spacing:0; text-align:left; box-shadow:0 12px 34px rgba(15,23,42,.28); opacity:0; visibility:hidden; transform:translateY(-4px); transition:.16s;}
+  .capinfo .captip::before{content:""; position:absolute; left:12px; top:-6px; border:6px solid transparent; border-top:0; border-bottom-color:var(--navy);}
+  .capinfo:hover .captip,.capinfo:focus .captip{opacity:1; visibility:visible; transform:translateY(0);}
+  .capinfo .captip b{color:#93c5fd; font-weight:800;}
+
+  /* 확인서 문서 */
+  .certtoolbar{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:14px 0 16px; padding:12px 14px; background:var(--sky); border:1px solid #dbeafe; border-radius:12px;}
+  .certtoolbar .ctt{flex:1; min-width:150px; font-size:12.5px; font-weight:700; color:#1e40af;}
+  .certtoolbar .btn{flex:0 0 auto; padding:10px 16px;}
+  .certdoc{background:#fff; border:1px solid var(--line); border-radius:14px; padding:34px 32px 26px; box-shadow:0 10px 30px rgba(15,23,42,.06); color:#1f2a44;}
+  .certdoc .cd-top{display:flex; align-items:center; justify-content:space-between; gap:12px;}
+  .certdoc .cd-logo{height:36px; width:auto; display:block;}
+  .certdoc .cd-no{font-size:11px; color:var(--muted);}
+  .certdoc .cd-rule{height:2.5px; background:var(--navy); border-radius:2px; margin:9px 0 22px;}
+  .certdoc .cd-title{text-align:center; font-size:27px; font-weight:900; letter-spacing:.14em; color:var(--navy); margin:0;}
+  .certdoc .cd-sub{text-align:center; font-size:10.5px; font-weight:700; letter-spacing:.18em; color:var(--muted); margin:5px 0 20px;}
+  .certdoc .cd-intro{font-size:12.5px; line-height:1.7; color:#243; background:#f0fdf4; border:1px solid #d5f2e0; border-radius:9px; padding:12px 15px; margin:0 0 20px;}
+  .certdoc .cd-table{width:100%; border-collapse:collapse; font-size:12.5px; table-layout:fixed;}
+  .certdoc .cd-table th,.certdoc .cd-table td{border:1px solid #d7deea; padding:9px 12px; text-align:left; vertical-align:middle; line-height:1.6; word-break:break-word;}
+  .certdoc .cd-table th{background:#eef3fa; font-weight:800; color:var(--navy); width:118px; white-space:nowrap;}
+  .certdoc .cd-table .cd-sec td{background:var(--navy); color:#fff; font-weight:800; text-align:center; letter-spacing:.04em;}
+  .certdoc .cd-table .cd-free td{padding:12px 14px;}
+  .certdoc .cd-narr{font-size:12.5px; line-height:1.95; color:#243349; margin:0; text-align:justify; word-break:keep-all;}
+  .certdoc .ckbox{color:var(--muted); font-size:13px;}
+  .certdoc .ckbox.on{color:var(--blue); font-weight:900;}
+  .certdoc .cd-table td a{color:var(--blue); word-break:break-all;}
+  .certdoc .cd-confirm{text-align:center; font-size:13px; line-height:1.9; color:var(--navy); font-weight:600; margin:26px 0 12px;}
+  .certdoc .cd-date{text-align:center; font-size:18px; font-weight:800; color:var(--navy); letter-spacing:.08em; margin:12px 0 8px;}
+  .certdoc .cd-issuerrow{display:flex; align-items:center; justify-content:center; gap:0; margin:14px 0 16px;}
+  .certdoc .cd-issuer{font-size:28px; font-weight:900; letter-spacing:.14em; color:var(--navy);}
+  .certdoc .cd-stamp{position:relative; width:128px; height:128px; margin-left:-14px; flex:0 0 auto;}
+  .certdoc .cd-stamp img,.certdoc .cd-stamp svg{width:100%; height:100%; object-fit:contain;}
+  .certdoc .cd-verify{font-size:10.5px; line-height:1.65; color:#475569; text-align:center; margin:0 0 12px; padding:0 8px;}
+  .certdoc .cd-verify b{color:var(--navy);}
+  .certdoc .cd-foot{font-size:10.5px; line-height:1.65; color:#64748b; background:#f8fafc; border:1px solid var(--line); border-radius:8px; padding:11px 13px; margin:6px 0 0;}
+  .certdoc .cd-brandfoot{text-align:center; font-size:10px; color:#94a3b8; letter-spacing:.02em; margin:16px 0 0;}
+  @media (max-width:520px){
+    .certdoc{padding:24px 18px 20px;}
+    .certdoc .cd-title{font-size:21px; letter-spacing:.08em;}
+    .certdoc .cd-table th{width:88px;}
+    .certdoc .cd-issuer{font-size:22px;}
+    .certdoc .cd-stamp{width:98px; height:98px; margin-left:-10px;}
+  }
+  @media print{
+    body{background:#fff;}
+    body *{visibility:hidden;}
+    #cert-doc,#cert-doc *{visibility:visible;}
+    #cert-doc{position:absolute; left:0; top:0; width:100%; border:none; box-shadow:none; border-radius:0; padding:8mm 6mm;}
+    .noprint{display:none !important;}
+    @page{margin:12mm;}
+  }
 </style>
 </head>
 <body>
@@ -790,6 +910,16 @@
 <!-- ===== 신청 현황 (내가 합류 신청한 아이디어) ===== -->
 <section class="screen hidden" id="s-applied">
   <div class="narrow pagepad" id="applied-body"></div>
+</section>
+
+<!-- ===== 프로젝트 완료 처리 (슈터) ===== -->
+<section class="screen hidden" id="s-complete">
+  <div class="narrow pagepad" id="complete-body"></div>
+</section>
+
+<!-- ===== 프로젝트 참여 확인서 ===== -->
+<section class="screen hidden" id="s-cert">
+  <div class="narrow pagepad" id="cert-body"></div>
 </section>
 
 <!-- ===== 라이더 둘러보기 (팀원 + 투자자) ===== -->
@@ -1846,6 +1976,7 @@ function appliedRow(a){
     <div class="applied-note">${note}</div>
     ${footer}
     ${acc && a.channels ? teamChannelBlock(a) : ""}
+    ${acc ? certBlock(a, idx) : ""}
   </div>`;
 }
 /* 탭+목록만 (탭 전환 시 이 부분만 교체 → 통계·헤더 고정, 깜빡임 없음) */
@@ -3613,6 +3744,291 @@ function slackBlock(v){
     </div>`;
 }
 
+/* ===== 프로젝트 참여 확인서 =====
+   흐름: 합류 완료 → (제공자) 완료·증빙 등록 → 오르빗 승인(데모 시뮬레이션) → 라이더 발급 */
+function certStage(a){ return (a.cert && a.cert.stage) || "ongoing"; }
+function refreshApplied(){ const z=document.getElementById("applied-zone"); if(z) z.innerHTML = appliedZoneHtml(); }
+function certPad(n){ return String(n).padStart(2,"0"); }
+function certToday(){ const d=new Date(); return `${d.getFullYear()}.${certPad(d.getMonth()+1)}.${certPad(d.getDate())}`; }
+function certHash(str, mod){ let h=0; const s=String(str||""); for(let i=0;i<s.length;i++){ h=(h*31 + s.charCodeAt(i))>>>0; } return mod ? (h%mod) : h; }
+function certProjectId(a){ return "PRJ-" + certHash((a.title||"")+"|"+(a.role||"")).toString(36).toUpperCase().padStart(6,"0").slice(0,6); }
+function certOrbNo(a){ return String(certHash((ORBIT.user||"")+"|"+(a.title||""), 1000000)).padStart(6,"0"); }
+/* 담당 분야 추정 — 참여 역할을 먼저 판정하고(우선), 없으면 답변 텍스트로 보조 판정 */
+function certArea(a){
+  const role = (a.role||"").toLowerCase();
+  const full = (role + " " + ((a.qa||[]).map(x=>x&&x.a).join(" "))).toLowerCase();
+  const cats = [
+    ["마케팅", /마케팅|market|그로스|홍보|콘텐츠|sns|브랜드/],
+    ["개발",   /개발|엔지니어|프론트|백엔드|dev|프로그|코드|api/],
+    ["디자인", /디자인|design|ui|ux|브랜딩/],
+    ["기획",   /기획|pm|기획자|전략|planner/],
+    ["운영",   /운영|operation|cs|커뮤니티|고객/],
+  ];
+  for(const [name,re] of cats){ if(re.test(role)) return name; }  // 역할 우선
+  for(const [name,re] of cats){ if(re.test(full)) return name; }  // 보조: 답변 포함
+  return "기타";
+}
+
+/* 합류 완료 카드 안: 참여 확인서 (제공자 완료 → 오르빗 승인 후에만 발급 가능) */
+function certBlock(a, idx){
+  if(!a._certApproved){
+    return `<div class="certwrap">
+      <p class="eyebrow" style="margin-bottom:9px;">📄 프로젝트 참여 확인서</p>
+      <div class="certstat wait" style="margin-bottom:12px;">
+        <div class="csh">🕐 오르빗 담당자 승인 대기중</div>
+        <div class="csd">제공자가 프로젝트를 완료 처리하면 오르빗 담당자가 확인해요 · <b>영업일 기준 최대 10일</b> 소요</div>
+      </div>
+      <button class="certcta" onclick="certRiderApprove(${idx})">🛰️ 승인 완료 처리 <span class="dm">데모</span></button>
+    </div>`;
+  }
+  return `<div class="certwrap">
+    <p class="eyebrow" style="margin-bottom:9px;">📄 프로젝트 참여 확인서</p>
+    <div class="certstat ok" style="margin-bottom:12px;"><div class="csh">✅ 오르빗 승인 완료</div><div class="csd">이제 참여 확인서를 발급받을 수 있어요.</div></div>
+    <button class="certcta issue" onclick="certIssue(${idx})">📄 참여 확인서 발급 →</button>
+  </div>`;
+}
+/* (데모) 오르빗 담당자 승인 완료 — 실제로는 제공자 완료 심사 요청 후 담당자가 승인해요. */
+function certRiderApprove(idx){
+  const a=ORBIT.applied[idx]; if(!a) return;
+  a._certApproved = true;
+  const now=new Date();
+  const start=new Date(now.getFullYear(), now.getMonth()-3, now.getDate());
+  const fmt=d=>`${d.getFullYear()}.${certPad(d.getMonth()+1)}.${certPad(d.getDate())}`;
+  a.cert = Object.assign(a.cert||{}, {
+    projectId: certProjectId(a), sinceDate: fmt(start), completedDate: certToday(),
+    approvedDate: certToday(), orbNo: certOrbNo(a)
+  });
+  refreshApplied();
+  alert("🎉 오르빗 승인이 완료됐어요.\n이제 참여 확인서를 발급받을 수 있어요.");
+}
+function certIssue(idx){ ORBIT._certIdx=idx; go("cert"); renderCert(idx); }
+
+/* ===== 슈터(제공자) 측: 아이디어(프로젝트) 단위 완료 처리 =====
+   내 아이디어 카드의 '프로젝트 완료 하기' → 산출물(공통)·기간·합류 라이더 확인 → 오르빗 승인 */
+function certTodayISO(){ const d=new Date(); return `${d.getFullYear()}-${certPad(d.getMonth()+1)}-${certPad(d.getDate())}`; }
+function isoToDot(s){ return String(s||"").replace(/-/g,"."); }
+
+/* 아이디어 카드 헤더(받은 제안·합류 배지 아래)에 붙는 컴팩트 완료 버튼 */
+function projectCompleteBtn(it, idx){
+  const stage = (it.completion && it.completion.stage) || "ongoing";
+  if(stage==="reviewing") return `<button class="mihcbtn wait" onclick="event.stopPropagation(); openProjectComplete(${idx})">🕐 승인 대기중</button>`;
+  if(stage==="approved")  return `<button class="mihcbtn done" onclick="event.stopPropagation(); openProjectComplete(${idx})">✅ 완료 승인됨</button>`;
+  return `<button class="mihcbtn go" onclick="event.stopPropagation(); openProjectComplete(${idx})">🏁 프로젝트 완료 하기</button>`;
+}
+
+/* 완료 처리 화면 */
+function pcFilePick(input){ const el=document.getElementById("pc-filename"); const f=input.files&&input.files[0]; if(el) el.textContent = f ? ('📎 '+f.name) : ''; }
+function openProjectComplete(idx){ ORBIT._completeIdx=idx; go("complete"); renderProjectComplete(idx); }
+function renderProjectComplete(idx){
+  const it = ORBIT.myIdeas[idx]; if(!it) return;
+  const joined = it.proposals.map((p,pi)=>({p,pi})).filter(x=>x.p.status==="accepted");
+  const c = it.completion || {};
+  const stage = c.stage || "ongoing";
+  const reached = stage==="reviewing" ? 2 : stage==="approved" ? 3 : 1;
+  const stepLabels = ["합류 완료","프로젝트 완료","오르빗 승인","라이더 발급"];
+  const stepper = `<div class="cstepper">${stepLabels.map((t,i)=>{ const done=i<reached, cur=i===reached;
+    return `<div class="cstep ${done?'done':''} ${cur?'cur':''}"><span class="cdot">${done?'✓':i+1}</span><span class="cl">${t}</span></div>`; }).join('<span class="cbar"></span>')}</div>`;
+  const procSteps = [
+    ["합류 완료","라이더가 팀에 합류한 상태입니다."],
+    ["프로젝트 완료","제공자가 산출물·프로젝트 기간을 등록하고 완료 심사를 요청합니다."],
+    ["오르빗 승인","오르빗 담당자가 등록 내용을 확인합니다. (영업일 기준 최대 10일 소요)"],
+    ["라이더 발급","승인 완료 후 라이더가 마이페이지에서 참여 확인서를 발급받습니다."],
+  ];
+  const procTip = procSteps.map(s=>`<b>${s[0]}</b> ${esc(s[1])}`).join("<br>");
+  const outHtml = c.link
+    ? `<a href="${esc(/^https?:\/\//.test(c.link)?c.link:'https://'+c.link)}" target="_blank" rel="noopener">${esc(c.link)}</a>`
+    : (c.fileName ? `📎 ${esc(c.fileName)}` : "-");
+  const confNames = (c.confirmed||[]).map(pi=>esc((it.proposals[pi]||{}).name||"")).filter(Boolean).join(", ") || "-";
+
+  const head = `${backBar("showMy('idea')")}
+    <div class="myhead" style="margin-top:14px">
+      <div class="myhi">📄 프로젝트 완료 · 참여 확인서</div>
+      <div class="mymode"><b>${esc(it.vision.serviceName)}</b></div>
+    </div>
+    <div class="card">
+      <p class="eyebrow" style="margin-bottom:13px;">🧭 승인 절차 <span class="capinfo" tabindex="0" aria-label="심사 단계 안내">ⓘ<span class="captip">${procTip}</span></span></p>
+      ${stepper}
+    </div>`;
+
+  let body = "";
+  if(stage==="ongoing"){
+    const riderRows = joined.length ? joined.map(x=>`
+      <label class="pcrider">
+        <input type="checkbox" id="pc-chk-${x.pi}" checked />
+        <span class="pcr-body"><span class="pcr-name">${esc(x.p.name)}</span><span class="pcr-role">${esc(x.p.role||"팀원")}</span></span>
+        <span class="pcr-hint">이 역할로 참여한 게 맞아요</span>
+      </label>`).join("") : `<div class="dc-empty" style="padding:14px 0;">합류한 라이더가 없어요. 먼저 제안을 수락해 주세요.</div>`;
+    body = `
+      <div class="card">
+        <p class="eyebrow">📦 산출물 (공통)</p>
+        <label class="cfl">결과 링크 또는 파일 업로드 <span>(GitHub·노션·배포 URL / PDF·이미지 등)</span></label>
+        <div class="pc-output">
+          <input id="pc-link" class="cfi" placeholder="https:// 결과 링크 붙여넣기" value="${esc(c.link||"")}" />
+          <input type="file" id="pc-file" onchange="pcFilePick(this)" style="display:none" />
+          <button type="button" class="cfile-btn" onclick="document.getElementById('pc-file').click()" title="파일 업로드"><span class="cfi-ic">📎</span> 파일</button>
+        </div>
+        <div id="pc-filename" class="pc-fname">${c.fileName?('📎 '+esc(c.fileName)):''}</div>
+        <label class="cfl" style="margin-top:12px;">프로젝트 성과 요약 <span>(선택)</span></label>
+        <textarea id="pc-desc" class="cft" placeholder="예: MVP 출시, 베타 사용자 200명 확보">${esc(c.desc||"")}</textarea>
+      </div>
+      <div class="card">
+        <p class="eyebrow">📅 프로젝트 기간</p>
+        <div class="pcperiod">
+          <div><label class="cfl">시작일</label><input type="date" id="pc-since" class="cfi" value="${esc(c.since||"")}" /></div>
+          <span class="pcp-tilde">~</span>
+          <div><label class="cfl">종료일</label><input type="date" id="pc-until" class="cfi" value="${esc(c.until||certTodayISO())}" /></div>
+        </div>
+      </div>
+      <div class="card">
+        <p class="eyebrow">🧑‍🤝‍🧑 합류한 라이더 확인 <span style="font-weight:600;color:var(--muted);font-size:11px;">· 역할이 맞는지 체크하세요</span></p>
+        <div class="pcriders">${riderRows}</div>
+      </div>
+      <button class="btn green full" onclick="submitProjectComplete(${idx})">완료 처리하고 오르빗 승인 요청 →</button>`;
+  } else {
+    const summary = `
+      <div class="certev" style="margin-top:0;">
+        <div class="cei"><span>프로젝트 기간</span>${esc(isoToDot(c.since))} ~ ${esc(isoToDot(c.until))}</div>
+        <div class="cei"><span>산출물</span>${outHtml}</div>
+        ${c.desc?`<div class="cei"><span>성과 요약</span>${esc(c.desc)}</div>`:``}
+        <div class="cei"><span>확인 라이더</span>${confNames}</div>
+      </div>`;
+    if(stage==="reviewing"){
+      body = `<div class="card">
+        <div class="certstat wait"><div class="csh">🕐 오르빗 승인 대기중</div><div class="csd">담당자가 확인하고 있어요 · <b>영업일 기준 최대 10일</b></div></div>
+        ${summary}
+        <button class="certcta" style="margin-top:14px;" onclick="approveProjectComplete(${idx})">🛰️ 오르빗 승인 처리 <span class="dm">데모</span></button>
+      </div>`;
+    } else {
+      body = `<div class="card">
+        <div class="certstat ok"><div class="csh">✅ 오르빗 승인 완료</div><div class="csd"><b>${confNames}</b> 님이 마이페이지에서 참여 확인서를 발급받을 수 있어요.</div></div>
+        ${summary}
+      </div>`;
+    }
+  }
+  document.getElementById("complete-body").innerHTML = head + body;
+}
+function submitProjectComplete(idx){
+  const it = ORBIT.myIdeas[idx]; if(!it) return;
+  const joined = it.proposals.map((p,pi)=>({p,pi})).filter(x=>x.p.status==="accepted");
+  const confirmed = joined.filter(x=>{ const el=document.getElementById("pc-chk-"+x.pi); return el && el.checked; }).map(x=>x.pi);
+  if(!confirmed.length){ alert("참여를 확인할 라이더를 1명 이상 선택해 주세요."); return; }
+  const link=(document.getElementById("pc-link")||{}).value||"";
+  const desc=(document.getElementById("pc-desc")||{}).value||"";
+  const since=(document.getElementById("pc-since")||{}).value||"";
+  const until=(document.getElementById("pc-until")||{}).value||certTodayISO();
+  const fileEl=document.getElementById("pc-file");
+  const prevFile=(it.completion&&it.completion.fileName)||"";
+  const fileName=(fileEl&&fileEl.files&&fileEl.files[0])? fileEl.files[0].name : prevFile;
+  if(!since){ alert("프로젝트 시작일을 입력해 주세요."); return; }
+  if(!link.trim() && !fileName){ alert("산출물 링크 또는 파일 중 하나는 등록해 주세요."); return; }
+  it.completion = { stage:"reviewing", link:link.trim(), fileName, desc:desc.trim(), since, until, confirmed };
+  // 확인된 라이더별 확인서 데이터도 준비(공통 산출물·기간 사용)
+  const title = it.vision.serviceName || "";
+  confirmed.forEach(pi=>{
+    const p = it.proposals[pi];
+    p.cert = { stage:"reviewing", link:link.trim(), fileName, desc:desc.trim(),
+      completedDate:isoToDot(until), sinceDate:isoToDot(since), projectId:certProjectId({title, role:p.role}) };
+  });
+  renderMyIdea();
+  showMy("idea");
+  alert(`✅ 완료 처리됐어요. (확인 라이더 ${confirmed.length}명)\n오르빗 담당자 승인 검토가 시작됩니다. (영업일 기준 최대 10일)`);
+}
+function approveProjectComplete(idx){
+  const it = ORBIT.myIdeas[idx]; if(!it||!it.completion) return;
+  it.completion.stage="approved";
+  (it.completion.confirmed||[]).forEach(pi=>{ const p=it.proposals[pi]; if(p&&p.cert){ p.cert.stage="approved"; p.cert.approvedDate=certToday(); } });
+  renderMyIdea();
+  renderProjectComplete(idx);   // 완료 화면을 '승인 완료' 상태로 갱신
+  alert("🎉 오르빗 승인 완료!\n확인된 라이더가 참여 확인서를 발급받을 수 있어요.");
+}
+
+/* 오르빗 확인 직인 (인라인 SVG — 인쇄·화면 공통) */
+const ORBIT_STAMP_SVG = `<svg viewBox="0 0 200 200" class="stampsvg" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="주식회사 오르빗 확인 직인">
+  <defs>
+    <path id="cstArcT" d="M 32 100 A 68 68 0 0 1 168 100" fill="none"/>
+    <path id="cstArcB" d="M 40 100 A 60 60 0 0 0 160 100" fill="none"/>
+  </defs>
+  <g fill="none" stroke="#C8352B" stroke-width="4">
+    <rect x="10" y="10" width="180" height="180" rx="7"/>
+    <circle cx="100" cy="100" r="80"/>
+    <circle cx="100" cy="100" r="60"/>
+  </g>
+  <text fill="#C8352B" font-weight="800" font-size="18" letter-spacing="3" font-family="'Apple SD Gothic Neo','Malgun Gothic',sans-serif"><textPath href="#cstArcT" startOffset="50%" text-anchor="middle">주식회사 오르빗</textPath></text>
+  <text fill="#C8352B" font-weight="800" font-size="17" letter-spacing="4" font-family="Arial,Helvetica,sans-serif"><textPath href="#cstArcB" startOffset="50%" text-anchor="middle">ORBIT</textPath></text>
+  <path d="M100 72 L126 118 L74 118 Z" fill="none" stroke="#C8352B" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M100 92 L113 116 L87 116 Z" fill="#C8352B"/>
+  <circle cx="27" cy="100" r="3.4" fill="#C8352B"/>
+  <circle cx="173" cy="100" r="3.4" fill="#C8352B"/>
+</svg>`;
+
+/* 확인서 발급 화면 렌더 */
+function renderCert(idx){
+  const a = ORBIT.applied[idx]; if(!a) return;
+  const c = a.cert || {};
+  const name = esc(ORBIT.user||"");
+  const contact = esc((ORBIT.profile && (ORBIT.profile.phone||ORBIT.profile.contact)) || "-");
+  const area = certArea(a);
+  const areas = ["기획","디자인","개발","마케팅","운영"];
+  const roleTxt = a.role || "팀원";
+  // 주요 참여 내용 — 공식 확인서 문투(사실만 기술, 주관적 평가 배제)
+  const workByArea = { 기획:"서비스 기획", 디자인:"디자인", 개발:"제품 개발", 마케팅:"마케팅 및 콘텐츠 제작", 운영:"서비스 운영" };
+  const workTxt = workByArea[area] || "담당 분야";
+  const narrative =
+    `참여자는 '${a.title||"프로젝트"}' 프로젝트에 '${roleTxt}' 역할로 참여하였으며, ` +
+    `참여 기간 동안 프로젝트 관련 ${workTxt} 업무를 수행하였습니다.`;
+  const chk = on => on ? '<span class="ckbox on">☑</span>' : '<span class="ckbox">☐</span>';
+  const outputRef = c.link
+    ? `<a href="${esc(/^https?:\/\//.test(c.link)?c.link:'https://'+c.link)}" target="_blank" rel="noopener">${esc(c.link)}</a>`
+    : (c.fileName ? `📎 ${esc(c.fileName)}` : "-");
+  const _ad = certToday().split(".");   // 출력일 기준 (문서를 출력·조회하는 날짜)
+  const dateKo = `${_ad[0]}년 ${_ad[1]}월 ${_ad[2]}일`;
+  const orbNo = esc(c.orbNo||certOrbNo(a));
+
+  document.getElementById("cert-body").innerHTML = `
+    ${backBar("showAppliedList()")}
+    <div class="certtoolbar noprint">
+      <div class="ctt">발급이 완료됐어요. 인쇄하거나 PDF로 저장하세요.</div>
+      <button class="btn" onclick="window.print()">🖨️ 인쇄 · PDF 저장</button>
+    </div>
+
+    <div id="cert-doc" class="certdoc">
+      <div class="cd-top">
+        <div class="cd-brand"><img src="/static/orbit-logo.png" alt="ORBIT" class="cd-logo"/></div>
+        <div class="cd-no">발급번호 ORB-${orbNo}</div>
+      </div>
+      <div class="cd-rule"></div>
+
+      <h1 class="cd-title">프로젝트 참여 확인서</h1>
+      <p class="cd-sub">PROJECT PARTICIPATION CONFIRMATION</p>
+
+      <table class="cd-table">
+        <tr><th>성명</th><td>${name}</td><th>연락처</th><td>${contact}</td></tr>
+        <tr><th>프로젝트명</th><td colspan="3">${esc(a.title||"")}</td></tr>
+        <tr><th>참여 기간</th><td colspan="3">${esc(c.sinceDate||"")} ~ ${esc(c.completedDate||certToday())}</td></tr>
+        <tr><th>참여 역할</th><td colspan="3">${esc(roleTxt)}</td></tr>
+        <tr><th>담당 분야</th><td colspan="3">${areas.map(x=>`${chk(x===area)} ${x}`).join("   ")}${area==="기타"?`  ${chk(true)} 기타`:""}</td></tr>
+        <tr class="cd-sec"><td colspan="4">주요 참여 내용 및 기여 사항</td></tr>
+        <tr class="cd-free"><td colspan="4">
+          <p class="cd-narr">${esc(narrative)}</p>
+        </td></tr>
+        <tr><th>산출물</th><td colspan="3">${outputRef}</td></tr>
+        <tr><th>ORBIT 프로젝트 ID</th><td colspan="3">${esc(c.projectId||certProjectId(a))}</td></tr>
+      </table>
+
+      <p class="cd-confirm">위 참여자는 ORBIT 을 통해 구성된 상기 프로젝트에 참여하여,<br>기재된 기간 동안 해당 역할과 활동을 수행하였음을 확인합니다.</p>
+      <p class="cd-date">${dateKo}</p>
+      <div class="cd-issuerrow">
+        <span class="cd-issuer">주식회사 오르빗</span>
+        <span class="cd-stamp"><img src="/static/orbit-stamp.png" alt="주식회사 오르빗 직인" class="stampimg" onerror="stampFallback(this)"/></span>
+      </div>
+      <p class="cd-verify">본 확인서는 ORBIT(orbit-kr.onrender.com)을 통해 발급된 문서로, 발급번호 <b>ORB-${orbNo}</b> 로 진위를 확인할 수 있습니다.<br>위·변조 시 관련 법령에 따라 처벌받을 수 있습니다.</p>
+      <p class="cd-foot">※ 본 확인서는 ORBIT 플랫폼 내 프로젝트 참여 및 활동 사실을 확인하기 위한 문서입니다. 고용관계, 근로기간, 급여 지급 또는 공식 재직·경력증명서를 의미하거나 대체하지 않습니다.</p>
+      <p class="cd-brandfoot">ORBIT &nbsp;|&nbsp; 아이디어를 함께할 사람과 연결하는 AI 팀빌딩 플랫폼</p>
+    </div>`;
+}
+/* 직인 이미지가 없으면(파일 미첨부) 내장 SVG 직인으로 대체 */
+function stampFallback(img){ const p=img&&img.parentNode; if(p){ p.innerHTML = ORBIT_STAMP_SVG; } }
+
 /* ===== 마이페이지 ===== */
 function showMy(tab){
   ORBIT.myTab = tab;
@@ -3696,7 +4112,10 @@ function renderMyIdea(){
             <div class="mih-stats">${pend?`<span class="pill blue">받은 제안 ${pend}건</span>`:``}${acc?`<span class="pill green">합류 ${acc}명</span>`:``}</div>
           </div>
           <div class="mih-tag">${esc(it.vision.tagline)}</div>
-          <div class="mih-cta">📄 기획안 페이지 열기 <span class="mih-arrow">→</span></div>
+          <div class="mih-ctarow">
+            <span class="mih-cta">📄 기획안 페이지 열기 <span class="mih-arrow">→</span></span>
+            ${acc ? projectCompleteBtn(it, idx) : ""}
+          </div>
         </div>
         ${(function(){
           const nt = it.vision.neededTeammates || [];
