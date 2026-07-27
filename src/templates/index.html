@@ -3778,7 +3778,9 @@ function certBlock(a, idx){
         <div class="csh">🕐 오르빗 담당자 승인 대기중</div>
         <div class="csd">제공자가 프로젝트를 완료 처리하면 오르빗 담당자가 확인해요 · <b>영업일 기준 최대 10일</b> 소요</div>
       </div>
-      <button class="certcta" onclick="certRiderApprove(${idx})">🛰️ 승인 완료 처리 <span class="dm">데모</span></button>
+      <div style="margin-top:12px; text-align:center; font-size:11px; color:var(--muted); opacity:.4;">
+        <span onclick="certRiderApprove(${idx})" style="cursor:pointer">데모: 승인 완료 처리</span>
+      </div>
     </div>`;
   }
   return `<div class="certwrap">
@@ -3791,15 +3793,18 @@ function certBlock(a, idx){
 function certRiderApprove(idx){
   const a=ORBIT.applied[idx]; if(!a) return;
   a._certApproved = true;
-  const now=new Date();
-  const start=new Date(now.getFullYear(), now.getMonth()-3, now.getDate());
   const fmt=d=>`${d.getFullYear()}.${certPad(d.getMonth()+1)}.${certPad(d.getDate())}`;
+  const now=new Date();
+  const until=new Date(now); until.setDate(until.getDate()-10);   // 종료일: 오늘보다 10일 전(미래 불가)
+  const v=(typeof findVisionByTitle==="function") ? findVisionByTitle(a.title) : null;
+  let since = (v && v.createdAt) ? new Date(v.createdAt)          // 시작일: 아이디어 등록일 이후
+                                 : new Date(until.getFullYear(), until.getMonth()-1, until.getDate());
+  if(since > until){ since = new Date(until); since.setDate(since.getDate()-1); }
   a.cert = Object.assign(a.cert||{}, {
-    projectId: certProjectId(a), sinceDate: fmt(start), completedDate: certToday(),
+    projectId: certProjectId(a), sinceDate: fmt(since), completedDate: fmt(until),
     approvedDate: certToday(), orbNo: certOrbNo(a)
   });
   refreshApplied();
-  alert("🎉 오르빗 승인이 완료됐어요.\n이제 참여 확인서를 발급받을 수 있어요.");
 }
 function certIssue(idx){ ORBIT._certIdx=idx; go("cert"); renderCert(idx); }
 /* 인쇄/PDF 저장 — 저장 파일명이 'orbit_참여_확인서_{이름}'으로 제안되도록 문서 제목을 잠깐 바꿉니다. */
@@ -3815,6 +3820,7 @@ function printCert(){
 /* ===== 슈터(제공자) 측: 아이디어(프로젝트) 단위 완료 처리 =====
    내 아이디어 카드의 '프로젝트 완료 하기' → 산출물(공통)·기간·합류 라이더 확인 → 오르빗 승인 */
 function certTodayISO(){ const d=new Date(); return `${d.getFullYear()}-${certPad(d.getMonth()+1)}-${certPad(d.getDate())}`; }
+function certDaysAgoISO(n){ const d=new Date(); d.setDate(d.getDate()-n); return `${d.getFullYear()}-${certPad(d.getMonth()+1)}-${certPad(d.getDate())}`; }
 function isoToDot(s){ return String(s||"").replace(/-/g,"."); }
 
 /* 아이디어 카드 헤더(받은 제안·합류 배지 아래)에 붙는 컴팩트 완료 버튼 */
@@ -3883,10 +3889,11 @@ function renderProjectComplete(idx){
       <div class="card">
         <p class="eyebrow">📅 프로젝트 기간</p>
         <div class="pcperiod">
-          <div><label class="cfl">시작일</label><input type="date" id="pc-since" class="cfi" value="${esc(c.since||"")}" /></div>
+          <div><label class="cfl">시작일</label><input type="date" id="pc-since" class="cfi" value="${esc(c.since||it.vision.createdAt||"")}" ${it.vision.createdAt?`min="${esc(it.vision.createdAt)}"`:""} max="${certTodayISO()}" /></div>
           <span class="pcp-tilde">~</span>
-          <div><label class="cfl">종료일</label><input type="date" id="pc-until" class="cfi" value="${esc(c.until||certTodayISO())}" /></div>
+          <div><label class="cfl">종료일</label><input type="date" id="pc-until" class="cfi" value="${esc(c.until||certDaysAgoISO(10))}" ${it.vision.createdAt?`min="${esc(it.vision.createdAt)}"`:""} max="${certTodayISO()}" /></div>
         </div>
+        ${it.vision.createdAt?`<p style="font-size:11.5px;color:var(--muted);margin-top:9px;line-height:1.5;">· 시작일은 아이디어 등록일(${esc(isoToDot(it.vision.createdAt))}) 이후, 종료일은 오늘 이전까지만 선택할 수 있어요.</p>`:""}
       </div>
       <div class="card">
         <p class="eyebrow">🧑‍🤝‍🧑 합류한 라이더 확인 <span style="font-weight:600;color:var(--muted);font-size:11px;">· 역할이 맞는지 체크하세요</span></p>
@@ -3929,6 +3936,11 @@ function submitProjectComplete(idx){
   const prevFile=(it.completion&&it.completion.fileName)||"";
   const fileName=(fileEl&&fileEl.files&&fileEl.files[0])? fileEl.files[0].name : prevFile;
   if(!since){ alert("프로젝트 시작일을 입력해 주세요."); return; }
+  const reg = it.vision.createdAt || "";               // 아이디어 등록일(YYYY-MM-DD)
+  const today = certTodayISO();
+  if(reg && since < reg){ alert(`시작일은 아이디어 등록일(${isoToDot(reg)}) 이후여야 해요.`); return; }
+  if(until > today){ alert("종료일은 오늘 이후로 설정할 수 없어요."); return; }
+  if(since > until){ alert("시작일이 종료일보다 늦을 수 없어요."); return; }
   if(!link.trim() && !fileName){ alert("산출물 링크 또는 파일 중 하나는 등록해 주세요."); return; }
   it.completion = { stage:"reviewing", link:link.trim(), fileName, desc:desc.trim(), since, until, confirmed };
   // 확인된 라이더별 확인서 데이터도 준비(공통 산출물·기간 사용)
