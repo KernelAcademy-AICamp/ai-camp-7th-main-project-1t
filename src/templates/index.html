@@ -77,12 +77,88 @@
   .lintro .eb{display:inline-block; font-size:12.5px; font-weight:800; color:var(--cyan-ink); border:1px solid #cfe1fb; background:var(--sky); padding:7px 15px; border-radius:999px; margin-bottom:20px;}
   .lintro h1{font-size:clamp(30px,5.4vw,52px); line-height:1.14; letter-spacing:-.04em; color:var(--navy); font-weight:900; margin:0 0 18px; text-wrap:balance;}
   .lintro h1 b{color:var(--cyan-ink);}
-  .lintro .sub{font-size:clamp(15px,2.5vw,18px); color:var(--muted); line-height:1.7; margin:0 auto; max-width:640px; text-wrap:balance;}
+  .lintro .sub{font-size:clamp(14px,2.05vw,16px); color:var(--muted); line-height:1.75; margin:0 auto; max-width:840px; text-wrap:pretty;}
   .hslabel{text-align:center; font-size:12.5px; font-weight:800; color:var(--muted); letter-spacing:.02em; margin:8px 0 6px;}
+  /* 이렇게 작동해요 — 실제 화면 자동재생 데모(GIF형, Shooter+Rider) */
+  .demo-frame{position:relative; background:#fff; padding:16px 18px; overflow:hidden;}
+  /* 과정 2단 레이아웃 */
+  .howgrid{display:grid; grid-template-columns:1.12fr .88fr; gap:44px; align-items:start; margin-top:28px;}
+  .howright .rs-h:first-child{margin-top:0;}
+  /* '아이디어가 팀이 되는 과정' 위·아래 섹션 사이 간격 넓히기 */
+  #sec-how{padding-top:92px; padding-bottom:84px;}
+  #sec-how + .lsec{padding-top:104px;}
+  @media(max-width:900px){ .howgrid{grid-template-columns:1fr; gap:34px; max-width:520px; margin-left:auto; margin-right:auto;} }
+  /* 맥북 브라우저 창 */
+  .browser{width:100%; background:#fff; border:1px solid var(--line); border-radius:14px; overflow:hidden; box-shadow:0 20px 48px -22px rgba(15,23,42,.26);}
+  .br-bar{height:36px; background:#f1f5f9; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:7px; padding:0 14px;}
+  .br-bar .tl{width:11px; height:11px; border-radius:50%; flex:0 0 auto;}
+  .br-bar .tl.r{background:#ff5f57;} .br-bar .tl.y{background:#febc2e;} .br-bar .tl.g{background:#28c840;}
+  .br-url{margin:0 auto; background:#fff; border:1px solid var(--line); border-radius:7px; font-size:10.5px; color:var(--muted); padding:3px 14px; max-width:62%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  /* 마우스 커서 */
+  .cursor{position:absolute; z-index:6; left:50%; top:60%; width:22px; height:22px; transition:left .8s cubic-bezier(.45,0,.25,1), top .8s cubic-bezier(.45,0,.25,1); pointer-events:none;}
+  .cursor svg{width:100%; height:100%; filter:drop-shadow(0 1px 2px rgba(0,0,0,.35));}
+  .cursor::after{content:""; position:absolute; left:3px; top:3px; width:14px; height:14px; border-radius:50%; border:2px solid var(--navy); opacity:0;}
+  .cursor.click::after{animation:cclick .6s ease;}
+  @keyframes cclick{0%{opacity:.5; transform:scale(.3);} 100%{opacity:0; transform:scale(2.1);}}
+  /* 역할별 과정 */
+  .rolesteps{margin-bottom:20px;}
+  .rolesteps:last-child{margin-bottom:0;}
+  .rs-h{font-size:14.5px; font-weight:800; color:var(--navy); margin-bottom:8px;}
+  .rs-list{list-style:none; margin:0; padding:0; counter-reset:rs;}
+  .rs-list li{counter-increment:rs; position:relative; padding:9px 0 9px 34px; font-size:13.5px; color:#334155; border-top:1px solid var(--line); line-height:1.45;}
+  .rs-list li:first-child{border-top:0;}
+  .rs-list li::before{content:counter(rs); position:absolute; left:0; top:7px; width:22px; height:22px; border-radius:50%; background:var(--navy); color:#fff; font-size:11px; font-weight:800; display:grid; place-items:center;}
+  .demo-frame .dots{display:flex; gap:5px; margin-bottom:12px;}
+  .demo-frame .dots i{width:8px; height:8px; border-radius:50%; background:#dfe4ec;}
+  .drole{position:absolute; top:12px; right:12px; z-index:2; font-size:10px; font-weight:800; padding:4px 10px; border-radius:999px; background:var(--sky); color:#1e4fd6; border:1px solid #cfe1fb;}
+  .demo-slides{position:relative; min-height:312px;}   /* MacBook 16:10 비율 */
+  .dslide{position:absolute; inset:0; opacity:0; transform:translateY(8px); transition:opacity .45s ease, transform .45s ease; pointer-events:none; display:flex; flex-direction:column; justify-content:flex-start; gap:10px;}
+  .dslide.on{opacity:1; transform:none; pointer-events:auto;}
+  .dslide .lab{font-size:11px; color:var(--muted); font-weight:800;}
+  .dslide .box{background:var(--sky); border:1px solid #cfe1fb; border-radius:9px; padding:10px 11px; font-size:12.5px; color:#334155; line-height:1.5;}
+  .dslide .btn2{background:var(--navy); color:#fff; font-size:12px; font-weight:800; text-align:center; border-radius:9px; padding:10px; margin-top:2px;}
+  .dslide .ln{height:9px; border-radius:5px; background:#eef2f7;} .dslide .ln.s{width:56%;}
+  .dslide .mate{display:flex; align-items:center; gap:9px; font-size:12px; color:var(--navy); font-weight:700;}
+  .dslide .mate .av2{width:24px; height:24px; border-radius:50%; background:var(--navy); flex:0 0 auto;}
+  .dslide .mate .pct{margin-left:auto; font-size:11px; font-weight:800; color:#1e4fd6; background:#dbeafe; border-radius:6px; padding:2px 8px;}
+  .dslide .tagp{font-size:10px; font-weight:800; color:#1e4fd6; background:#dbeafe; border-radius:6px; padding:3px 9px;}
+  .dslide .big{text-align:center;}
+  .dslide .big .n{font-size:32px; font-weight:900; color:#1e4fd6; line-height:1;}
+  .dslide .big .n span{font-size:16px;}
+  .dslide .big .c{font-size:11px; color:var(--muted); margin-top:4px;}
+  .demo-cap{text-align:center; margin-top:14px; font-size:13px; color:var(--navy); font-weight:800;}
+  .demo-cap .drole2{color:#1e4fd6; margin-right:6px;}
+  .demo-track{display:flex; gap:7px; justify-content:center; margin-top:11px;}
+  .ddot{width:9px; height:9px; border-radius:999px; background:var(--line); border:none; padding:0; cursor:pointer; transition:.25s;}
+  .ddot.on{background:var(--navy); width:24px;}
+  /* 데모 화면 요소 (명확한 실제 화면형) */
+  .dslide .sc-h{font-size:14.5px; font-weight:800; color:var(--navy); display:flex; align-items:center; gap:7px;}
+  .dslide .sc-h .sc-cnt{font-size:11px; font-weight:700; color:var(--muted);}
+  .dslide .sc-sub{font-size:11.5px; color:var(--muted); margin-top:-4px;}
+  .dslide .sc-flab{font-size:10.5px; font-weight:800; color:var(--muted); margin:2px 0 -4px;}
+  .dslide .sc-doc{border:1px solid var(--line); border-radius:11px; padding:13px 14px; display:flex; flex-direction:column; gap:9px; background:#fff;}
+  .dslide .sc-doc .sc-title{font-size:14px; font-weight:800; color:var(--navy);}
+  .dslide .sc-row{font-size:12px; color:#334155; line-height:1.5;}
+  .dslide .sc-row b{display:inline-block; min-width:60px; color:#1e4fd6; font-weight:800; margin-right:6px;}
+  .dslide .sc-q{background:var(--sky); border:1px solid #cfe1fb; border-radius:10px; padding:11px 13px; font-size:12.5px; font-weight:700; color:var(--navy);}
+  .dslide .mate2{display:flex; align-items:center; gap:10px; border:1px solid var(--line); border-radius:11px; padding:9px 12px;}
+  .dslide .mate2 .info{flex:1; min-width:0; display:flex; flex-direction:column;}
+  .dslide .mate2 .nm{font-size:12.5px; font-weight:800; color:var(--navy);}
+  .dslide .mate2 .rl{font-size:10.5px; color:var(--muted);}
+  .dslide .mate2 .p{font-size:11.5px; font-weight:800; color:#1e4fd6; flex:0 0 auto;}
+  .dslide .fitb{width:56px; flex:0 0 auto; height:6px; background:#eef2f7; border-radius:99px; overflow:hidden;}
+  .dslide .fitb i{display:block; height:100%; background:#1e4fd6; border-radius:99px;}
+  .dslide .brow{display:flex; align-items:center; gap:10px; border:1px solid var(--line); border-radius:11px; padding:11px 13px;}
+  .dslide .brow .bt{flex:1; min-width:0; font-size:12.5px; font-weight:700; color:var(--navy);}
+  .dslide .brow .bp{font-size:11px; font-weight:800; color:#1e4fd6; background:#dbeafe; border-radius:6px; padding:2px 8px; flex:0 0 auto;}
+  .dslide .sc-fit{display:flex; flex-direction:column; gap:8px; margin-top:2px;}
+  .dslide .sc-fit .fr{display:flex; align-items:center; gap:10px;}
+  .dslide .sc-fit .frl{font-size:11px; font-weight:800; color:var(--navy); flex:0 0 34px;}
+  .dslide .sc-fit .fitb{width:auto; flex:1; height:8px;}
   .lhero{display:grid; grid-template-columns:1.05fr .95fr; gap:44px; align-items:center; align-content:center; padding:14px 0 44px;}
   @media(max-width:860px){ .lhero{grid-template-columns:1fr; gap:30px;} }
   .badge{display:inline-block; font-size:12.5px; font-weight:800; color:var(--cyan-ink); border:1px solid #cfe1fb; background:var(--sky); padding:7px 14px; border-radius:999px; margin-bottom:18px;}
-  .lhero h1{font-size:clamp(26px,4vw,38px); line-height:1.16; letter-spacing:-.04em; color:var(--navy); margin:0 0 18px; font-weight:900;}
+  .lhero h1{font-size:clamp(22px,2.6vw,29px); line-height:1.2; letter-spacing:-.03em; color:var(--navy); margin:0 0 14px; font-weight:800;}
   .lhero h1 .bl{color:var(--cyan-ink);}
   .lhero h1 .gr{color:var(--cyan-ink);}
   .badge.rider{color:var(--cyan-ink); border-color:#cfe1fb; background:var(--sky);}
@@ -100,11 +176,11 @@
   .rolecard{display:block; text-align:center; border:1.5px solid var(--line); border-radius:20px; padding:30px 20px; background:#fff; cursor:pointer; transition:.16s; font-family:inherit;}
   .statband{background:#1c2b5a; border-radius:22px; padding:32px 26px; color:#e9eefc; text-align:center; box-shadow:0 20px 48px -24px rgba(11,18,38,.5);}
   .statlead{font-size:15px; color:#c7d2fe; margin:0 0 24px;}
-  .statlead b{color:#fff; font-weight:900;}
+  .statlead b{color:#fff; font-weight:700;}
   .statgrid3{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
   .stat3{padding:4px 6px;}
   .stat3 + .stat3{border-left:1px solid rgba(255,255,255,.1);}
-  .sv3{font-size:clamp(34px,6.2vw,54px); font-weight:900; color:#fff; font-variant-numeric:tabular-nums; line-height:1; letter-spacing:-.02em;}
+  .sv3{font-size:clamp(34px,6.2vw,54px); font-weight:800; color:#fff; font-variant-numeric:tabular-nums; line-height:1; letter-spacing:-.01em;}
   .sl3{font-size:13px; color:#a9b8de; margin-top:12px; font-weight:700;}
   .statasof{margin-top:20px; font-size:11.5px; color:#8595bd; letter-spacing:.02em; font-variant-numeric:tabular-nums;}
   @media(max-width:560px){ .statgrid3{grid-template-columns:1fr; gap:22px;} .stat3 + .stat3{border-left:none; border-top:1px solid rgba(255,255,255,.1); padding-top:22px;} }
@@ -118,7 +194,7 @@
   .rc-sub{font-size:14.5px; color:#334155; font-weight:700; margin-top:7px;}
   .rc-hint{font-size:12px; color:var(--muted); margin-top:4px;}
   @media(max-width:680px){ .role-pick{grid-template-columns:1fr;} }
-  @media(max-width:860px){ .lhero h1{font-size:38px;} }
+  @media(max-width:860px){ .lhero h1{font-size:26px;} }
   /* 히어로 목업 카드 */
   .heromock{background:#fff; border:1px solid var(--line); border-radius:18px; overflow:hidden;}
   .hm-top{padding:12px 16px; border-bottom:1px solid var(--line); display:flex; gap:6px;}
@@ -129,7 +205,7 @@
   .hm-status{background:var(--navy); color:#fff; border-radius:11px; padding:12px 15px; font-size:12.5px; font-weight:600; display:flex; align-items:center; gap:9px; margin-bottom:13px;}
   .hm-status .sp{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite; flex:0 0 auto;}
   .hm-mate{display:flex; align-items:center; gap:11px; border:1px solid var(--line); border-radius:11px; padding:11px 13px; margin-bottom:8px;}
-  .hm-mate .av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--cyan));flex:0 0 auto;}
+  .hm-mate .av{width:34px;height:34px;border-radius:50%;background:var(--navy);flex:0 0 auto;}
   .hm-mate .mt{font-size:12.5px; font-weight:800; color:var(--navy);}
   .hm-mate .md{font-size:11px; color:var(--muted); margin-top:2px; line-height:1.4;}
   .hm-mate .bg{margin-left:auto; font-size:10.5px; font-weight:800; padding:3px 9px; border-radius:999px; flex:0 0 auto;}
@@ -148,7 +224,7 @@
   .bigcard .t{font-size:18px; font-weight:800; color:var(--navy); margin-bottom:8px;}
   .bigcard .d{font-size:13.5px; color:var(--muted); line-height:1.65;}
   /* 5단계 타임라인 */
-  .flowbox{background:linear-gradient(160deg,#f3f7ff,#eef2ff); border:1px solid #cfe1fb; border-radius:22px; padding:38px 26px;}
+  .flowbox{background:#f4f7ff; border:1px solid #cfe1fb; border-radius:22px; padding:38px 26px;}
   .flow{display:flex; align-items:flex-start; justify-content:space-between; gap:4px;}
   .fstep{flex:1; text-align:center; position:relative;}
   .fstep .ic{width:52px;height:52px;border-radius:50%;background:#fff;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:23px;margin:0 auto 11px;position:relative;z-index:2;}
@@ -160,7 +236,7 @@
   /* 프로젝트 예시 */
   .exgrid{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
   @media(max-width:760px){ .exgrid{grid-template-columns:1fr;} }
-  .excard{background:linear-gradient(160deg,#eef6ff,#f0f4ff); border:1px solid #cfe1fb; border-radius:18px; padding:26px;}
+  .excard{background:#eff4ff; border:1px solid #cfe1fb; border-radius:18px; padding:26px;}
   .excard .et{font-size:21px; font-weight:800; color:var(--navy); line-height:1.35; margin-bottom:9px;}
   .excard .ed{font-size:13px; color:var(--muted); line-height:1.6; margin-bottom:18px;}
   .ex-badge{display:inline-block; font-size:11.5px; font-weight:800; color:var(--blue); background:#fff; border:1px solid #cfe1fb; padding:5px 11px; border-radius:999px; margin-bottom:14px;}
@@ -191,7 +267,7 @@
   .lfoot .ft-r{margin-left:auto;}
 
   /* 로그인 */
-  .loginpage{min-height:calc(100vh - 56px); background:linear-gradient(150deg,#0f172a 0%,#16225a 60%,#1e3a8a 100%); display:flex; align-items:center; justify-content:center; padding:36px 16px;}
+  .loginpage{min-height:calc(100vh - 56px); background:#0f172a; display:flex; align-items:center; justify-content:center; padding:36px 16px;}
   .loginbox{max-width:430px; width:100%; text-align:center; background:#fff; border-radius:22px; padding:42px 36px; box-shadow:0 26px 64px rgba(0,0,0,.32);}
   .loginbox .mark{justify-content:center; font-size:21px; margin-bottom:14px;}
   .lb-sub{color:var(--muted); font-size:13px; margin:0 0 24px; line-height:1.55;}
@@ -289,7 +365,7 @@
   .opt.sel .rd{border-color:var(--blue); background:var(--blue); box-shadow:inset 0 0 0 3px #fff;}
 
   /* 히어로 */
-  .hero{background:linear-gradient(140deg,#0f172a 0%,#1e293b 55%,#1e3a8a 100%); color:#fff; border-radius:18px; padding:30px 30px 26px; margin-bottom:18px;}
+  .hero{background:#0f172a; color:#fff; border-radius:18px; padding:30px 30px 26px; margin-bottom:18px;}
   .hero .tags{display:flex; gap:7px; flex-wrap:wrap; margin-bottom:13px;}
   .hero .tags span{font-size:11.5px; font-weight:700; padding:4px 11px; border-radius:999px; background:rgba(255,255,255,.14); color:#cfe1fb;}
   .hero .tags span.hot{background:#dbeafe; color:#1e3a8a;}
@@ -310,7 +386,7 @@
   .mock{display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
   .mm{border:1px solid var(--line); border-radius:12px; overflow:hidden; background:#fff;}
   .mm .cap{font-size:10px; font-weight:800; color:var(--blue); text-align:center; padding:7px 0 3px;}
-  .mm .img{height:74px; background:linear-gradient(135deg,#dbeafe,#cfe1fb); display:flex; align-items:center; justify-content:center; font-size:24px;}
+  .mm .img{height:74px; background:#dbeafe; display:flex; align-items:center; justify-content:center; font-size:24px;}
   .plan{display:flex; flex-direction:column;}
   .prow{display:grid; grid-template-columns:90px 1fr; gap:14px; padding:11px 0; border-bottom:1px solid var(--line);}
   .prow:last-child{border-bottom:0;}
@@ -383,7 +459,7 @@
   .rk-sub{font-size:12px; color:var(--muted); margin-top:-9px;}
   .spinner{width:20px;height:20px;border:3px solid #e2e8f0;border-top-color:var(--blue);border-radius:50%;animation:spin 1s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
-  .banner{background:linear-gradient(135deg,#eff4ff,#eef2ff); border:1px solid #c7d2fe; border-radius:14px; padding:14px 18px; margin-bottom:16px; font-size:13px; color:#334155;} .banner b{color:var(--navy);}
+  .banner{background:#eff4ff; border:1px solid #c7d2fe; border-radius:14px; padding:14px 18px; margin-bottom:16px; font-size:13px; color:#334155;} .banner b{color:var(--navy);}
   .browsecard{border:1px solid var(--line); border-radius:16px; padding:18px 20px; margin-bottom:14px; cursor:pointer; transition:.15s; background:var(--card);}
   .browsecard:hover{border-color:var(--green); box-shadow:0 10px 26px rgba(16,185,129,.1);}
   .browsecard .bt{font-size:17px; font-weight:800; color:var(--navy);} .browsecard .bd{font-size:13px; color:var(--muted); margin:4px 0 10px;}
@@ -511,7 +587,7 @@
   .pill.blue{background:var(--sky); color:var(--blue);} .pill.green{background:var(--mint); color:#1e4fd6;} .pill.amber{background:#fef3c7; color:#92400e;}
   .prop{display:flex; align-items:flex-start; gap:11px; border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-bottom:9px;}
   .prop.accepted{background:#eff6ff; border-color:#bfdbfe;}
-  .pav{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex:0 0 auto;}
+  .pav{width:36px;height:36px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex:0 0 auto;}
   .pn{font-size:13.5px; font-weight:800; color:var(--navy); display:flex; align-items:center; gap:7px; flex-wrap:wrap;}
   .pr{font-size:12px; color:var(--muted); margin-top:2px;}
   .pl{font-size:12px; color:#475569; margin-top:5px; font-style:italic;}
@@ -717,7 +793,7 @@
 <!-- ===== 랜딩 ===== -->
 <section class="screen" id="s-landing">
   <!-- 서비스 소개 (첫 방문자용 포지셔닝) -->
-  <div class="lwrap">
+  <div class="lwrap" id="sec-about">
     <div class="lintro">
       <span class="eb">✦ AI 팀빌딩 플랫폼</span>
       <h1>아이디어에 딱 맞는<br><b>팀원</b>과 <b>투자자</b>를 만나는 곳</h1>
@@ -735,57 +811,6 @@
         <div class="stat3"><div class="sv3" id="stat-fund">–</div><div class="sl3">💰 누적 투자금</div></div>
       </div>
       <div class="statasof" id="stat-asof"></div>
-    </div>
-  </div>
-
-  <!-- HERO — 두 가지 시작 방식 미리보기 -->
-  <div class="lwrap" id="sec-about">
-    <div class="hslabel">🖥️ 이렇게 작동해요 — 두 가지 시작 방식</div>
-    <div class="hero-slider">
-      <div class="hero-track" id="heroTrack">
-      <!-- 슬라이드 1: Shooter -->
-      <div class="lhero hslide">
-        <div>
-          <span class="badge">🚀 Shooter · 아이디어를 던지다</span>
-          <h1>아이디어를,<br><span class="bl">ORBIT</span> 하다.</h1>
-          <p class="desc">한 줄의 아이디어를 팀원이 이해할 수 있는 언어로 바꾸고,<br>함께할 사람에게 ORBIT 제안을 보내 팀 구성까지 이어지게 합니다.</p>
-          <p style="font-size:13.5px; color:var(--cyan-ink); font-weight:800; margin:0;">👇 아래에서 시작 방식을 골라보세요</p>
-        </div>
-        <div class="heromock">
-          <div class="hm-top"><i></i><i></i><i></i></div>
-          <div class="hm-body">
-            <div class="hm-label">아이디어</div>
-            <div class="hm-idea">페트병 뚜껑을 모아 핸드폰 그립톡으로 재활용, 판매하는 사업</div>
-            <div class="hm-status">ORBIT 중… 필요한 팀원과 매칭 기준을 찾고 있어요.</div>
-            <div class="hm-mate"><div class="av"></div><div><div class="mt">생산 시설 지식 보유자</div><div class="md">압출 기계의 재활용 소재 가공 경험이 필요합니다.</div></div><span class="bg req">필수</span></div>
-            <div class="hm-mate"><div class="av"></div><div><div class="mt">SNS 마케팅 전문가</div><div class="md">Gen Z 타겟과 인스타그램 판매 흐름에 익숙한 팀원이 적합합니다.</div></div><span class="bg rec">추천</span></div>
-          </div>
-        </div>
-      </div>
-      <!-- 슬라이드 2: Rider -->
-      <div class="lhero hslide">
-        <div>
-          <span class="badge rider">🛰️ 당신의 자리를 찾는 곳</span>
-          <h1>빛나는 아이디어에,<br><span class="gr">올라타다.</span></h1>
-          <p class="desc">아이디어를 쏘아올리는 3가지 질문에 답하세요.<br>딱 맞는 자리로 제안받고, 탑승하세요.</p>
-          <p style="font-size:13.5px; color:var(--cyan-ink); font-weight:800; margin:0;">👇 아래에서 시작 방식을 골라보세요</p>
-        </div>
-        <div class="heromock">
-          <div class="hm-top"><i></i><i></i><i></i></div>
-          <div class="hm-body">
-            <div class="hm-label">🛰️ 도착한 ORBIT 제안</div>
-            <div class="hm-idea">에코그립 — 버려진 뚜껑이 손안의 무드</div>
-            <div class="hm-status" style="background:var(--cyan-ink);">✓ 당신에게 딱 맞는 자리를 찾았어요!</div>
-            <div class="hm-mate"><div class="av" style="background:linear-gradient(135deg,#0f172a,#2563eb)"></div><div><div class="mt">SNS 마케팅 전문가 · 당신의 자리</div><div class="md">Gen Z 트렌드 이해도가 높아 이 팀과 잘 맞아요.</div></div><span class="bg" style="background:var(--cyan-ink);color:#fff">88%</span></div>
-            <div class="hm-mate" style="border:none; padding-top:2px;"><div style="flex:1"></div><span style="background:#0f172a;color:#fff;font-size:11.5px;font-weight:800;padding:8px 14px;border-radius:9px">합류 검토하기 →</span></div>
-          </div>
-        </div>
-      </div>
-      </div>
-      <div class="hdots">
-        <button class="hdot on" onclick="heroGo(0)" aria-label="Shooter"></button>
-        <button class="hdot" onclick="heroGo(1)" aria-label="Rider"></button>
-      </div>
     </div>
   </div>
 
@@ -811,15 +836,99 @@
   <div class="lsec alt" id="sec-how">
     <div class="lwrap">
       <h2 class="lsec-t">아이디어가 팀이 되는 과정</h2>
-      <div class="flowbox">
-        <div class="flow">
-          <div class="fstep"><div class="fline"></div><div class="ic">💡</div><div class="ft">1. 아이디어 입력</div></div>
-          <div class="fstep"><div class="fline"></div><div class="ic">📋</div><div class="ft">2. ORBIT 구체화</div></div>
-          <div class="fstep"><div class="fline"></div><div class="ic">◎</div><div class="ft">3. 팀원 식별</div></div>
-          <div class="fstep"><div class="fline"></div><div class="ic">✉️</div><div class="ft">4. ORBIT 제안</div></div>
-          <div class="fstep last"><div class="ic">🚩</div><div class="ft">5. ORBIT 완료</div></div>
+      <p class="lsec-s">실제 화면을 따라가 보세요 — Shooter가 아이디어를 쏘아 올리고, Rider가 올라탑니다.</p>
+      <div class="howgrid">
+        <div class="howleft">
+          <div class="browser">
+            <div class="br-bar"><span class="tl r"></span><span class="tl y"></span><span class="tl g"></span></div>
+            <div class="demo-frame">
+              <span class="drole" id="demoRole">🚀 Shooter</span>
+                <div class="demo-slides" id="demoSlides">
+                  <!-- Shooter ① 아이디어 등록 -->
+                  <div class="dslide on" data-role="🚀 Shooter" data-cap="① 한 줄 아이디어 입력" data-cx="50" data-cy="52">
+                    <div class="sc-h">💡 아이디어 등록</div>
+                    <div class="sc-sub">머릿속 아이디어를 한 문장으로 적어주세요</div>
+                    <div class="sc-flab">아이디어 한 줄</div>
+                    <div class="box">페트병 뚜껑을 모아 핸드폰 그립톡으로 재활용·판매하는 사업</div>
+                    <div class="btn2">AI로 기획안 만들기 →</div>
+                  </div>
+                  <!-- Shooter ② AI 기획안 -->
+                  <div class="dslide" data-role="🚀 Shooter" data-cap="② AI 기획안 자동 생성" data-cx="42" data-cy="42">
+                    <div class="sc-h">📋 AI 기획안</div>
+                    <div class="sc-doc">
+                      <div class="sc-title">에코그립 — 손안의 무드등</div>
+                      <div class="sc-row"><b>문제</b>버려지는 뚜껑, 밋밋한 그립톡</div>
+                      <div class="sc-row"><b>해결</b>뚜껑을 재활용한 감성 그립톡 제작·판매</div>
+                      <div class="sc-row"><b>필요한 팀원</b>생산 · 마케팅 · 디자인</div>
+                    </div>
+                  </div>
+                  <!-- Shooter ③ 팀원 추천 -->
+                  <div class="dslide" data-role="🚀 Shooter" data-cap="③ 딱 맞는 팀원 추천" data-cx="88" data-cy="26">
+                    <div class="sc-h">🤝 추천 팀원 · 적합도순</div>
+                    <div class="mate2"><span class="av2"></span><span class="info"><span class="nm">생산 시설 지식 보유자</span><span class="rl">압출·재활용 소재 경험</span></span><span class="fitb"><i style="width:88%"></i></span><span class="p">88%</span></div>
+                    <div class="mate2"><span class="av2"></span><span class="info"><span class="nm">SNS 마케팅 전문가</span><span class="rl">Gen Z 타겟 콘텐츠</span></span><span class="fitb"><i style="width:74%"></i></span><span class="p">74%</span></div>
+                    <div class="mate2"><span class="av2"></span><span class="info"><span class="nm">브랜드 디자이너</span><span class="rl">패키지·제품 디자인</span></span><span class="fitb"><i style="width:69%"></i></span><span class="p">69%</span></div>
+                  </div>
+                  <!-- Rider ④ 둘러보기 -->
+                  <div class="dslide" data-role="🛰 Rider" data-cap="④ 아이디어 둘러보기" data-cx="84" data-cy="30">
+                    <div class="sc-h">🔍 아이디어 둘러보기</div>
+                    <div class="sc-sub">관심 가는 프로젝트를 골라 상세를 봐요</div>
+                    <div class="brow"><span class="bt">에코그립 — 손안의 무드등</span><span class="bp">🎯 82%</span></div>
+                    <div class="brow"><span class="bt">제로데이 — 제로웨이스트 챌린지</span><span class="bp">🎯 76%</span></div>
+                    <div class="brow"><span class="bt">리필맵 — 리필 스테이션 지도</span><span class="bp">🎯 71%</span></div>
+                  </div>
+                  <!-- Rider ⑤ 합류 질문 -->
+                  <div class="dslide" data-role="🛰 Rider" data-cap="⑤ 합류 질문에 답하기" data-cx="50" data-cy="56">
+                    <div class="sc-h">✍️ 합류 질문 <span class="sc-cnt">1 / 3</span></div>
+                    <div class="sc-q">SNS·콘텐츠 마케팅 경험이 있나요?</div>
+                    <div class="box">작은 브랜드를 SNS로 0에서 키워봤고, 콘텐츠 기획이 제 주력이에요.</div>
+                    <div class="btn2">답변 제출하고 매칭 확인 →</div>
+                  </div>
+                  <!-- Rider ⑥ 매칭 결과 -->
+                  <div class="dslide" data-role="🛰 Rider" data-cap="⑥ 매칭 결과 → 합류 신청" data-cx="50" data-cy="62">
+                    <div class="sc-h">🤝 나와 이 팀의 매칭률</div>
+                    <div class="big"><div class="n">88<span>%</span></div><div class="c">🎯 SNS 마케팅 전문가 · 당신의 자리</div></div>
+                    <div class="sc-fit">
+                      <div class="fr"><span class="frl">기술</span><span class="fitb"><i style="width:90%"></i></span></div>
+                      <div class="fr"><span class="frl">관심</span><span class="fitb"><i style="width:85%"></i></span></div>
+                      <div class="fr"><span class="frl">목적</span><span class="fitb"><i style="width:80%"></i></span></div>
+                    </div>
+                    <div class="btn2">이 팀에 합류 신청 →</div>
+                  </div>
+                </div>
+              <div class="cursor" id="demoCursor"><svg viewBox="0 0 24 24"><path d="M5 3 L5 19 L9.2 15.2 L12 21 L14.3 20 L11.6 14.3 L17 14 Z" fill="#0f172a" stroke="#fff" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+            </div>
+          </div>
+          <div class="demo-cap" id="demoCap"><span class="drole2">🚀 Shooter</span>① 한 줄 아이디어 입력</div>
+          <div class="demo-track" id="demoTrack">
+            <button class="ddot on" onclick="demoGo(0)" aria-label="1"></button>
+            <button class="ddot" onclick="demoGo(1)" aria-label="2"></button>
+            <button class="ddot" onclick="demoGo(2)" aria-label="3"></button>
+            <button class="ddot" onclick="demoGo(3)" aria-label="4"></button>
+            <button class="ddot" onclick="demoGo(4)" aria-label="5"></button>
+            <button class="ddot" onclick="demoGo(5)" aria-label="6"></button>
+          </div>
         </div>
-        <div class="flowcap">아이디어 한 줄 → 구체화 → 맞는 팀원 식별 → ORBIT 제안 → 합류 합의</div>
+        <div class="howright">
+          <div class="rolesteps">
+            <div class="rs-h">🚀 Shooter — 아이디어 제공자</div>
+            <ol class="rs-list">
+              <li>한 줄 아이디어 입력</li>
+              <li>AI 기획안 자동 생성</li>
+              <li>딱 맞는 팀원·투자자 추천</li>
+              <li>제안 검토 → 수락 → 팀 시작</li>
+            </ol>
+          </div>
+          <div class="rolesteps">
+            <div class="rs-h">🛰 Rider — 팀원 · 투자자</div>
+            <ol class="rs-list">
+              <li>프로필 등록</li>
+              <li>아이디어 둘러보기</li>
+              <li>합류 질문에 답변</li>
+              <li>매칭 확인 → 합류 신청</li>
+            </ol>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -997,7 +1106,7 @@
     <button class="btn ghost" onclick="goHome()">← 홈으로</button>
     <!-- 1) 입력 -->
     <div id="idea-input">
-      <div class="hero fade" style="margin-top:14px; background:linear-gradient(150deg,#0f172a 0%,#1e3a8a 60%,#0f172a 100%);">
+      <div class="hero fade" style="margin-top:14px; background:#0f172a;">
         <div class="tags"><span class="hot">🚀 Shooter</span><span>아이디어 쏘아 올리기</span></div>
         <h1>어떤 아이디어를 쏘아 올릴까요?</h1>
         <p class="lead">한 줄이면 충분해요. ORBIT이 <b style="color:#fff">기획안과 필요한 팀원</b>까지 만들어 드릴게요.</p>
@@ -1031,7 +1140,7 @@
     <div id="riderBack"></div>
     <!-- 1) 인트로 + 두 갈래 -->
     <div id="rider-intro">
-      <div class="hero fade" style="margin-top:14px; background:linear-gradient(150deg,#0f172a 0%,#1e4fd6 60%,#2563eb 100%);">
+      <div class="hero fade" style="margin-top:14px; background:#0f172a;">
         <div class="tags"><span class="hot">🛰️ Rider</span><span>빛나는 아이디어에 올라타기</span></div>
         <h1>당신에 대해 알려주세요</h1>
         <p class="lead">간단한 프로필을 남기면, 아이디어와의 <b style="color:#fff">매칭률·적합도</b>가 더 정확해지고<br>딱 맞는 자리를 먼저 추천받을 수 있어요.</p>
@@ -4359,8 +4468,8 @@ function toggleBrowseSort(){ ORBIT._browseSort = (ORBIT._browseSort==='recent') 
 function openDetailIdx(i){ openDetail((window._browse||[])[i]); }
 function showResume(){ go("resume"); document.getElementById("resume-body").innerHTML = resumeCard(); }
 
-/* 히어로 슬라이더 (Shooter ↔ Rider 자동 전환) */
-let heroI = 0;
+/* 이렇게 작동해요 데모 — 현재 단계 인덱스 */
+let demoI = 0;
 /* 랜딩 서비스 현황 — 시연 임팩트용 가상 수치. DB 붙으면 실측으로 교체. */
 function _countUp(id, to, opts){
   opts = opts||{};
@@ -4380,17 +4489,30 @@ function renderLandingStats(){
   const el = document.getElementById("stat-asof");
   if(el){ const d = new Date(); el.textContent = `📊 ${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 기준`; }
 }
-function heroGo(i){
-  heroI = i;
-  const track = document.getElementById("heroTrack");
-  if(track) track.style.transform = `translateX(-${i*100}%)`;
-  document.querySelectorAll(".hdot").forEach((d,j)=>d.classList.toggle("on", j===i));
+/* 이렇게 작동해요 — 실제 화면 자동재생 데모(GIF형): 슈터·라이더 6화면 순환 */
+function demoGo(i){
+  const slides = document.querySelectorAll("#demoSlides .dslide");
+  if(!slides.length) return;
+  demoI = ((i % slides.length) + slides.length) % slides.length;
+  slides.forEach((s,j)=>s.classList.toggle("on", j===demoI));
+  document.querySelectorAll("#demoTrack .ddot").forEach((d,j)=>d.classList.toggle("on", j===demoI));
+  const cur = slides[demoI];
+  const role = document.getElementById("demoRole");
+  if(role) role.textContent = cur.dataset.role || "";
+  const cap = document.getElementById("demoCap");
+  if(cap) cap.innerHTML = `<span class="drole2">${cur.dataset.role||""}</span>${cur.dataset.cap||""}`;
+  // 마우스 커서를 해당 화면의 목표 지점으로 이동 + 클릭 효과
+  const cursor = document.getElementById("demoCursor");
+  if(cursor){
+    cursor.style.left = (cur.dataset.cx || "50") + "%";
+    cursor.style.top  = (cur.dataset.cy || "60") + "%";
+    cursor.classList.remove("click"); void cursor.offsetWidth; cursor.classList.add("click");
+  }
 }
 setInterval(()=>{
-  if(!document.getElementById("s-landing").classList.contains("hidden")){
-    heroGo((heroI + 1) % 2);
-  }
-}, 5000);
+  const ls = document.getElementById("s-landing");
+  if(ls && !ls.classList.contains("hidden")) demoGo(demoI + 1);
+}, 2600);
 /* 두 슬라이드 예시화면(목업) 높이를 큰 쪽에 맞춰 통일 → 전환 시 높이 흔들림 제거 */
 function equalizeHeroMocks(){
   const mocks = document.querySelectorAll(".heromock");
@@ -4405,7 +4527,15 @@ window.addEventListener("resize", equalizeHeroMocks);
 setTimeout(equalizeHeroMocks, 400);
 
 renderNav();
-renderLandingStats();
+/* 현황 밴드가 화면에 들어올 때 숫자 카운트업 재생 (스크롤 트리거) */
+(function(){
+  const band = document.querySelector(".statband");
+  if(!band || !("IntersectionObserver" in window)){ renderLandingStats(); return; }
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting) renderLandingStats(); });
+  }, { threshold:0.35 });
+  io.observe(band);
+})();
 </script>
 </body>
 </html>
