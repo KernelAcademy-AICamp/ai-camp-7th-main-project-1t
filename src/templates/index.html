@@ -687,6 +687,7 @@
   .certstat{border-radius:12px; padding:12px 14px; margin-bottom:12px;}
   .certstat.wait{background:#fffbeb; border:1px solid #fde68a;}
   .certstat.ok{background:#eff6ff; border:1px solid #bfdbfe;}
+  .certstat.go{background:#f8fafc; border:1px solid #e2e8f0;}
   .certstat .csh{font-size:13.5px; font-weight:800; color:var(--navy);}
   .certstat .csd{font-size:12px; color:#475569; margin-top:3px;}
   .certstat.wait .csd b{color:#b45309;}
@@ -3712,6 +3713,7 @@ async function submitJoinAnswers(){
 
 function renderJoin(r){
   const rate = parseInt(r.matchRate||0, 10); ORBIT.detailRate = rate;
+  ORBIT.detailRole = r.bestRole || ORBIT.detailRole || "";   // 합류 시 '추천 자리' 대신 매칭된 실제 자리 사용
   const answers = (r.answers||[]).map((a,i)=>{
     const isPr = i===2;
     return `<div class="qcard ${isPr?"pr":""}"><p class="qtext">${esc(a.question)}<span class="qsrc ${isPr?"prv":"ai"}">${isPr?"제공자":"AI"}</span></p><div class="ans">💬 ${esc(a.answer)}<div class="cc">↳ ${esc(a.comment)}</div></div></div>`;
@@ -3968,24 +3970,39 @@ function certArea(a){
 
 /* 합류 완료 카드 안: 참여 확인서 (제공자 완료 → 오르빗 승인 후에만 발급 가능) */
 function certBlock(a, idx){
+  const head = `<p class="eyebrow" style="margin-bottom:9px;">📄 프로젝트 참여 확인서</p>`;
+  // 1) 합류 직후 = 프로젝트 진행 중 (아직 확인서 절차 시작 전)
+  if(!a._certReviewing && !a._certApproved){
+    return `<div class="certwrap">${head}
+      <div class="certstat go" style="margin-bottom:12px;">
+        <div class="csh">🚀 프로젝트 진행 중</div>
+        <div class="csd">프로젝트가 마무리되고 <b>제공자가 완료 처리</b>하면, 오르빗 승인을 거쳐 참여 확인서를 발급받을 수 있어요.</div>
+      </div>
+      <div style="margin-top:12px; text-align:center; font-size:11px; color:var(--muted); opacity:.4;">
+        <span onclick="certRiderComplete(${idx})" style="cursor:pointer">데모: 제공자 완료 처리</span>
+      </div>
+    </div>`;
+  }
+  // 2) 제공자 완료 처리 후 = 오르빗 승인 대기
   if(!a._certApproved){
-    return `<div class="certwrap">
-      <p class="eyebrow" style="margin-bottom:9px;">📄 프로젝트 참여 확인서</p>
+    return `<div class="certwrap">${head}
       <div class="certstat wait" style="margin-bottom:12px;">
         <div class="csh">🕐 오르빗 담당자 승인 대기중</div>
-        <div class="csd">제공자가 프로젝트를 완료 처리하면 오르빗 담당자가 확인해요 · <b>영업일 기준 최대 10일</b> 소요</div>
+        <div class="csd">제공자가 완료 처리했어요. 오르빗 담당자가 확인 중이에요 · <b>영업일 기준 최대 10일</b> 소요</div>
       </div>
       <div style="margin-top:12px; text-align:center; font-size:11px; color:var(--muted); opacity:.4;">
         <span onclick="certRiderApprove(${idx})" style="cursor:pointer">데모: 승인 완료 처리</span>
       </div>
     </div>`;
   }
-  return `<div class="certwrap">
-    <p class="eyebrow" style="margin-bottom:9px;">📄 프로젝트 참여 확인서</p>
+  // 3) 승인 완료 = 발급 가능
+  return `<div class="certwrap">${head}
     <div class="certstat ok" style="margin-bottom:12px;"><div class="csh">✓ 오르빗 승인 완료</div><div class="csd">이제 참여 확인서를 발급받을 수 있어요.</div></div>
     <button class="certcta issue" onclick="certIssue(${idx})">📄 참여 확인서 발급 →</button>
   </div>`;
 }
+/* (데모) 제공자가 프로젝트를 완료 처리했다고 가정 → 오르빗 승인 대기 단계로 */
+function certRiderComplete(idx){ const a=ORBIT.applied[idx]; if(!a) return; a._certReviewing = true; refreshApplied(); }
 /* (데모) 오르빗 담당자 승인 완료 — 실제로는 제공자 완료 심사 요청 후 담당자가 승인해요. */
 function certRiderApprove(idx){
   const a=ORBIT.applied[idx]; if(!a) return;
