@@ -2968,7 +2968,8 @@ function visHead(label, key){
 function visSaveBtns(key){
   return `<div style="display:flex; gap:8px; margin-top:11px;"><button class="btn green sm" onclick="saveVisionField('${key}')">💾 저장</button><button class="btn ghost sm" onclick="cancelEdit()">취소</button></div>`;
 }
-function renderVision(v){
+function renderVision(v, quiet){
+  const fade = quiet ? "" : "fade";   // 편집 재렌더(quiet)에선 진입 애니메이션 끔 → 깜빡임 방지
   const ed = ORBIT.editing;
   const p = v.plan || {};
   const story = (v.story||[]).map(t=>`<p>${esc(t)}</p>`).join("");
@@ -3005,8 +3006,8 @@ function renderVision(v){
     </div>` : ``;
 
   document.getElementById("idea-vision").innerHTML = `
-    <div class="banner fade">${ORBIT._editingIdea!=null ? `✏️ <b>등록된 아이디어를 수정 중이에요.</b> 각 항목 옆 <b>✎ 수정</b>으로 고치고 맨 아래 <b>저장</b>을 누르세요. <b>취소</b>하면 원래대로 돌아가요. (투자 받기·질문·채널도 여기서 변경돼요)` : `✍️ <b>AI가 만든 기획안이에요.</b> 각 항목 옆 <b>✎ 수정</b>으로 직접 고칠 수 있어요. <b>함께 찾을 팀원</b>은 1명 이상 선택해야 합니다.`}</div>
-    <div class="hero fade">
+    <div class="banner ${fade}" style="margin-top:18px;">${ORBIT._editingIdea!=null ? `✏️ <b>등록된 아이디어를 수정 중이에요.</b> 각 항목 옆 <b>✎ 수정</b>으로 고치고 맨 아래 <b>저장</b>을 누르세요. <b>취소</b>하면 원래대로 돌아가요. (투자 받기·질문·채널도 여기서 변경돼요)` : `✍️ <b>AI가 만든 기획안이에요.</b> 각 항목 옆 <b>✎ 수정</b>으로 직접 고칠 수 있어요. <b>함께 찾을 팀원</b>은 1명 이상 선택해야 합니다.`}</div>
+    <div class="hero ${fade}">
       <div class="tags"><span class="hot">아이디어 단계</span><span>팀원 모집 중</span></div>
       <h1>${esc(v.serviceName)} — ${esc(v.tagline)}</h1>
       <p class="lead">${esc(v.lead)}</p>
@@ -3062,9 +3063,9 @@ function renderVision(v){
     ${invToggle}
     ${invSections}
 
-    <div class="card">
+    <div class="card" id="chanSec">
       <p class="eyebrow">🔗 팀 소통 채널 <span class="qsrc prv">수락 후 공개</span></p>
-      <p style="font-size:12.5px; color:#475569; margin:0 0 6px;">합류가 <b>서로 수락</b>되면 이 링크가 팀원에게 공개돼요. 지금은 나만 봅니다. (선택 입력)</p>
+      <p style="font-size:12.5px; color:#475569; margin:0 0 6px;">합류가 <b>서로 수락</b>되면 이 링크가 팀원에게 공개돼요. 지금은 나만 봅니다. <b style="color:#dc2626;">(최소 1개 필수)</b></p>
       <label class="chan-l">💬 카카오 오픈채팅</label>
       <input class="chan-in" type="text" placeholder="https://open.kakao.com/o/..." value="${esc(ch.kakao||'')}" oninput="ORBIT.channels.kakao=this.value">
       <label class="chan-l">🟣 슬랙 채널</label>
@@ -3088,22 +3089,27 @@ function renderVision(v){
   (ORBIT.picks||[]).forEach(i=>{ const el=document.getElementById("pick-"+i); if(el) el.classList.add("on"); });
 }
 
-function editVisionField(key){ ORBIT.editing = key; renderVision(ORBIT.vision); setTimeout(()=>{ const e=document.getElementById("card-"+key); if(e) e.scrollIntoView({behavior:"smooth", block:"start"}); }, 60); }
-function cancelEdit(){ ORBIT.editing = null; renderVision(ORBIT.vision); }
-function toggleMatchInvestor(){ const fq=document.getElementById("founderQ"); if(fq) ORBIT.founderQuestion=fq.value; const fiq=document.getElementById("founderIQ"); if(fiq) ORBIT.founderInvestorQuestion=fiq.value; const v=ORBIT.vision; v.matchInvestor=!v.matchInvestor; ORBIT.editing=null; renderVision(v); }
+function editVisionField(key){ const y=window.scrollY; ORBIT.editing = key; renderVision(ORBIT.vision, true); window.scrollTo(0, y); }
+function cancelEdit(){ const y=window.scrollY; ORBIT.editing = null; renderVision(ORBIT.vision, true); window.scrollTo(0, y); }
+function toggleMatchInvestor(){ const fq=document.getElementById("founderQ"); if(fq) ORBIT.founderQuestion=fq.value; const fiq=document.getElementById("founderIQ"); if(fiq) ORBIT.founderInvestorQuestion=fiq.value; const v=ORBIT.vision; v.matchInvestor=!v.matchInvestor; const y=window.scrollY; ORBIT.editing=null; renderVision(v, true); window.scrollTo(0, y); }
 function saveVisionField(key){
   const v = ORBIT.vision; const val = id => (document.getElementById(id)||{}).value || "";
   if(key==='story') v.story = val('ed-story').split(/\n\s*\n/).map(s=>s.trim()).filter(Boolean);
   if(key==='factors') v.matchFactors = val('ed-factors').split(/\n+/).map(s=>s.trim()).filter(Boolean);
   if(key==='ifactors') v.investorMatchFactors = val('ed-ifactors').split(/\n+/).map(s=>s.trim()).filter(Boolean);
   if(key==='plan'){ v.productNote=val('ed-productNote'); v.plan.problem=val('ed-problem'); v.plan.solution=val('ed-solution'); v.plan.target=val('ed-target'); v.plan.revenue=val('ed-revenue'); }
-  ORBIT.editing = null; renderVision(v);
-  setTimeout(()=>{ const e=document.getElementById("card-"+key); if(e) e.scrollIntoView({behavior:"smooth", block:"start"}); }, 60);
+  const y=window.scrollY; ORBIT.editing = null; renderVision(v, true); window.scrollTo(0, y);
 }
 function tryConfirm(){
   const fq=document.getElementById("founderQ"); if(fq) ORBIT.founderQuestion = fq.value.trim();
   if(!ORBIT.picks || ORBIT.picks.length===0){
     const s=document.getElementById("teamPickSec"); if(s) s.scrollIntoView({behavior:"smooth", block:"start"});
+    return;
+  }
+  const ch = ORBIT.channels || {};
+  if(!["kakao","slack","email","zoom"].some(k => (ch[k]||"").trim())){
+    const cs=document.getElementById("chanSec"); if(cs) cs.scrollIntoView({behavior:"smooth", block:"start"});
+    alert("팀 소통 채널을 최소 1개는 입력해 주세요.\n수락된 팀원과 함께 시작할 연락 수단이 필요해요.");
     return;
   }
   confirmVision();
@@ -3284,10 +3290,27 @@ function recoRow(p,i){
     <span style="align-self:center; color:#cbd5e1; font-size:20px; flex:0 0 auto;">›</span>
   </div>`;
 }
+/* 슈터가 추천 팀원/투자자에게 제안 → 현재 아이디어의 '보낸 제안'(dir:"sent")으로 기록 */
+function _recordSentProposal(p){
+  if(!p) return;
+  const idx = ORBIT.myIdeas.findIndex(it => it.vision === ORBIT.detailVision);
+  if(idx < 0) return;
+  const it = ORBIT.myIdeas[idx];
+  if(it.proposals.some(x => x.name === p.name && (x.dir||"") === "sent")) return;  // 중복 방지
+  const d = new Date(), pad = n => String(n).padStart(2,"0");
+  const today = `${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())}`;
+  it.proposals.unshift(Object.assign({}, p, {
+    dir:"sent", status:"pending", date:today,
+    role: p.fitsRole || p.primaryRole || p.role || (p.kind==="investor" ? "투자 검토" : "추천 자리"),
+    rate: (typeof p.score==="number") ? p.score : (p.rate||0),
+    line: p.line || p.headline || ""
+  }));
+}
 function inviteTeammate(i){
   const p = (ORBIT._reco||[])[i]; if(!p) return;
   const b = document.getElementById("inv-"+i);
   if(b){ b.textContent = "제안함 ✓"; b.disabled = true; }
+  _recordSentProposal(p);
   alert(p.kind === "investor"
     ? `🛰️ ${p.name} 투자자에게 검토 제안을 보냈어요!\n관심이 있으면 미팅으로 이어집니다.`
     : `🛰️ ${p.name}님에게 ORBIT 제안을 보냈어요!\n상대가 수락하면 함께 시작합니다.`);
@@ -3510,6 +3533,7 @@ function inviteFromModal(i){
   p._invited = true;
   const btn = document.getElementById("modalInvBtn");
   if(btn){ btn.textContent = "제안함 ✓"; btn.disabled = true; btn.style.background = "#cbd5e1"; btn.style.cursor = "default"; }
+  _recordSentProposal(p);
   alert(p.kind === "investor"
     ? `🛰️ ${p.name} 투자자에게 검토 제안을 보냈어요!\n관심이 있으면 미팅으로 이어집니다.`
     : `🛰️ ${p.name}님에게 ORBIT 제안을 보냈어요!\n상대가 수락하면 함께 시작합니다.`);
@@ -4263,12 +4287,8 @@ function cancelEditIdea(){
   showMy('idea');
 }
 function makeProposals(v){
-  const roles = v.neededTeammates || [];
-  const base = [
-    {name:"김도현", role:(roles[0]&&roles[0].role)||"핵심 역량 보유자", rate:88, line:"관련 공정을 직접 다뤄본 경험이 있어요. 시제품을 빠르게 만들 수 있습니다."},
-    {name:"박지훈", role:(roles[1]&&roles[1].role)||"마케팅 담당", rate:80, line:"SNS로 0에서 팬덤을 만든 경험이 있어요. 브랜드 스토리를 잘 풀 수 있습니다."},
-  ];
-  return base.map(c=>({...c, status:"pending"}));
+  // 실제 서비스처럼 새 아이디어는 받은 제안 0으로 시작 (제안은 상대가 보내야 생김)
+  return [];
 }
 function renderMyIdea(){
   const box = document.getElementById("my-idea");
