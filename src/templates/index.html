@@ -651,6 +651,12 @@
   .dashcard .dc-n{margin-left:auto; font-size:12px; font-weight:800; padding:3px 10px; border-radius:999px; background:var(--sky); color:var(--blue);}
   .dashcard .dc-body{flex:1; margin-bottom:14px;}
   .dashcard .dc-empty{color:var(--muted); font-size:13px; line-height:1.55; padding:6px 0;}
+  /* 빈 상태 카드 (받은 제안/신청/합류 없음) */
+  .emptybox{text-align:center; padding:42px 24px;}
+  .emptybox .eb-ic{font-size:46px; line-height:1; margin-bottom:14px;}
+  .emptybox .eb-t{font-size:15.5px; font-weight:800; color:var(--navy); margin-bottom:7px; letter-spacing:-.01em;}
+  .emptybox .eb-s{font-size:13px; color:var(--muted); line-height:1.65; margin:0 auto 22px; max-width:340px;}
+  .emptybox .eb-cta{display:inline-flex; width:auto; padding:12px 22px; font-size:13.5px;}
   .dash-row{display:flex; align-items:center; gap:9px; padding:8px 0; border-bottom:1px solid var(--line);}
   .dash-row:last-child{border-bottom:0;}
   .dash-row .pav{width:28px; height:28px; font-size:12px;}
@@ -2136,20 +2142,30 @@ function appliedRow(a){
 /* 탭+목록만 (탭 전환 시 이 부분만 교체 → 통계·헤더 고정, 깜빡임 없음) */
 function appliedZoneHtml(){
   const applied = ORBIT.applied || [];
-  const tab = ORBIT._appliedTab || "received";
   const received = applied.filter(a=>(a.dir||"applied")==="received" && a.status!=="accepted");
   const mine     = applied.filter(a=>(a.dir||"applied")==="applied"  && a.status!=="accepted");
   const joined   = applied.filter(a=>a.status==="accepted");
+  // 기본 탭 = 내용이 있는 첫 탭 (받은 제안 → 신청 현황 → 합류). 빈 '받은 제안'이 먼저 뜨던 문제 해결
+  const tab = ORBIT._appliedTab || (received.length ? "received" : mine.length ? "applied" : joined.length ? "joined" : "received");
   const shown = tab==="applied" ? mine : tab==="joined" ? joined : received;
   const tabs = `<div class="prop-tabs" style="margin-bottom:14px;">
     <button class="prop-tab ${tab==='received'?'on':''}" onclick="setAppliedTab('received')">📥 받은 제안 ${received.length}</button>
     <button class="prop-tab ${tab==='applied'?'on':''}" onclick="setAppliedTab('applied')">📤 신청 현황 ${mine.length}</button>
     <button class="prop-tab ${tab==='joined'?'on':''}" onclick="setAppliedTab('joined')">✓ 합류 ${joined.length}</button>
   </div>`;
-  const emptyMsg = tab==="applied" ? "아직 신청한 아이디어가 없어요." : tab==="joined" ? "아직 합류한 팀이 없어요." : "아직 받은 제안이 없어요.";
+  const emptyMap = {
+    received: { ic:"📭", t:"아직 받은 제안이 없어요", s:"관심 가는 팀을 둘러보면, 딱 맞는 자리를 먼저 제안받을 수 있어요." },
+    applied:  { ic:"📮", t:"아직 신청한 아이디어가 없어요", s:"마음에 드는 팀을 찾아 합류를 신청해 보세요." },
+    joined:   { ic:"🌱", t:"아직 합류한 팀이 없어요", s:"둘러보고 합류하면, 함께하는 팀이 여기에 모여요." },
+  };
+  const em = emptyMap[tab] || emptyMap.received;
   const list = shown.length ? shown.map(appliedRow).join("")
-    : `<div class="card"><div class="dc-empty">${emptyMsg}<br>둘러보기에서 마음에 드는 팀을 찾아보세요.</div>
-        <button class="btn full" onclick="goExplore()">🛰️ 아이디어 둘러보기 →</button></div>`;
+    : `<div class="card emptybox">
+        <div class="eb-ic">${em.ic}</div>
+        <div class="eb-t">${em.t}</div>
+        <div class="eb-s">${em.s}</div>
+        <button class="btn eb-cta" onclick="goExplore()">🔍 아이디어 둘러보기 →</button>
+      </div>`;
   return `${tabs}${list}`;
 }
 function renderAppliedList(){
