@@ -1169,7 +1169,7 @@
 <section class="screen hidden" id="s-explore">
   <div class="narrow pagepad">
     <button class="btn ghost" onclick="goHome()">← 홈으로</button>
-    <h2 style="font-size:21px; color:var(--navy); margin:16px 0 4px; letter-spacing:-.02em;">🔍 아이디어 둘러보기 <span id="explore-count" class="cntbadge" style="font-size:13px; font-weight:700; color:var(--muted); background:#f1f5f9; padding:3px 12px; border-radius:20px; vertical-align:middle; margin-left:6px;"></span></h2>
+    <h2 style="font-size:21px; color:var(--navy); margin:16px 0 4px; letter-spacing:-.02em; display:flex; align-items:center; gap:8px;">🔍 아이디어 둘러보기 <span id="explore-count" class="cntbadge" style="font-size:13px; font-weight:700; color:var(--muted); background:#f1f5f9; padding:3px 12px; border-radius:20px; vertical-align:middle;"></span><button class="sorttoggle" id="explore-sort" style="margin-left:auto;" onclick="toggleExploreSort()" title="정렬 전환 (적합도순 ↔ 최신순)">적합도순</button></h2>
     <p style="color:var(--muted); font-size:13px; margin:0 0 18px;">관심 가는 프로젝트를 고르면 상세를 볼 수 있어요. (상세 보기·합류는 로그인 후 진행됩니다.)</p>
     <div id="explore-list"></div>
   </div>
@@ -2833,24 +2833,44 @@ async function attachPreview(prefix, visions){
   }catch(e){ /* 미리보기는 실패해도 목록엔 영향 없음 */ }
 }
 /* 비로그인 진입 — 팀원으로 둘러보기 (목록만 먼저) */
-function goExplore(){
+async function goExplore(){
   go("explore");
   const _mine = ORBIT.myIdeas.map(it=>it.vision);
   const _withDemo = _mine.includes(DEMO_PROJECT) ? _mine : [DEMO_PROJECT, ..._mine];
   const _base = ORBIT.loggedIn ? [..._withDemo, ...DEMO_IDEAS] : [DEMO_PROJECT, ...DEMO_IDEAS];
   // 투자자는 '투자 받기(matchInvestor)' 켠 아이디어만 볼 수 있음 (슈터가 노출 통제 · OFF는 목록에서 숨김)
   const _isInvestor = !!(ORBIT.profile && ORBIT.profile.kind === "investor");
-  window._explore = _isInvestor ? _base.filter(v => v.matchInvestor === true) : _base;
+  let list = _isInvestor ? _base.filter(v => v.matchInvestor === true) : _base;
+
+  // 적합도 점수 계산(프로필 있을 때) → 정렬·배지에 함께 사용
+  const applicant = profileApplicant();
+  if(applicant){
+    try{
+      const r = await api("/api/preview", { applicant, projects:list.map(v=>v.matchProfile||null) });
+      (r.scores||[]).forEach((s,i)=>{ if(list[i]) list[i]._fit = s || null; });
+    }catch(e){ /* 미리보기 실패해도 목록엔 영향 없음 */ }
+  }
+  // 정렬 (기본: 적합도순 · 하드필터 탈락은 뒤로 / 최신순: 등록일 내림차순)
+  const sort = ORBIT._browseSort || 'fit';
+  list = list.slice();
+  if(sort === 'recent') list.sort((a,b)=> String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
+  else list.sort((a,b)=> fitVal(b) - fitVal(a));
+  window._explore = list;
+
   const _cnt = document.getElementById("explore-count");
   if(_cnt){ _cnt.textContent = window._explore.length + "개" + (_isInvestor?" ⓘ":""); if(_isInvestor){ _cnt.setAttribute("data-tip","투자 검토를 희망한 아이디어만 보여요"); } else { _cnt.removeAttribute("data-tip"); } }
+  const _sb = document.getElementById("explore-sort");
+  if(_sb){ _sb.style.display = ORBIT.loggedIn ? "" : "none"; _sb.textContent = sort==='recent' ? '최신순' : '적합도순'; }
   document.getElementById("explore-list").innerHTML = window._explore.map((v,i)=>`
     <div class="browsecard" onclick="exploreOpen(${i})">
       <span class="fitpct" id="xfit-${i}">🔥 팀원 모집 중</span>
       <div class="bt" style="margin-top:9px">${esc(v.serviceName)} — ${esc(v.tagline)}</div>
       <div class="bd">${esc(v.lead)}</div>
+      ${v.createdAt?`<div class="bdate">🕐 ${esc(v.createdAt.replace(/-/g,'.'))} 등록</div>`:''}
     </div>`).join("");
-  attachPreview("xfit", window._explore);
+  paintFitBadges("xfit", window._explore);
 }
+function toggleExploreSort(){ ORBIT._browseSort = (ORBIT._browseSort==='recent') ? 'fit' : 'recent'; goExplore(); }
 function exploreOpen(i){
   const v = (window._explore||[])[i]; if(!v) return;
   if(!ORBIT.loggedIn){ ORBIT._pending={type:"detail", vision:v}; go("login"); return; }
