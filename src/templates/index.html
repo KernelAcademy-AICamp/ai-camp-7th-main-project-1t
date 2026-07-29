@@ -1175,7 +1175,10 @@
 <!-- ===== 둘러보기 (비로그인 가능) ===== -->
 <section class="screen hidden" id="s-explore">
   <div class="narrow pagepad">
-    <button class="btn ghost" onclick="goHome()">← 홈으로</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+      <button class="btn ghost" onclick="goHome()">← 홈으로</button>
+      <button class="btn ghost" onclick="go(ORBIT._exploreReturn||'landing')">← 이전으로</button>
+    </div>
     <h2 style="font-size:21px; color:var(--navy); margin:16px 0 4px; letter-spacing:-.02em; display:flex; align-items:center; gap:8px;">🔍 아이디어 둘러보기 <span id="explore-count" class="cntbadge" style="font-size:13px; font-weight:700; color:var(--muted); background:#f1f5f9; padding:3px 12px; border-radius:20px; vertical-align:middle;"></span><button class="sorttoggle" id="explore-sort" style="margin-left:auto;" onclick="toggleExploreSort()" title="정렬 전환 (적합도순 ↔ 최신순)">적합도순</button></h2>
     <p style="color:var(--muted); font-size:13px; margin:0 0 18px;">관심 가는 프로젝트를 고르면 상세를 볼 수 있어요. (상세 보기·합류는 로그인 후 진행됩니다.)</p>
     <div id="explore-list"></div>
@@ -2851,6 +2854,8 @@ async function attachPreview(prefix, visions){
 }
 /* 비로그인 진입 — 팀원으로 둘러보기 (목록만 먼저) */
 async function goExplore(){
+  const _from = (typeof currentScreen==="function") ? currentScreen() : "";
+  if(_from && _from !== "explore") ORBIT._exploreReturn = _from;   // '이전으로' 복귀 지점 기억
   go("explore");
   const _mine = ORBIT.myIdeas.map(it=>it.vision);
   const _withDemo = _mine.includes(DEMO_PROJECT) ? _mine : [DEMO_PROJECT, ..._mine];
