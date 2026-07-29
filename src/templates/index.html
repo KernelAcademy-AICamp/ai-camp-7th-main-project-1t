@@ -3224,7 +3224,7 @@ async function openDetail(v, isOwner, receivedIdx){
       </div>
       <div class="card">
         <p class="eyebrow">💰 투자 검토 · 제공자와 질문을 주고받아요</p>
-        <p style="font-size:12.5px; color:#475569; margin:2px 0 12px;">몇 가지 질문에 답하고 제공자에게 궁금한 점을 물으면, <b>제공자의 답변</b>과 함께 투자 관심을 남길 수 있어요.</p>
+        <p style="font-size:12.5px; color:#475569; margin:2px 0 12px;">몇 가지 질문에 답하고 제공자에게 궁금한 점을 남기면, 투자 관심을 표할 수 있어요. <b>제공자 답변</b>은 제안 수락 후 미팅에서 직접 들어요.</p>
         <button class="btn full" id="investBtn" onclick="investApply()">투자 검토 질문에 답하기 →</button>
       </div>
       <div id="joinResult"></div>`;
@@ -3864,7 +3864,7 @@ function renderInvestForm(){
       ${qhtml}
       <p class="eyebrow" style="margin-top:16px">❓ 제공자에게 묻고 싶은 점</p>
       <div class="qcard"><textarea id="iask" placeholder="예) 현재 확보한 초기 지표나 파일럿 결과가 있나요?"></textarea></div>
-      <button class="btn full" id="iansSubmit" style="margin-top:14px" onclick="submitInvestAnswers()">제출하고 제공자 답변 받기 →</button>
+      <button class="btn full" id="iansSubmit" style="margin-top:14px" onclick="submitInvestAnswers()">제출하고 투자 관심 남기기 →</button>
     </div>`;
 }
 async function submitInvestAnswers(){
@@ -3876,11 +3876,11 @@ async function submitInvestAnswers(){
   if(answers.some(a=>!a)){ alert("제공자의 질문 2가지에 모두 답해 주세요."); return; }
   const investor = _investorObj();
   const sb = document.getElementById("iansSubmit");
-  if(sb){ sb.disabled=true; sb.textContent="제공자 답변 받는 중..."; }
+  if(sb){ sb.disabled=true; sb.textContent="투자 관심 정리 중..."; }
   try{
     const r = await api("/api/investeval", { vision:v, investor, questions:qs, answers, investorQuestion });
     renderInvest(r, investorQuestion);
-  }catch(err){ if(sb){ sb.disabled=false; sb.textContent="제출하고 제공자 답변 받기 →"; } alert("⚠️ "+err.message); }
+  }catch(err){ if(sb){ sb.disabled=false; sb.textContent="제출하고 투자 관심 남기기 →"; } alert("⚠️ "+err.message); }
 }
 function renderInvest(r, investorQuestion){
   const lv = r.interestLevel || "";
@@ -3891,7 +3891,7 @@ function renderInvest(r, investorQuestion){
     <div class="card fade"><p class="eyebrow">✓ 제공자 질문에 대한 내 답변</p>${qa}</div>
     ${investorQuestion?`<div class="card fade"><p class="eyebrow">🗣 내가 제공자에게 물은 질문</p>
       <div class="qcard pr"><p class="qtext">${esc(investorQuestion)}<span class="qsrc ai">투자자</span></p></div>
-      <div class="ans" style="margin-top:10px">💬 <b>제공자 답변</b><div class="cc" style="font-style:normal">${esc(r.founderReply||"")}</div></div>
+      <div class="ans" style="margin-top:10px">🕐 <b>제공자에게 전달됐어요</b><div class="cc" style="font-style:normal">제공자가 확인 후 답변해요. 투자 제안을 보내 수락되면 미팅에서 직접 물어볼 수 있어요.</div></div>
     </div>`:``}
     <div class="card fade"><p class="eyebrow">💰 투자 관심 요약</p>
       <div style="margin-bottom:8px;"><span class="pill amber">관심도 ${esc(lv||"-")}</span></div>

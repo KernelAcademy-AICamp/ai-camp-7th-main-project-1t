@@ -1133,13 +1133,12 @@ def evaluate_applicant(vision: dict, question_texts: list, applicant: dict,
 # ── 투자자 검토 Q&A (투자자가 답하고, 제공자에게 묻고, 제공자가 답한다) ──
 INVEST_SYSTEM_PROMPT = """당신은 ORBIT의 '투자 검토 도우미'입니다.
 투자자가 사업 기획안에 관심을 남기려고 몇 가지 질문에 답하고, 제공자에게 궁금한 점을 묻습니다.
-당신은 (1) 투자자의 답변에 제공자 관점의 한 줄 코멘트를 달고, (2) 투자자의 질문에 제공자 입장에서 답하며,
-(3) 이 사업이 이 투자자에게 얼마나 맞는지 관심도를 매깁니다.
+당신은 (1) 투자자의 답변에 제공자 관점의 한 줄 코멘트를 달고, (2) 이 사업이 이 투자자에게 얼마나 맞는지 관심도를 매깁니다.
+⚠️ 투자자가 '제공자에게 묻는 질문'에는 절대 답하지 마세요. 그 답변은 실제 제공자(사람)가 직접 합니다 — 당신이 대신 지어내면 안 됩니다.
 
 규칙:
 - 반드시 아래 JSON 형식으로만 답하세요. JSON 외 다른 말이나 코드펜스를 절대 붙이지 마세요.
 - answers: 주어진 각 질문/답변을 그대로 옮기고(창작·수정 금지), comment 는 제공자 관점에서 이 답변이 투자 매력·적합성에 어떤 의미인지 한 줄.
-- founderReply: 투자자의 질문에 제공자 입장에서 기획안 내용을 근거로 성실히 답변(2~3문장). 아직 아이디어 단계이므로 없는 성과를 지어내지 마세요.
 - interestLevel: 투자자 관심 분야·단계와 이 사업의 결이 얼마나 맞는지 "높음"/"보통"/"낮음" 중 하나.
 - summary: 투자 관점 한 줄 요약. highlights: 이 투자자에게 어필할 포인트(또는 유의점) 2~3개.
 - 모두 한국어로.
@@ -1147,7 +1146,6 @@ INVEST_SYSTEM_PROMPT = """당신은 ORBIT의 '투자 검토 도우미'입니다.
 [응답 JSON 형식]
 {
   "answers": [{"question":"질문","answer":"투자자 답변","comment":"제공자 관점 코멘트"}],
-  "founderReply": "제공자가 투자자 질문에 답한 내용",
   "interestLevel": "높음",
   "summary": "한 줄 요약",
   "highlights": ["포인트1","포인트2"]
@@ -1157,16 +1155,16 @@ INVEST_SCHEMA = _obj({
     "answers": {"type": "array", "items": _obj(
         {"question": {"type": "string"}, "answer": {"type": "string"}, "comment": {"type": "string"}},
         ["question", "answer", "comment"])},
-    "founderReply": {"type": "string"},
     "interestLevel": {"type": "string"},
     "summary": {"type": "string"},
     "highlights": {"type": "array", "items": {"type": "string"}},
-}, ["answers", "founderReply", "interestLevel", "summary", "highlights"])
+}, ["answers", "interestLevel", "summary", "highlights"])
 
 
 def evaluate_investor(vision: dict, investor: dict, question_texts: list,
                       answers: list, investor_question: str = "") -> dict:
-    """투자자가 답한 질문 + 제공자에게 묻는 질문으로 투자 관심 요약·제공자 답변을 생성합니다."""
+    """투자자가 답한 질문 + 제공자에게 묻는 질문으로 투자 관심을 요약합니다.
+    (제공자에게 묻는 질문의 '답변'은 생성하지 않음 — 실제 제공자가 직접 답합니다.)"""
     brief = {
         "serviceName": vision.get("serviceName"),
         "oneLineDesc": vision.get("oneLineDesc"),
@@ -1183,9 +1181,9 @@ def evaluate_investor(vision: dict, investor: dict, question_texts: list,
         f"{json.dumps(investor, ensure_ascii=False, indent=2)}\n\n"
         "[제공자가 투자자에게 물은 질문과 투자자의 답변]\n"
         f"{json.dumps(qa, ensure_ascii=False, indent=2)}\n\n"
-        "[투자자가 제공자에게 묻는 질문]\n"
+        "[투자자가 제공자에게 묻는 질문] (이 질문에는 답하지 마세요 — 제공자가 직접 답합니다)\n"
         f"{investor_question or '(없음)'}\n\n"
-        "answers 의 answer 는 위 투자자 답변을 그대로 옮기고, founderReply 는 투자자 질문에 제공자 입장에서 답하세요. "
+        "answers 의 answer 는 위 투자자 답변을 그대로 옮기고, 투자자가 제공자에게 묻는 질문에는 답하지 마세요. "
         "이 투자자의 투자 관심 평가를 JSON 형식으로 작성하세요."
     )
     response = client.messages.create(
